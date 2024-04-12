@@ -1,4 +1,4 @@
-# CS347-BattleshipGame
+# Shipping Hazards: A Game By Pink Puffy Rhinos
 
 This is a project written by Cece che Tita, Gisele Nelson, Willow Gu, Josh Meier, Kendra Winhall, and Ryan Dunn in Spring 2024 for CS 347 (Advanced Software Design) at Carleton College in Northfield, MN.
 
