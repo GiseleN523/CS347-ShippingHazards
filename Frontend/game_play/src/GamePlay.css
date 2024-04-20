@@ -1,0 +1,26 @@
+.grid {
+    display: table;
+}
+
+.grid-row {
+    display: table-row;
+}
+
+.grid-square {
+    display: table-cell;
+    border: 1px solid black;
+    padding: 20px;
+}
+
+.box {
+    background-color: white;
+    color: #ff8ac7;
+    border: 1px solid #ff8ac7;
+    border-radius: 5%;
+}
+
+#instruction-box {
+    font-size: 120%;
+    width: 20%;
+    
+}

@@ -25,13 +25,12 @@
 
 .App-Navigation {
   background-color: black;
-  color: white; 
+  color: white;
 }
 
 .App-Navigation .nav-list {
   list-style-type: none;
   margin: 5px;
-
   text-align: center;
 }
 
@@ -45,5 +44,4 @@
 
 .App-Navigation .nav-list li a {
   text-decoration: none;
-  color: black;
 }
