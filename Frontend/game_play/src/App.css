@@ -1,0 +1,49 @@
+.App {
+  text-align: center;
+}
+
+.App-Header {
+  background-color: #ff8ac7;
+  color: rgb(1, 1, 1);
+  padding: px ;
+  display: flex;
+}
+
+.App-Header .logo {
+  margin-right: 30px;
+}
+
+.App-Header img {
+  width: 100px;
+  border-radius: 0%;
+}
+
+.header-text {
+  flex-grow: 1; 
+  padding-left: 200px;
+}
+
+.App-Navigation {
+  background-color: black;
+  color: white; 
+}
+
+.App-Navigation .nav-list {
+  list-style-type: none;
+  margin: 5px;
+
+  text-align: center;
+}
+
+.App-Navigation .nav-list li {
+  display: inline;
+  margin-right: 100px;
+  font-weight: bold;
+  float: left;
+}
+
+
+.App-Navigation .nav-list li a {
+  text-decoration: none;
+  color: black;
+}
