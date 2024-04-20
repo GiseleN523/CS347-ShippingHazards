@@ -1,0 +1,47 @@
+header {
+    background-color: #ff8ac7;
+    color: rgb(1, 1, 1);
+}
+  
+header * {
+    vertical-align: middle;
+}
+  
+header .logo {
+    margin-right: 5%;
+    height: 10em;
+}
+  
+#header-text {
+    font-size: 220%;
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+  
+  
+nav {
+    background-color: black;
+    color: white; 
+} 
+  
+nav .nav-list {
+    padding-left: 10px;
+    padding: 20px;
+    padding-bottom: 30px;
+    margin: 0px;
+    text-align: center;
+}
+  
+nav .nav-list li {
+    display: inline;
+    margin-right: 100px;
+    font-weight: bold;
+    float: left;
+    font-size: 20px;
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+  
+  
+nav .nav-list li a {
+    text-decoration: none;
+    color: white;
+}
