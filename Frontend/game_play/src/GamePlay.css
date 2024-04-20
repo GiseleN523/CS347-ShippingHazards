@@ -1,3 +1,7 @@
+#game-content {
+    padding: 2% inherit;
+}
+
 .grid {
     display: table;
 }
@@ -8,19 +12,40 @@
 
 .grid-square {
     display: table-cell;
-    border: 1px solid black;
+    border: 2px solid black;
     padding: 20px;
+    cursor: pointer;
 }
 
-.box {
-    background-color: white;
-    color: #ff8ac7;
-    border: 1px solid #ff8ac7;
-    border-radius: 5%;
+#gameplay-instructions {
+    font-size: 150%;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    padding: 2% 0% 1% 0%;
 }
 
-#instruction-box {
-    font-size: 120%;
-    width: 20%;
-    
+#boards {
+    display: table;
+    width: 100%;
+    background-image: url('./images/water_background.png');
+    background-repeat: no-repeat;
+}
+
+#boards-row {
+    display: table-row;
+    width: 100%;
+}
+
+.boards-cell * {
+    margin: auto;
+}
+
+.boards-cell {
+    display: table-cell;
+    width: 50%;
+    margin: auto;
+    text-align: center;
+    font-size: 150%;
+    padding: .5% 0%;
 }
