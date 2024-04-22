@@ -1,4 +1,6 @@
 .button {
+    cursor: pointer;
+    /* from react.dev */
     border: 0;
     line-height: 2.5;
     padding-left: 50px;

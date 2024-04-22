@@ -5,6 +5,7 @@ import Home from './home.js';
 import AboutUs from './aboutus.js';
 import MyAccount from './myaccount.js';
 import GamePlay from './gameplay.js';
+import './index.css'
 
 ReactDOM.render(
   <React.StrictMode>

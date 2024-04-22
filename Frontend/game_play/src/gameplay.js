@@ -37,11 +37,11 @@ function GamePlay() {
         <HeaderAndNav />
         <Instructions />
         <div id="content">
-          <div id="content-row">
+          <div className="content-row">
             <div className="content-cell">YOUR BOARD</div>
             <div className="content-cell">OPPONENT BOARD</div>
           </div>
-          <div id="content-row">
+          <div className="content-row" id="board-row">
             <div className="content-cell">
               <Board />
             </div>

@@ -14,6 +14,10 @@
     cursor: pointer;
 }
 
+.board-square:hover {
+    background-color: blue;
+}
+
 #gameplay-instructions {
     font-size: 200%;
     width: 100%;
@@ -25,13 +29,17 @@
 #content {
     display: table;
     width: 100%;
-    background-image: url('./images/water_background.png');
-    background-repeat: no-repeat;
 }
 
-#content-row {
+.content-row {
     display: table-row;
     width: 100%;
+}
+
+#board-row {
+    padding-top: 5%;
+    background-image: url('./images/water_background.png');
+    background-repeat: no-repeat;
 }
 
 .content-cell * {

@@ -33,6 +33,7 @@ function HeaderAndNav() {
         <div>
             <Header />
             <NavigationBar />
+            <br /><br />
         </div>
     )
 }

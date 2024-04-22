@@ -1,10 +1,12 @@
 header {
     background-color: #ff8ac7;
     color: rgb(1, 1, 1);
+    margin: 0px;
 }
   
 header * {
     vertical-align: middle;
+    margin: 0px;
 }
   
 header .logo {
@@ -16,32 +18,36 @@ header .logo {
     font-size: 220%;
     font-family: "Lucida Console", "Courier New", monospace;
 }
-  
-  
+
 nav {
+    margin: 0px;
     background-color: black;
-    color: white; 
-} 
+    display: block;
+}
   
 nav .nav-list {
-    padding-left: 10px;
-    padding: 20px;
-    padding-bottom: 30px;
+    padding: 2% 0%;
     margin: 0px;
-    text-align: center;
 }
   
 nav .nav-list li {
+    padding: 2% 3%;
+    background-color: black;
+    color: white;
     display: inline;
-    margin-right: 100px;
     font-weight: bold;
-    float: left;
     font-size: 20px;
     font-family: "Lucida Console", "Courier New", monospace;
+    cursor: pointer;
+}
+
+nav .nav-list li:hover {
+    background-color: white;
+    color: black;
 }
   
-  
 nav .nav-list li a {
+    text-align: center;
     text-decoration: none;
-    color: white;
+    color: inherit;
 }
