@@ -1,11 +1,21 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './home.js';
+import AboutUs from './aboutus.js';
+import MyAccount from './myaccount.js';
 import GamePlay from './gameplay.js';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.render(
   <React.StrictMode>
-    <GamePlay />
-  </React.StrictMode>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/aboutus" element={<AboutUs />} />
+        <Route path="/myaccount" element={<MyAccount />} />
+        <Route path="/game" element={<GamePlay />} />
+      </Routes>
+    </Router>
+  </React.StrictMode>,
+  document.getElementById('root')
 );

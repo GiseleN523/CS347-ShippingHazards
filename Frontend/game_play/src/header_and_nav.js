@@ -15,13 +15,13 @@ function NavigationBar() {
       <nav>
         <ul className="nav-list">
           <li>
-            <a href="#home">Home</a>
+            <a href="/">Home</a>
           </li>
           <li>
-            <a href="#about_us">About Us</a>
+            <a href="/aboutus">About Us</a>
           </li>
           <li>
-            <a href="#my_account">My Account/Log Out</a>
+            <a href="/myaccount">My Account/Log Out</a>
           </li>
         </ul>
       </nav>
