@@ -8,7 +8,7 @@ function MyAccount() {
     return (
       <div>
         <HeaderAndNav />
-        
+        My Account
       </div>
     )
 }

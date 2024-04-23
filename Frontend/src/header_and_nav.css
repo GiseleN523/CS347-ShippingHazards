@@ -33,19 +33,19 @@ header #user-info a {
 
 nav {
     margin: 0px;
-    padding: 2% 0%;
+    padding: 1.4% 0%;
     background-color: black;
     color: white;
     display: block;
 }
   
 nav a{
-    padding: 2% 3%;
+    padding: 1.4% 3%;
     background-color: black;
     color: inherit;
     display: inline;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 150%;
     font-family: "Lucida Console", "Courier New", monospace;
     text-decoration: none;
     text-align: center;

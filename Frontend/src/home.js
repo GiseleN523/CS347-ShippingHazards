@@ -1,4 +1,3 @@
-
 import './home.css'
 import HeaderAndNav from './header_and_nav.js';
 import { Link } from 'react-router-dom';

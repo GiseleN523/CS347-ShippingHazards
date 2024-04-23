@@ -5,6 +5,7 @@ function Settings() {
     return (
       <div>
         <HeaderAndNav />
+        Settings Page
       </div>
     )
 }
