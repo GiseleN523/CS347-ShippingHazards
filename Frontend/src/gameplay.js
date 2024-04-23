@@ -3,14 +3,21 @@ import HeaderAndNav from './header_and_nav.js';
 
 function Ship() {
   return (
-    <span className="ship"></span>
+    <span className="board-square ship"></span>
   )
 }
 
 function BoardSquare() {
-    return (
-      <div className="board-square"></div>
-    )
+  let result
+  if(Math.random() < 0.9) {
+    result = <div className="board-square"></div>
+  }
+  else {
+    result = <Ship />
+  }
+  return (
+    result
+  )
 }
   
 function BoardRow({size}) {
