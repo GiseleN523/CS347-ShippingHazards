@@ -11,15 +11,15 @@ class Player(models.Model):
     num_of_ships_sunk= models.IntegerField(default=0)
 
 class Game(models.Model):
-    player1_id = models.ForeignKey(Player, on_delete=models.CASCADE) #Many to One relationship from Games to player.
-    player2_id = models.ForeignKey(Player, on_delete=models.CASCADE) #Unsure how we will want to set on_delete but 
-    board1_id = models.IntegerField(default=0)
-    board2_id = models.IntegerField(default=0)
+    player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player1_games')
+    player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player2_games') #Unsure how we will want to set on_delete but 
+    board1 = models.IntegerField(default=0)
+    board2 = models.IntegerField(default=0)
     turn = models.IntegerField(default=0) #1 for player 1's turn, 2 for player 2's turn
     status = models.IntegerField(default=0) #0 for not started, 1 for in progress, 2 for complete?
     num_ships = models.IntegerField(default=0)
-    winner_id = models.IntegerField(default=0)
-    loser_id = models.IntegerField(default=0)
+    winner = models.IntegerField(default=0)
+    loser = models.IntegerField(default=0)
 
 class Board(models.Model):
     ship_board = models.CharField(max_length=200)
