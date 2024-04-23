@@ -17,37 +17,42 @@ header .logo {
 #header-text {
     font-size: 220%;
     font-family: "Lucida Console", "Courier New", monospace;
+    font-weight: bold;
+}
+
+header #user-info {
+    float: right;
+    font-size: 160%;
+    text-align: right;
+    padding: 1%;
+}
+
+header #user-info a {
+    color: black;
 }
 
 nav {
     margin: 0px;
+    padding: 2% 0%;
     background-color: black;
+    color: white;
     display: block;
 }
   
-nav .nav-list {
-    padding: 2% 0%;
-    margin: 0px;
-}
-  
-nav .nav-list li {
+nav a{
     padding: 2% 3%;
     background-color: black;
-    color: white;
+    color: inherit;
     display: inline;
     font-weight: bold;
     font-size: 20px;
     font-family: "Lucida Console", "Courier New", monospace;
+    text-decoration: none;
+    text-align: center;
     cursor: pointer;
 }
 
-nav .nav-list li:hover {
+nav a:hover {
     background-color: white;
     color: black;
-}
-  
-nav .nav-list li a {
-    text-align: center;
-    text-decoration: none;
-    color: inherit;
 }

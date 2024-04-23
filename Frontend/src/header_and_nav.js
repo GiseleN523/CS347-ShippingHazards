@@ -1,11 +1,15 @@
 import logo from './images/logo.png';
 import './header_and_nav.css'
 
-function Header() {
+function Header({username}) {
     return (
       <header>
         <img src= {logo} alt="Logo" className="logo"/>
         <span id="header-text">SHIPPING HAZARDS: A Game By Pink Puffy Rhinos</span>
+        <div id="user-info">
+          <p>Hello, {username}!</p>
+          <a href="">Logout</a>
+        </div>
       </header>
     )
 }
@@ -13,17 +17,10 @@ function Header() {
 function NavigationBar() {
     return (
       <nav>
-        <ul className="nav-list">
-          <li>
-            <a href="/">Home</a>
-          </li>
-          <li>
-            <a href="/aboutus">About Us</a>
-          </li>
-          <li>
-            <a href="/myaccount">My Account/Log Out</a>
-          </li>
-        </ul>
+        <a href="/">Home</a>
+        <a href="/settings">Settings</a>
+        <a href="/myaccount">My Account</a>
+        <a href="/aboutus">About Us</a>
       </nav>
     )
 }
@@ -31,9 +28,8 @@ function NavigationBar() {
 function HeaderAndNav() {
     return (
         <div>
-            <Header />
+            <Header username={"user12345"}/>
             <NavigationBar />
-            <br /><br />
         </div>
     )
 }

@@ -1,23 +1,27 @@
 import './gameplay.css'
 import HeaderAndNav from './header_and_nav.js';
 
+function Ship() {
+  return (
+    <span className="ship"></span>
+  )
+}
+
 function BoardSquare() {
     return (
       <div className="board-square"></div>
     )
 }
   
-function BoardRow() {
-    let size = 10
+function BoardRow({size}) {
     let arr = Array(size).fill(<BoardSquare />)
     return (
       <div className="board-row">{arr}</div>
     )
 }
   
-function Board() {
-    let size = 10
-    let arr = Array(size).fill(<BoardRow />);
+function Board({size}) {
+    let arr = Array(size).fill(<BoardRow size={10}/>);
     return (
       <div className="board">{arr}</div>
     )
@@ -43,10 +47,10 @@ function GamePlay() {
           </div>
           <div className="content-row" id="board-row">
             <div className="content-cell">
-              <Board />
+              <Board size={10}/>
             </div>
             <div className="content-cell">
-              <Board />
+              <Board size={10}/>
             </div>
           </div>
         </div>
