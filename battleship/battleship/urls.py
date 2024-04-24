@@ -15,8 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('shdatabase/', include('shdatabase.urls')) #Connects the project urls to shdatabse/urls.py where most of our endpoints should be located. 
 ]
