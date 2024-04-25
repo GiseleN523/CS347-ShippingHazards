@@ -15,8 +15,8 @@ header .logo {
 }
   
 #header-text {
-    font-size: 220%;
-    font-family: "Lucida Console", "Courier New", monospace;
+    font-size: 250%;
+    font-family: "Copperplate", "Copperplate Gothic Light", fantasy;
     font-weight: bold;
 }
 
@@ -46,7 +46,7 @@ nav a{
     display: inline;
     font-weight: bold;
     font-size: 150%;
-    font-family: "Lucida Console", "Courier New", monospace;
+    font-family: "Copperplate", "Copperplate Gothic Light", "fantasy";
     text-decoration: none;
     text-align: center;
     cursor: pointer;

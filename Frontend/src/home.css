@@ -1,12 +1,11 @@
 .button {
     cursor: pointer;
-    /* from react.dev */
     border: 0;
     line-height: 2.5;
     padding-left: 50px;
     padding-right: 50px;
     font-size: 34px;
-    font-family: "Lucida Console", "Courier New", monospace;
+    font-family: "Copperplate", "Copperplate Gothic Light", fantasy;
     text-align: center;
     text-decoration: none;
     color: #fff;

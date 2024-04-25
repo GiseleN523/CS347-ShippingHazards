@@ -7,12 +7,14 @@ import AboutUs from './aboutus.js';
 import MyAccount from './myaccount.js';
 import GamePlay from './gameplay.js';
 import './index.css'
+import Login from './login.js';
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/myaccount" element={<MyAccount />} />
         <Route path="/aboutus" element={<AboutUs />} />

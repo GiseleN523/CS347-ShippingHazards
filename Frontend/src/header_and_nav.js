@@ -8,7 +8,7 @@ function Header({username}) {
         <span id="header-text">SHIPPING HAZARDS: A Game By Pink Puffy Rhinos</span>
         <div id="user-info">
           <p>Hello, {username}!</p>
-          <a href="">Logout</a>
+          <a href="/">Logout</a>
         </div>
       </header>
     )
