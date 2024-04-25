@@ -17,7 +17,7 @@ function Header({username}) {
 function NavigationBar() {
     return (
       <nav>
-        <a href="/">Home</a>
+        <a href="/home">Home</a>
         <a href="/settings">Settings</a>
         <a href="/myaccount">My Account</a>
         <a href="/aboutus">About Us</a>

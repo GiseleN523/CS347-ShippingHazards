@@ -5,22 +5,23 @@ import { Link } from 'react-router-dom';
 function PlayButton() {
   return (
     <Link to="/game" className="button" type="button">
-      Play Game
+      Play Person
     </Link>
+  );
+}
+
+function PlayCompButton() {
+  return (
+    <button className="button" type="button">Play Computer</button>
   );
 }
 
 function StatsButton() {
   return (
-    <button className="button" type="button">Stats</button>
+    <button className="button" type="button">Your Stats</button>
   );
 }
 
-function SettingsButton() {
-  return (
-    <button className="button" type="button">Settings</button>
-  );
-}
 
 function Home() {
   return (
@@ -28,8 +29,9 @@ function Home() {
       <HeaderAndNav />
       <div className="buttons-container">
         <PlayButton />
+        <PlayCompButton />
         <StatsButton />
-        <SettingsButton />
+
       </div>
     </div>
   );
