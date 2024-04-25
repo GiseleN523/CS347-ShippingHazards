@@ -17,7 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from shdatabase import views
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'players', views.UserViewSet)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('shdatabase/', include('shdatabase.urls')) #Connects the project urls to shdatabse/urls.py where most of our endpoints should be located. 
+    path('', include(router.urls)),
+    path('shdatabase/', include('rest_framework.urls', namespace='rest_framework')) 
 ]
