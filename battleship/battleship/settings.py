@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'shdatabase',
 
+    'rest_framework',
 
     'django.contrib.admin',
     'django.contrib.auth',
