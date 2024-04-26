@@ -1,0 +1,60 @@
+.board {
+    display: table;
+    margin: auto;
+}
+
+.board-row {
+    display: table-row;
+}
+
+.board-square {
+    display: table-cell;
+    border: 2px solid black;
+    padding: 1em;
+    cursor: pointer;
+}
+
+.board-square:hover {
+    background-color: blue;
+}
+
+#gameplay-instructions {
+    font-size: 200%;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    padding: 2% 0% 1% 0%;
+}
+
+#content {
+    display: table;
+    width: 100%;
+}
+
+.content-row {
+    display: table-row;
+    width: 100%;
+}
+
+#board-row {
+    padding-top: 5%;
+    background-image: url('./images/water_background.png');
+    background-repeat: no-repeat;
+}
+
+.content-cell * {
+    margin: auto;
+}
+
+.content-cell {
+    display: table-cell;
+    width: 50%;
+    margin: auto;
+    text-align: center;
+    font-size: 180%;
+    padding: .5% 0%;
+}
+
+.ship {
+    background-color: #ff8ac7;
+}

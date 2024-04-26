@@ -1,0 +1,58 @@
+header {
+    background-color: #ff8ac7;
+    color: rgb(1, 1, 1);
+    margin: 0px;
+}
+  
+header * {
+    vertical-align: middle;
+    margin: 0px;
+}
+  
+header .logo {
+    margin-right: 5%;
+    height: 10em;
+}
+  
+#header-text {
+    font-size: 250%;
+    font-family: "Copperplate", "Copperplate Gothic Light", fantasy;
+    font-weight: bold;
+}
+
+header #user-info {
+    float: right;
+    font-size: 160%;
+    text-align: right;
+    padding: 1%;
+}
+
+header #user-info a {
+    color: black;
+}
+
+nav {
+    margin: 0px;
+    padding: 1.4% 0%;
+    background-color: black;
+    color: white;
+    display: block;
+}
+  
+nav a{
+    padding: 1.4% 3%;
+    background-color: black;
+    color: inherit;
+    display: inline;
+    font-weight: bold;
+    font-size: 150%;
+    font-family: "Copperplate", "Copperplate Gothic Light", "fantasy";
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+}
+
+nav a:hover {
+    background-color: white;
+    color: black;
+}
