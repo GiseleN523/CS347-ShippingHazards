@@ -3,11 +3,11 @@ import random
 
 # sys.path.insert(1,r"C:\Users\jboog\StuWork\cs347\CS347-ShippingHazards")
 
+# sys.path.append("../")
+
 # # from .gamelogic.logic import *
-
-# import gamelogic.logic
-
-# from ..gamelogic import logic
+# import game_logic
+# from game_logic.logic import * 
 
 
 # input:
