@@ -1,18 +1,26 @@
 import './home.css'
 import HeaderAndNav from './header_and_nav.js';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+
+let playerID;
 
 function PlayButton() {
   return (
-    <Link to="/game" className="button" type="button">
-      Play Person
-    </Link>
+    <button className="button" type="button">Play Person</button>
   );
 }
 
 function PlayCompButton() {
+  let gameID = 1;
+  function handleClick() {
+    URL = "/newgame/0000/"+playerID;
+    fetch(URL).then( response => response.json()).then( the_json => gameID = the_json['gameID']); // Matt
+  }
   return (
-    <button className="button" type="button">Play Computer</button>
+    <Link to={"/game/"+playerID+"/"+gameID} className="button" type="button">
+      Play Computer
+    </Link>
   );
 }
 
@@ -24,9 +32,10 @@ function StatsButton() {
 
 
 function Home() {
+  ({playerID} = useParams());
   return (
     <div className="header/nav">
-      <HeaderAndNav />
+      <HeaderAndNav playerID={playerID}/>
       <div className="buttons-container">
         <PlayButton />
         <PlayCompButton />
