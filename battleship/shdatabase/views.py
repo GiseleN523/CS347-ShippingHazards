@@ -4,7 +4,7 @@ from .models import Player, Game, Board
 from rest_framework import permissions, viewsets
 import random
 
-from .serializers import PlayerSerializer
+from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -12,6 +12,22 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class GameViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows games to be viewed or edited.
+    """
+    queryset = Game.objects.all()
+    serializer_class = GameSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class BoardViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows boards to be viewed or edited.
+    """
+    queryset = Board.objects.all()
+    serializer_class = BoardSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 def new_board():

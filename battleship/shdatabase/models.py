@@ -25,7 +25,7 @@ class Game(models.Model):
     loser = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 class Board(models.Model):
     ship_board = models.CharField(max_length=200)
@@ -33,5 +33,5 @@ class Board(models.Model):
     combined_board = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
     
