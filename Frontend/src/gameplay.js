@@ -12,14 +12,16 @@ let playerID;
 let gameID;
 
 function BoardSquare({row, column, occupied, myBoard}) {
-  const [isOccupied, setIsOccupied] = useState(occupied == true);
+  const [isOccupied, setIsOccupied] = useState(occupied === true);
   const [isEmpty, setIsEmpty] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const isMyBoard = myBoard;
   function applyUpdate(the_json) {
-    //alert("results are "+the_json);
-    setIsOccupied(isOccupied);
-    setIsEmpty(false);
+    /*alert("results are "+the_json);
+    let result = the_json["result"];
+    setIsOccupied(result == 1);
+    setIsEmpty(result == 0);
+    alert("is empty: "+isEmpty+", is occupied: "+isOccupied);*/
   }
   function handleClickPlacement() {
     if(isMyBoard) {
@@ -100,7 +102,6 @@ function Instructions({stage}) {
 
 function ConfirmButton() {
   function handleClick() {
-    alert("move confirmed!");
     URL = "/confirmShips/"+playerBoard;
     alert("fetching URL "+URL);
     fetch(URL);
