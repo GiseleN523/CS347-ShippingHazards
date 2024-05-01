@@ -2,7 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("newgame/<int:player1id>/<int:player2id>/<int:num_ships>", views.new_game, name="new_game")
+    path("new-game/<int:player1_id>/<int:player2_id>/<int:num_ships>", views.new_game, name="new_game"),
+    path("confirm-ships/<int:game_id>/<int:player_id>/<ship_board>", views.confirm_ships, name="confirm_ships"),
+    path("get-state/<int:game_id>/<int:player_id>/<is_my_board>", views.get_state, name="get_state"),
+    path("fire-shot/<int:game_id>/<int:player_id>/<attack_board>/<int:row>/<int:col>", views.fire_shot, name="fire_shot")
 ]
 
 
