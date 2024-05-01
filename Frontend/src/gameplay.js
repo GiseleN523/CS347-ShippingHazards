@@ -17,11 +17,11 @@ function BoardSquare({row, column, occupied, myBoard}) {
   const [isHovered, setIsHovered] = useState(false);
   const isMyBoard = myBoard;
   function applyUpdate(the_json) {
-    /*alert("results are "+the_json);
+    alert("results are "+the_json);
     let result = the_json["result"];
     setIsOccupied(result == 1);
     setIsEmpty(result == 0);
-    alert("is empty: "+isEmpty+", is occupied: "+isOccupied);*/
+    alert("is empty: "+isEmpty+", is occupied: "+isOccupied);
   }
   function handleClickPlacement() {
     if(isMyBoard) {
@@ -30,9 +30,9 @@ function BoardSquare({row, column, occupied, myBoard}) {
   }
   function handleClickGameplay() {
     if(!isMyBoard) {
-      URL = "/fireshot/<gameID>/<playerID>/<attackboard>/" + row + "/" + column;
-      alert("fetching URL "+URL);
-      fetch(URL).then( response => response.json()).then( the_json => applyUpdate(the_json) ); // Matt
+      URL = "/fire-shot/"+gameID+"/"+playerID+"/<attackboard>/" + row + "/" + column;
+      alert("fetching URL: "+URL);
+      //fetch(URL).then( response => response.json()).then( the_json => applyUpdate(the_json) ); // Matt
     }
   }
   function handleMouseEnter() {
@@ -102,8 +102,8 @@ function Instructions({stage}) {
 
 function ConfirmButton() {
   function handleClick() {
-    URL = "/confirmShips/"+playerBoard;
-    alert("fetching URL "+URL);
+    URL = "/confirm-ships/"+gameID+"/"+playerID+"/"+playerBoard;
+    alert("fetching URL: "+URL);
     fetch(URL);
     isPlacementStage = false;
   }
@@ -116,7 +116,6 @@ function ConfirmButton() {
   
 function GamePlay() {
     ({gameID, playerID} = useParams());
-    alert("player: "+playerID+", game: "+gameID);
     return (
       <div>
         <HeaderAndNav playerID={"user1234"}/>

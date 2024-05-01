@@ -14,11 +14,12 @@ function PlayButton() {
 function PlayCompButton() {
   let gameID = 1;
   function handleClick() {
-    URL = "/newgame/0000/"+playerID;
-    fetch(URL).then( response => response.json()).then( the_json => gameID = the_json['gameID']); // Matt
+    //URL = "/new-game/0000/"+playerID+"/4";
+    alert("fetching URL: "+"/new-game/0000/"+playerID+"/4");
+    //fetch(URL).then( response => response.json()).then( the_json => gameID = the_json['gameID']); // Matt
   }
   return (
-    <Link to={"/game/"+playerID+"/"+gameID} className="button" type="button">
+    <Link to={"/game/"+playerID+"/"+gameID} className="button" type="button" onClick={handleClick}>
       Play Computer
     </Link>
   );
