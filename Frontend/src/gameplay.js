@@ -28,10 +28,10 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage}) {
   }
   function handleClickGameplay() {
     if(!isMyBoard) {
-      applyUpdate({'result': Math.floor(Math.random()*2)}) //randomly chooses hit or miss - TODO remove this
-      URL = "/fire-shot/"+gameID+"/"+playerID+"/<attackboard>/" + row + "/" + column;
-      alert("fetching URL: "+URL);
-      //fetch(URL).then( response => response.json()).then( the_json => applyUpdate(the_json) ); // Matt
+      //applyUpdate({'result': Math.floor(Math.random()*2)}) //randomly chooses hit or miss - TODO remove this
+      let url = "http://name:port/fire-shot/"+gameID+"/"+playerID+"/<attackboard>/" + row + "/" + column;
+      alert("fetching URL: " + url);
+      //fetch(URL).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt
     }
   }
   return (
@@ -109,9 +109,9 @@ function Instructions({isSetupStage}) {
 function ConfirmButton({isSetupStage, setIsSetupStage}) {
   function handleClick() {
     setIsSetupStage(false);
-    URL = "/confirm-ships/"+gameID+"/"+playerID+"/"+playerBoard;
-    alert("fetching URL: "+URL);
-    fetch(URL);
+    let url = "http://name:port/confirm-ships/"+gameID+"/"+playerID+"/"+playerBoard;
+    alert("fetching URL: "+url);
+    //fetch(url);
   }
   return (
     <div style={{width: '100%', textAlign: 'center'}}>

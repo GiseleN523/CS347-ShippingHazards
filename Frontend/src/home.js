@@ -11,14 +11,21 @@ function PlayButton() {
   );
 }
 
+
 function PlayCompButton() {
   let gameID = 1;
+
+  function redirectBrowser(the_json){
+      gameID = the_json["gameID"];
+      window.location.replace("/game/playerId/gameID");
+  }
+
   function handleClick() {
     let aiType = "randomAI";
     let numShips = 4;
-    //URL = "/new-game/0000/"+playerID+"/4";
-    alert("fetching URL: "+"/new-game-ai/"+playerID+"/"+aiType+"/"+numShips);
-    //fetch(URL).then( response => response.json()).then( the_json => gameID = the_json['gameID']); // Matt
+    let url = "http://name:port/new-game-ai/"+playerID+"/"+aiType+"/"+numShips;
+    alert("fetching URL: "+url);
+    //fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt
   }
   return (
     <Link to={"/game/"+playerID+"/"+gameID} className="button" type="button" onClick={handleClick}>
