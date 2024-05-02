@@ -14,8 +14,10 @@ function PlayButton() {
 function PlayCompButton() {
   let gameID = 1;
   function handleClick() {
+    let aiType = "randomAI";
+    let numShips = 4;
     //URL = "/new-game/0000/"+playerID+"/4";
-    alert("fetching URL: "+"/new-game/0000/"+playerID+"/4");
+    alert("fetching URL: "+"/new-game-ai/"+playerID+"/"+aiType+"/"+numShips);
     //fetch(URL).then( response => response.json()).then( the_json => gameID = the_json['gameID']); // Matt
   }
   return (
