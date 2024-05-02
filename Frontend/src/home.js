@@ -16,21 +16,24 @@ function PlayCompButton() {
   let gameID = 1;
 
   function redirectBrowser(the_json){
-      gameID = the_json["gameID"];
-      window.location.replace("/game/playerId/gameID");
+      gameID = the_json["game_id"];
+      window.location.replace("/game/"+playerID+"/"+gameID);
   }
 
   function handleClick() {
     let aiType = "randomAI";
     let numShips = 4;
-    let url = "http://name:port/new-game-ai/"+playerID+"/"+aiType+"/"+numShips;
+    let boardSize = 10;
+    let isAiGame = "true";
+    let url = "http://web:8000/new-game/" + playerID + "/" + aiType + "/" + numShips + "/" + boardSize + "/" + isAiGame;
     alert("fetching URL: "+url);
     //fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt
+    window.location.replace("/game/"+playerID+"/0001"); // remove this
   }
   return (
-    <Link to={"/game/"+playerID+"/"+gameID} className="button" type="button" onClick={handleClick}>
+    <button className="button" type="button" onClick={handleClick}>
       Play Computer
-    </Link>
+    </button>
   );
 }
 
