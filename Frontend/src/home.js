@@ -27,8 +27,8 @@ function PlayCompButton() {
     let isAiGame = "true";
     let url = "http://web:8000/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
     alert("fetching URL: "+url); // remove this
-    //fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt // add this back in
-    window.location.replace("/game/"+playerID+"/0001"); // remove this
+    fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt
+    //window.location.replace("/game/"+playerID+"/0001"); // remove this
   }
   return (
     <button className="button" type="button" onClick={handleClick}>

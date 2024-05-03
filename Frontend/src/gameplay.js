@@ -58,10 +58,10 @@ function updateOpponentBoard({the_json, myTurn, setMyTurn}) {
 function fetchUpdate({myTurn, setMyTurn}) {
   let isMyBoard = "true";
   let url = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  //fetch(URL).then( response => response.json()).then( the_json => updatePlayerBoard(the_json={the_json} myTurn={myTurn} setMyTurn={setMyTurn}) ); // add this back in
+  fetch(URL).then( response => response.json()).then( the_json => updatePlayerBoard(the_json={the_json}, myTurn={myTurn}, setMyTurn={setMyTurn}) ); // add this back in
   isMyBoard = "false";
   url = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  //fetch(URL).then( response => response.json()).then( the_json => updateOpponentBoard(the_json={the_json} myTurn={myTurn} setMyTurn={setMyTurn}) ); // add this back in
+  fetch(URL).then( response => response.json()).then( the_json => updateOpponentBoard(the_json={the_json}, myTurn={myTurn}, setMyTurn={setMyTurn}) ); // add this back in
 }
 
 function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
@@ -94,7 +94,7 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
       //applyUpdate({'result': Math.floor(Math.random()*2)}) //randomly chooses hit or miss // remove this
       let url = "http://web:8000/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
       alert("fetching URL: " + url);
-      //fetch(URL).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt // add this back in
+      fetch(URL).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt // add this back in
     }
   }
   return (
@@ -177,7 +177,7 @@ function ConfirmButton({isSetupStage, setIsSetupStage}) {
     setIsSetupStage(false);
     let url = "http://web:8000/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
     alert("fetching URL: "+url);
-    //fetch(url); // add this back in
+    fetch(url); // add this back in
   }
   return (
     <div style={{width: '100%', textAlign: 'center'}}>
