@@ -3,7 +3,7 @@ services:
   frontend: 
     build: ./Frontend
     ports: 
-      - 5555:5555
+      - 3000:3000
     depends_on:
       - web
   web:
