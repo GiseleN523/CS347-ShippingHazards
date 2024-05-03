@@ -27,7 +27,7 @@ function PlayCompButton() {
     let numShips = 4;
     let boardSize = 10;
     let isAiGame = "true";
-    let url = "http://localhost:8000/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
+    let url = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
     fetch(url).then( response => response.json() ).then( the_json => redirectBrowser(the_json)); // Matt
     //window.location.replace("/game/"+playerID+"/0001"); // remove this
   }
