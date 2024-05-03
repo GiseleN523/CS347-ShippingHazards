@@ -20,8 +20,8 @@ RUN npm install
 # Build the app
 RUN npm run build
 
-# We want port 5555 (Flask will be using this port) to be used outside the containe
-EXPOSE 8000
+# We want port 5555 to be used outside the container
+EXPOSE 5555
 
 
 # Start the app
