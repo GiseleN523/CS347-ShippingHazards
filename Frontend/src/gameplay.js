@@ -10,7 +10,8 @@ let opponentBoard = "-----------------------------------------------------------
 let playerID;
 let gameID;
 
-function updatePlayerBoard({the_json, myTurn, setMyTurn}) {
+// returns updated myTurn var
+function updatePlayerBoardAndTurn(the_json, myTurn) {
   let attackBoard = the_json["attack_board"];
   let shipBoard = the_json["ship_board"];
   let turn = the_json["turn"];
@@ -20,10 +21,10 @@ function updatePlayerBoard({the_json, myTurn, setMyTurn}) {
   let shot_col = the_json["shot_col"];
 
   if(myTurn && turn == 2) {
-    setMyTurn(false);
+    return false;
   }
   if(!myTurn && turn == 1) {
-    setMyTurn(true);
+    return true;
   }
   if(status == 1) {
     alert("Game over; you won!");
@@ -31,9 +32,10 @@ function updatePlayerBoard({the_json, myTurn, setMyTurn}) {
   else if(status == 2) {
     alert("Game over; opponent won :(");
   }
+  return myTurn;
 }
 
-function updateOpponentBoard({the_json, myTurn, setMyTurn}) {
+function updateOpponentBoardAndTurn(the_json, myTurn) {
   let attackBoard = the_json["attack_board"];
   let turn = the_json["turn"];
   let status = the_json["status"];
@@ -42,10 +44,10 @@ function updateOpponentBoard({the_json, myTurn, setMyTurn}) {
   let shot_col = the_json["shot_col"];
 
   if(myTurn && turn == 2) {
-    setMyTurn(false);
+    return false;
   }
   if(!myTurn && turn == 1) {
-    setMyTurn(true);
+    return true;
   }
   if(status == 1) {
     alert("Game over; you won!");
@@ -53,15 +55,16 @@ function updateOpponentBoard({the_json, myTurn, setMyTurn}) {
   else if(status == 2) {
     alert("Game over; opponent won :(");
   }
+  return myTurn;
 }
 
 function fetchUpdate({myTurn, setMyTurn}) {
   let isMyBoard = "true";
   let url = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(URL).then( response => response.json()).then( the_json => updatePlayerBoard(the_json={the_json}, myTurn={myTurn}, setMyTurn={setMyTurn}) ); // add this back in
+  fetch(URL).then( response => response.json()).then( the_json => setMyTurn(updatePlayerBoardAndTurn(the_json, myTurn)) ); // add this back in
   isMyBoard = "false";
   url = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(URL).then( response => response.json()).then( the_json => updateOpponentBoard(the_json={the_json}, myTurn={myTurn}, setMyTurn={setMyTurn}) ); // add this back in
+  fetch(URL).then( response => response.json()).then( the_json => setMyTurn(updateOpponentBoardAndTurn(the_json, myTurn)) ); // add this back in
 }
 
 function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
