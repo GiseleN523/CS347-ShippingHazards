@@ -20,8 +20,8 @@ RUN npm install
 # Build the app
 RUN npm run build
 
-# We want port 5555 to be used outside the container
-EXPOSE 5555
+# We want port 3000 to be used outside the container
+EXPOSE 3000
 
 
 # Start the app
