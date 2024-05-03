@@ -52,14 +52,11 @@ function Home() {
       <HeaderAndNav playerID={playerID}/>
       <div className="buttons-container">
         <PlayButton />
-        <PlayCompButton aiID=1/>
-        <PlayCompButton aiID=2/>
-        <PlayCompButton aiID=3/>
+        <PlayCompButton />
         <StatsButton />
 
       </div>
     </div>
   );
 }
-
 export default Home
