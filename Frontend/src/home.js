@@ -17,10 +17,12 @@ function PlayCompButton({aiID}) {
 
   function redirectBrowser(the_json){
       gameID = the_json["game_id"];
+      let playerID = 5;
       window.location.replace("/game/"+playerID+"/"+gameID);
   }
 
   function handleClick() {
+    let playerID = 5;
     let numShips = 4;
     let boardSize = 10;
     let isAiGame = "true";
