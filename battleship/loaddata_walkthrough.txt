@@ -12,7 +12,7 @@ POPULATING THE DATABASE
     3. At this point you should be able to navigate to localhost:8000/admin and see the login page.
     4. In the highest level battleship folder: run docker-compose exec web python manage.py loaddata populateData 
     5. Now the database should be populated with the base data that I created. 
-        - 2 AI Players: ID 1,2
+        - 3 AI Players: ID 1,2,3
         - 2 Players: Lucifer and Charlie Morningstar
 
 CREATING A SUPERUSER FOR DJANGO ADMIN (localhost:8000/admin) 
