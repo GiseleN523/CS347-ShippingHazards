@@ -109,6 +109,8 @@ def isValidAttack(attackBoard, attackRow, attackCol):
     Input: attackBoard with only previous hits and misses, row and col of next attack
     Output: True if there has not been an attack at those coordinates before, otherwise False
     '''
+    if attackRow > 9 or attackRow < 0 or attackCol > 9 or attackCol < 0:
+        return False
     if charAt(attackBoard, attackRow, attackCol) == "-":
         return True
     else:
