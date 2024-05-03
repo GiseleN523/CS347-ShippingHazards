@@ -43,6 +43,9 @@ class BattleShipAI:
         self.attackBoard = ""
         self.opponentShipBoard = ""
         self.combinedBoard = ""
+        self.previousShotHit = 0
+        self.previousShotRow = 0
+        self.previousShotCol = 0
 
     def getCoords(self, index):
         row = index//10
@@ -75,6 +78,19 @@ class BattleShipAI:
     # when an attack is a hit, add squares around it (top, below, left, right) to targetStack
     # structure from: https://towardsdatascience.com/coding-an-intelligent-battleship-agent-bf0064a4b319
     def targetedAttack(self):
+        
+        if self.previousShotHit == 1:
+            aboveRow, aboveCol = self.previousShotRow-1, self.previousShotCol
+            belowRow, belowCol = self.previousShotRow+1, self.previousShotCol
+            rightRow, rightCol = self.previousShotRow, self.previousShotCol+1
+            leftRow, leftCol = self.previousShotRow, self.previousShotCol-1
+            possibleTargets = [(aboveRow, aboveCol), (belowRow, belowCol), (rightRow, rightCol), (leftRow, leftCol)]
+
+            for row, col in possibleTargets:
+                if isValidAttack(self.attackBoard, row, col): # there has been no previous shot there
+                    self.targetStack.append((row, col))
+        
+        
         # if length of target stack is 0, do randomAttack
         if len(self.targetStack) == 0:
             print("attempt a random attack")
@@ -83,19 +99,19 @@ class BattleShipAI:
             print("attempt a targeted attack")
             attackRow, attackCol = self.targetStack.pop()
         
-        status, char = isHit(self.opponentShipBoard, attackRow, attackCol) ## need to import logic functions! also have access to opponentShipBoard
-        if status:  
-            # add square above, below, right, and left to targetStack (if they are not previous shots already)
-            print("adding surrounding possible targets")
-            aboveRow, aboveCol = attackRow-1, attackCol
-            belowRow, belowCol = attackRow+1, attackCol
-            rightRow, rightCol = attackRow, attackCol+1
-            leftRow, leftCol = attackRow, attackCol-1
-            possibleTargets = [(aboveRow, aboveCol), (belowRow, belowCol), (rightRow, rightCol), (leftRow, leftCol)]
+        # status, char = isHit(self.opponentShipBoard, attackRow, attackCol) ## need to import logic functions! also have access to opponentShipBoard
+        # if status:  
+        #     # add square above, below, right, and left to targetStack (if they are not previous shots already)
+        #     print("adding surrounding possible targets")
+        #     aboveRow, aboveCol = attackRow-1, attackCol
+        #     belowRow, belowCol = attackRow+1, attackCol
+        #     rightRow, rightCol = attackRow, attackCol+1
+        #     leftRow, leftCol = attackRow, attackCol-1
+        #     possibleTargets = [(aboveRow, aboveCol), (belowRow, belowCol), (rightRow, rightCol), (leftRow, leftCol)]
 
-            for row, col in possibleTargets:
-                if isValidAttack(self.attackBoard, row, col): # there has been no previous shot there
-                    self.targetStack.append((row, col))
+        #     for row, col in possibleTargets:
+        #         if isValidAttack(self.attackBoard, row, col): # there has been no previous shot there
+        #             self.targetStack.append((row, col))
     
         return attackRow, attackCol
         
