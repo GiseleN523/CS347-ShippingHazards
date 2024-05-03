@@ -1,0 +1,28 @@
+Django Fixtures: https://docs.djangoproject.com/en/5.0/howto/initial-data/#initial-data-via-fixtures 
+
+RESETTING YOUR DATABASE
+    1. Navigate to your docker panel. 
+    2. Go to the Volumes tab on the left. 
+    3. If battleship_postgres_data exists, make sure it is not running than 
+       click on the 3 dots under the ACTION header and then press delete.
+
+POPULATING THE DATABASE
+    1. run docker-compose up -d --build  
+    2. run docker-compose exec web python manage.py migrate 
+    3. At this point you should be able to navigate to localhost:8000/admin and see the login page.
+    4. In the highest level battleship folder: run docker-compose exec web python manage.py loaddata populateData 
+    5. Now the database should be populated with the base data that I created. 
+        - 3 AI Players: ID 1,2,3
+        - 2 Players: Lucifer and Charlie Morningstar
+
+CREATING A SUPERUSER FOR DJANGO ADMIN (localhost:8000/admin) 
+    Whenever working with a Django project if you want to have full permissions within Django Admin and be able to view your data, you 
+    must create a Django Admin user. 
+    1. run docker-compose exec web python manage.py createsuperuser
+    2. Follow the instructions to create your user. 
+    3. Once your user has been created, you can update populateData.json so that 
+       everytime we change the prepopulated database you don't have to recreate your superuser. Instructions follow.
+
+UPDATING THE populateData.json
+    1. run docker-compose exec web python manage.py dumpdata > populateData.json
+    2. Make sure the json file has updated and is in the location you wanted. 
