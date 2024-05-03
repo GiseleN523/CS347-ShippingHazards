@@ -21,6 +21,12 @@ services:
       - ./battleship/postgres_data:/var/lib/postgresql/data/
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
+  ai-server:
+    build: ./ai_server
+    ports:
+      - 7000:7000
+    depends_on:
+      - web
 
 volumes:
   postgres_data:
