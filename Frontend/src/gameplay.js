@@ -60,11 +60,11 @@ function updateOpponentBoardAndTurn(the_json, myTurn) {
 
 function fetchUpdate({myTurn, setMyTurn}) {
   let isMyBoard = "true";
-  let url = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(URL).then( response => response.json()).then( the_json => setMyTurn(updatePlayerBoardAndTurn(the_json, myTurn)) ); // add this back in
+  let url = "http://web:8000/play/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
+  fetch(url).then( response => response.json()).then( the_json => setMyTurn(updatePlayerBoardAndTurn(the_json, myTurn)) ); // add this back in
   isMyBoard = "false";
-  url = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(URL).then( response => response.json()).then( the_json => setMyTurn(updateOpponentBoardAndTurn(the_json, myTurn)) ); // add this back in
+  url = "http://web:8000/play/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
+  fetch(url).then( response => response.json()).then( the_json => setMyTurn(updateOpponentBoardAndTurn(the_json, myTurn)) ); // add this back in
 }
 
 function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
@@ -95,9 +95,9 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
   function handleClickGameplay() {
     if(!isMyBoard && myTurn) {
       //applyUpdate({'result': Math.floor(Math.random()*2)}) //randomly chooses hit or miss // remove this
-      let url = "http://web:8000/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
+      let url = "http://web:8000/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
       alert("fetching URL: " + url);
-      fetch(URL).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt // add this back in
+      fetch(url).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt // add this back in
     }
   }
   return (
@@ -178,7 +178,7 @@ function Instructions({isSetupStage, myTurn}) {
 function ConfirmButton({isSetupStage, setIsSetupStage}) {
   function handleClick() {
     setIsSetupStage(false);
-    let url = "http://web:8000/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
+    let url = "http://web:8000/play/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
     alert("fetching URL: "+url);
     fetch(url); // add this back in
   }

@@ -24,7 +24,7 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
     # params = {'game_id': game_id,
     #           'player2_id': player2_id,
     #           'ship_board': ship_board}
-    url = 'http://web:8000/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
+    url = 'http://web:8000/play/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
     response = requests.get(url)
     # initialize the ai player
     ai = BattleShipAI()
@@ -34,7 +34,7 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
     # call get_state
     # params = {'game_id': game_id,
     #           'player2_id': player2_id}
-    url = 'http://web:8000/get-state/{}/{}/false'.format(game_id, player2_id)
+    url = 'http://web:8000/play/get-state/{}/{}/false'.format(game_id, player2_id)
     response = requests.get(url)
     data = response.json()
     # save game_status, my_turn, and attack_board in vars
@@ -47,7 +47,7 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
         time.sleep(5)
         # params = {'game_id': game_id,
         #       'player2_id': player2_id}
-        url = 'http://web:8000/get-state/{}/{}/false'.format(game_id, player2_id)
+        url = 'http://web:8000/play/get-state/{}/{}/false'.format(game_id, player2_id)
         response = requests.get(url)
         data = response.json()
         ai.attackBoard = data["attack_board"] 
@@ -64,7 +64,7 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
             #         'col': col}
             # do we need to sleep here??
             time.sleep(5)
-            url = 'http://web:8000/fire-shot/{}/{}/{}/{}'.format(game_id, player2_id, row, col) 
+            url = 'http://web:8000/play/fire-shot/{}/{}/{}/{}'.format(game_id, player2_id, row, col) 
             response = requests.get(url)
      
     return
@@ -72,5 +72,5 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
 
 if __name__ == '__main__':
     host = '0.0.0.0'
-    port = 7000 
+    port = 5555 
     app.run(host=host, port=port, debug=True)

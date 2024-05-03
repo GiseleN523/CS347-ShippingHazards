@@ -24,7 +24,7 @@ services:
   ai-server:
     build: ./ai_server
     ports:
-      - 7000:7000
+      - 5555:5555
     depends_on:
       - web
 

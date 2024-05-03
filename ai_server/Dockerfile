@@ -5,7 +5,7 @@ WORKDIR /code
 RUN pip install flask
 RUN pip install requests
 
-EXPOSE 7000
+EXPOSE 5555
 
 COPY . .
 

@@ -71,8 +71,8 @@ def new_game(request, player1_id, player2_id, num_ships, board_size, is_ai_game)
     game.winner = 0 
     game.loser = 0
     game.save()
-
-    requests.get('http://ai-server:7000/new-game/' + player1_id + '/' + player2_id  + '/' + num_ships + '/' + board_size + '/' + game.id)
+    
+    requests.get('http://ai-server:5555/new-game/' + str(player1_id) + '/' + str(player2_id)  + '/' + str(num_ships) + '/' + str(board_size) + '/' + str(game.id))
 
 
     return JsonResponse({"game_id": game.id})
