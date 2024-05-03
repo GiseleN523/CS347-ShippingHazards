@@ -21,13 +21,13 @@ function PlayCompButton() {
   }
 
   function handleClick() {
-    let aiType = "randomAI";
+    let aiID = 1;
     let numShips = 4;
     let boardSize = 10;
     let isAiGame = "true";
-    let url = "http://web:8000/new-game/" + playerID + "/" + aiType + "/" + numShips + "/" + boardSize + "/" + isAiGame;
-    alert("fetching URL: "+url);
-    //fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt
+    let url = "http://web:8000/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
+    alert("fetching URL: "+url); // remove this
+    //fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt // add this back in
     window.location.replace("/game/"+playerID+"/0001"); // remove this
   }
   return (

@@ -9,9 +9,8 @@ let playerBoard = "-----------a---------a------------bbbb----------------c------
 let opponentBoard = "----------------------------------------------------------------------------------------------------";
 let playerID;
 let gameID;
-let myTurn = true;
 
-function updatePlayerBoard(the_json) {
+function updatePlayerBoard({the_json, myTurn}) {
   let attackBoard = the_json["attack_board"];
   let shipBoard = the_json["ship_board"];
   let turn = the_json["turn"];
@@ -31,7 +30,7 @@ function updatePlayerBoard(the_json) {
   }
 }
 
-function updateOpponentBoard(the_json) {
+function updateOpponentBoard({the_json, myTurn}) {
   let attackBoard = the_json["attack_board"];
   let turn = the_json["turn"];
   let status = the_json["status"];
@@ -50,16 +49,16 @@ function updateOpponentBoard(the_json) {
   }
 }
 
-function fetchUpdate() {
+function fetchUpdate({myTurn}) {
   let isMyBoard = "true";
   URL = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(URL).then( response => response.json()).then( the_json => updatePlayerBoard(the_json) );
+  //fetch(URL).then( response => response.json()).then( the_json => updatePlayerBoard(the_json={the_json} myTurn={myTurn}) ); // add this back in
   isMyBoard = "false";
   URL = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(URL).then( response => response.json()).then( the_json => updateOpponentBoard(the_json) );
+  //fetch(URL).then( response => response.json()).then( the_json => updateOpponentBoard(the_json={the_json} myTurn={myTurn}) ); // add this back in
 }
 
-function BoardSquare({row, column, occupied, myBoard, isSetupStage}) {
+function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
   const [isOccupied, setIsOccupied] = useState(occupied === true);
   const [isEmpty, setIsEmpty] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -86,10 +85,10 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage}) {
   }
   function handleClickGameplay() {
     if(!isMyBoard && myTurn) {
-      //applyUpdate({'result': Math.floor(Math.random()*2)}) //randomly chooses hit or miss - TODO remove this
+      //applyUpdate({'result': Math.floor(Math.random()*2)}) //randomly chooses hit or miss // remove this
       let url = "http://web:8000/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
       alert("fetching URL: " + url);
-      //fetch(URL).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt
+      //fetch(URL).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt // add this back in
     }
   }
   return (
@@ -100,11 +99,11 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage}) {
       style={{backgroundColor:
            (function() {
             if(isMyBoard) {
-              if(isOccupied && !isSetupStage) {
-                return '#ff8ac7';
-              }
               if(isOccupied && isHovered && isSetupStage) {
                 return 'pink';
+              }
+              if(isOccupied) {
+                return '#ff8ac7';
               }
               if(!isOccupied && isEmpty) {
                 return 'white';
@@ -129,27 +128,27 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage}) {
   )
 }
   
-function BoardRow({row, boardSize, ships, myBoard, isSetupStage}) {
+function BoardRow({row, boardSize, ships, myBoard, isSetupStage, myTurn}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
-      arr.push(<BoardSquare key={"square"+{row}+"-"+i} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage}/>);
+      arr.push(<BoardSquare key={"square"+{row}+"-"+i} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn}/>);
     }
     return (
       <div className="board-row">{arr}</div>
     )
 }
   
-function Board({boardSize, presetBoard, myBoard, isSetupStage}) {
+function Board({boardSize, presetBoard, myBoard, isSetupStage, myTurn}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
-      arr.push(<BoardRow key={"row"+i} row={i} boardSize={10} ships={presetBoard.slice((i*boardSize), ((i+1)*boardSize))} myBoard={myBoard} isSetupStage={isSetupStage}/>);
+      arr.push(<BoardRow key={"row"+i} row={i} boardSize={10} ships={presetBoard.slice((i*boardSize), ((i+1)*boardSize))} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn}/>);
     }
     return (
       <div className="board">{arr}</div>
     )
 }
   
-function Instructions({isSetupStage}) {
+function Instructions({isSetupStage, myTurn}) {
     return (
       <div id="gameplay-instructions">
         {function() {
@@ -172,7 +171,7 @@ function ConfirmButton({isSetupStage, setIsSetupStage}) {
     setIsSetupStage(false);
     let url = "http://web:8000/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
     alert("fetching URL: "+url);
-    //fetch(url);
+    //fetch(url); // add this back in
   }
   return (
     <div style={{width: '100%', textAlign: 'center'}}>
@@ -187,12 +186,14 @@ function ConfirmButton({isSetupStage, setIsSetupStage}) {
   
 function GamePlay() {
     ({gameID, playerID} = useParams());
-    const [isSetupStage, setIsSetupStage] = useState(true); //pass this state around so components know when it updates
-    setInterval(fetchUpdate, 5000)
+    //pass these states around so components know when they update; they must be states and not variables so components automatically update
+    const [isSetupStage, setIsSetupStage] = useState(true);
+    const [myTurn, setMyTurn] = useState(true);
+    setInterval(() => fetchUpdate({myTurn}), 5000)
     return (
       <div>
         <HeaderAndNav playerID={playerID}/>
-        <Instructions isSetupStage={isSetupStage}/>
+        <Instructions isSetupStage={isSetupStage} myTurn={myTurn}/>
         <ConfirmButton isSetupStage={isSetupStage} setIsSetupStage={setIsSetupStage}></ConfirmButton>
         <div id="content">
           <div className="content-row">
@@ -201,10 +202,10 @@ function GamePlay() {
           </div>
           <div className="content-row" id="board-row">
             <div className="content-cell">
-              <Board boardSize={boardSize} presetBoard={playerBoard} myBoard={true} isSetupStage={isSetupStage}/>
+              <Board boardSize={boardSize} presetBoard={playerBoard} myBoard={true} isSetupStage={isSetupStage} myTurn={myTurn}/>
             </div>
             <div className="content-cell">
-              <Board boardSize={boardSize} presetBoard={opponentBoard} myBoard={false} isSetupStage={isSetupStage}/>
+              <Board boardSize={boardSize} presetBoard={opponentBoard} myBoard={false} isSetupStage={isSetupStage} myTurn={myTurn}/>
             </div>
           </div>
         </div>
