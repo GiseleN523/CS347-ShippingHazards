@@ -15,9 +15,9 @@ They start a game as follows:
 http://localhost:8000/play/new-game/5/6/4/10/true
 
 This returns:
-{"game_id": 19}
+{"game_id": 1}
 
-* The game has been created and its ID is 19.
+* The game has been created and its ID is 1.
 
 The human player, Player 1, wants to place their ships. They will use the following endpoint:
 
@@ -36,12 +36,12 @@ Let's say the following string represents their ship placement:
 ----------
 -----ddddd
 
-* Player 1 knows the game ID (19) and their own player ID (5). 
+* Player 1 knows the game ID (1) and their own player ID (5). 
 * They also have a string representing their desired ship placement on their board:
 ship_board = -----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd. 
 
 Player 1 confirms their ship placement as follows:
-http://localhost:8000/play/confirm-ships/19/5/-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd
+http://localhost:8000/play/confirm-ships/1/5/-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd
 
 This returns:
 {"ship_board": "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd"}
@@ -49,7 +49,7 @@ This returns:
 * The player's ship placement has been saved.
 
 The AI, Player 2, also confirms its own ship placement:
-http://localhost:8000/play/confirm-ships/19/6/-----------b---------b---------b--cccc--------------------------d---------d--------------------aaaaa
+http://localhost:8000/play/confirm-ships/1/6/-----------b---------b---------b--cccc--------------------------d---------d--------------------aaaaa
 
 This returns
 {"ship_board": "-----------b---------b---------b--cccc--------------------------d---------d--------------------aaaaa"}
@@ -58,22 +58,29 @@ Player 1 wants to view the game boards and game state. They will use the followi
 
 play/get-state/<int:game_id>/<int:player_id>/<is_my_board>
 
-* Player 1 knows the game ID (19) and their own player ID (5). 
+* Player 1 knows the game ID (1) and their own player ID (5). 
 * Player 1 wants to see their own board, so is_my_board = true. 
 
 Player 1 gets the game state as follows:
-http://localhost:8000/play/get-state/19/5/true
+http://localhost:8000/play/get-state/1/5/true
 
 This returns:
-{"attack_board": "----------------------------------------------------------------------------------------------------", 
-"ship_board": "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd", 
+{"ship_board": "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd", 
+"attack_board": "----------------------------------------------------------------------------------------------------", 
+"is_hit": -1, 
+"shot_row": -1, 
+"shot_col": -1, 
 "turn": 1, 
 "status": 0}
 
-* The attack board represents the attacks (made by the player’s opponent) on the player’s own board. 
-Nobody has fired shots yet, so this is an empty board—dashes represent spaces on the board that 
-have not been fired at. 
 * Player 1 can also see their own ship placement with the ship board. 
+* The attack board represents the attacks (made by the player’s opponent) on the player’s board. 
+Nobody has fired shots yet, so this is an empty board. Dashes represent spaces on the board that 
+have not been fired at. 
+* is_hit represents whether the most recent shot on that board was a hit (1) or a miss (0). 
+* shot_row represents the board row where the most recent shot was made. 
+* shot_col represents the board column where the most recent shot was made. 
+* The initial values of these attributes are negative to indicate that no shots have been made yet.
 * The turn variable indicates whose turn it is. If turn = 1, it’s Player 1’s turn. If turn = 2, 
 it’s Player 2’s turn. In this case, it’s Player 1’s turn.
 * The status variable represents the game status. status = 0 means that the game is ongoing, 
@@ -82,33 +89,36 @@ In this case, status = 0 because the game is ongoing.
 
 Now, Player 1 wants to view the attacks they’ve made on their opponent’s board. 
 
-* They know the game ID (19) and their own player ID (5). 
+* They know the game ID (1) and their own player ID (5). 
 * They want to see their opponent’s board, so is_my_board = false.
 
 Player 1 gets the game state as follows:
-http://localhost:8000/play/get-state/19/5/false
+http://localhost:8000/play/get-state/1/5/false
 This returns:
 {"attack_board": "----------------------------------------------------------------------------------------------------", 
+"is_hit": -1, 
+"shot_row": -1, 
+"shot_col": -1, 
 "turn": 1, 
 "status": 0}
 
-* Player 1 can see that they have made no attacks on Player 2’s board. 
-* They can’t see their opponent’s ship board; that would defeat the purpose of the game! 
+* Player 1 can see that they have made no attacks on Player 2’s board. (They can’t see their 
+opponent’s ship board; that would defeat the purpose of the game!)
 
 Since it’s Player 1’s turn, they want to fire a shot. They will use the following endpoint: 
 
 play/fire-shot/<int:game_id>/<int:player_id>/<int:row>/<int:col>
 
-* Player 1 knows the game ID (19) and their own player ID (5). 
+* Player 1 knows the game ID (1) and their own player ID (5). 
 * Player 1 wants to make a shot at the bottom right corner of their opponent's board, which is 
-the 10th row and column. However, using 0 based indexing:row = 9 and col = 9. 
+the 10th row and column. However, using 0 based indexing: row = 9 and col = 9. 
 
 Player 1 fires their shot as follows:
-http://localhost:8000/play/fire-shot/19/5/9/9
+http://localhost:8000/play/fire-shot/1/5/9/9
 
 This returns:
-{"is_hit": 1, 
-"attack_board": "---------------------------------------------------------------------------------------------------X", 
+{"attack_board": "---------------------------------------------------------------------------------------------------X", 
+"is_hit": 1,
 "turn": 1, 
 "status": 0}
 
@@ -122,49 +132,75 @@ because their opponent hasn’t made a hit yet.)
 * Since nobody has won yet and the game is ongoing, status = 0. 
 
 Player 1 thinks the ship might be placed vertically, so they hit one row higher than before:
-http://localhost:8000/play/fire-shot/19/5/8/9
+http://localhost:8000/play/fire-shot/1/5/8/9
 
 This returns:
-{"is_hit": 0,
-"attack_board": "-----------------------------------------------------------------------------------------O---------X", 
+{"attack_board": "-----------------------------------------------------------------------------------------O---------X", 
+"is_hit": 0,
 "turn": 2, 
 "status": 0}
 
 * Now is_hit = 0, indicating that the player missed. 
-* The location they fired at has an O on their opponent’s  attack board, showing that it was a miss. 
+* The location they fired at has an O on their opponent’s attack board, showing that it missed. 
 * Since Player 1 missed, it’s now Player 2’s turn, so turn = 2. 
 
-To save time, let’s assume that Player 2, the AI, is currently having an incredibly lucky chain 
-of successful hits without missing shots. 
+Note that the player who fires a shot automatically gets this JSON dictionary that shows the 
+effects of their shot. However, the other player (whose board was shot at) must use the get_state 
+endpoint to recieve this information. As a result, Player 2 has to use get_state to see the effect 
+of Player 1's hit and determine if it's their turn.
+
+To save time, let’s assume that Player 2, the AI, is currently having an incredibly lucky chain of 
+successful hits without missing shots. 
 
 Near the end of the game, Player 1, the human, checks their own board:
-http://localhost:8000/play/get-state/19/5/true
+http://localhost:8000/play/get-state/1/5/true
 
 This returns:
-{"attack_board": "---------------------X------------XXXX----------------X---------X---------X--------------------XXXXX", 
-"ship_board": "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd", 
+{"ship_board": "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd", 
+"attack_board": "---------------------X------------XXXX----------------X---------X---------X--------------------XXXXX", 
+"is_hit": 1, 
+"shot_row": 2, 
+"shot_col": 1, 
 "turn": 2, 
 "status": 0}
 
 * The X’s on Player 1’s own attack board correspond to the many successful hits that Player 2 made. 
 * By comparing the attack board and the ship board, it’s clear that Player 2 only needs one more 
 successful hit to win the game.
+* Player 2's last shot was a successful hit located at row 2, column 1 (using zero-based indexing)
 * It’s still Player 2’s turn because they haven’t missed yet, so turn = 2.
 * Note that status = 0 because the game is ongoing. (This is about to change.)
 
 Player 2 makes the winning shot:
-http://localhost:8000/play/fire-shot/19/6/1/1
+http://localhost:8000/play/fire-shot/1/6/1/1
 
 This returns:
-{"is_hit": 1, 
+{"attack_board": "-----------X---------X------------XXXX----------------X---------X---------X--------------------XXXXX",
+"is_hit": 1, 
+"turn": 2, 
+"status": 2}
+
+* is_hit = 1 indicates that the shot was a successful hit.
+* Since Player 2 never missed, there are no O's on Player 1's attack board.
+* Now, status = 2 because Player 2 has won the game. 
+* Since the game has ended, it stores the IDs of the winner and the loser for future reference. 
+
+Note that Player 1 doesn't automatically recieve this information; they must use get_state:
+http://localhost:8000/play/get-state/1/5/true
+
+This returns:
+{"ship_board": "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd", 
 "attack_board": "-----------X---------X------------XXXX----------------X---------X---------X--------------------XXXXX", 
+"is_hit": 1, 
+"shot_row": 1, 
+"shot_col": 1, 
 "turn": 2, 
 "status": 2}
 
 * By comparing Player 1’s ship board and attack board, it’s clear that all of their ships have been 
-sunk by Player 2's shots. Since Player 2 never missed, there are no O's on Player 1's attack board.
-* Now, status = 2 because Player 2 has won the game. 
-* The game also stores the IDs of the winner and the loser for future reference. 
+sunk by Player 2's shots.
+* Now, Player 1 can see all the information about the shot and its effects.
+* Now, both players know that the game has ended. Better luck next time, Player 1!
 
 As a final note, these endpoints don’t just update the Game and Board objects—they also update the 
 Player objects. Each time a player sinks a ship or wins/loses a game, the player’s profile is 

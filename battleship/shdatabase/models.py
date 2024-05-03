@@ -21,7 +21,7 @@ class Game(models.Model):
     board2ID = models.IntegerField(default=0)
     turn = models.IntegerField(default=0) #1 for player 1's turn, 2 for player 2's turn
     status = models.IntegerField(default=0) #0 for in progress, 1 for player1 won, 2 for player2 won
-    num_ships = models.IntegerField(default=0)
+    num_ships = models.IntegerField(default=4)
     winner = models.IntegerField(default=0)
     loser = models.IntegerField(default=0)
 
@@ -33,6 +33,13 @@ class Board(models.Model):
     ship_board = models.CharField(max_length=200) #string representing ship placement
     attack_board = models.CharField(max_length=200) #string representing attack locations
     combined_board = models.CharField(max_length=200)
+    '''
+    The default negative values for is_hit, shot_row, and shot_col represent that a shot has not 
+    been made yet. Once a shot is made, they become nonnegative
+    '''
+    is_hit = models.IntegerField(default=-1)
+    shot_row = models.IntegerField(default=-1)
+    shot_col = models.IntegerField(default=-1) 
 
     def __str__(self):
         return str(self.id)

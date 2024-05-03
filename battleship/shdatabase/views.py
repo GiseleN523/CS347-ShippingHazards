@@ -38,6 +38,13 @@ def new_board(board_size):
     board.ship_board = "-"*100
     board.attack_board = "-"*100
     board.combined_board = "-"*100
+    '''
+    The default negative values for is_hit, shot_row, and shot_col represent that a shot has not 
+    been made yet. Once a shot is made, they become nonnegative
+    '''
+    board.is_hit = -1
+    board.shot_row = -1
+    board.shot_col = -1
     board.save()
     return board.id
 
@@ -108,8 +115,11 @@ def get_state(request, game_id, player_id, is_my_board):
     game = Game.objects.get(id = game_id) 
     if is_my_board == "true":
         board = get_player_board(game, player_id)
-        return JsonResponse({"attack_board": board.attack_board,
-                            "ship_board": board.ship_board,
+        return JsonResponse({"ship_board": board.ship_board,
+                            "attack_board": board.attack_board,
+                            "is_hit": board.is_hit,
+                            "shot_row": board.shot_row,
+                            "shot_col": board.shot_col,
                             "turn": game.turn,
                             "status": game.status})
     
@@ -117,6 +127,9 @@ def get_state(request, game_id, player_id, is_my_board):
         opponent_id = get_opponent(game, player_id)
         board = get_player_board(game, opponent_id)
         return JsonResponse({"attack_board": board.attack_board,
+                            "is_hit": board.is_hit,
+                            "shot_row": board.shot_row,
+                            "shot_col": board.shot_col,
                             "turn": game.turn,
                             "status": game.status}) 
                    
@@ -144,20 +157,23 @@ def fire_shot(request, game_id, player_id, row, col):
     API endpoint that returns hit status, attack board, turn, and game status after player fires shot.
     """
     game = Game.objects.get(id = game_id)
-    if is_player_turn(game, player_id): 
-
-        #updates and saves attack board and combined board
+    if is_player_turn(game, player_id):
         opponent_id = get_opponent(game, player_id)
-        board = get_player_board(game, opponent_id)
+        board = get_player_board(game, opponent_id) 
+
+        #updates and saves attack board, combined board, shot row, and shot col
         combinedBoard, attackBoard = updateBoards(board.ship_board, board.combined_board, 
                                                   board.attack_board, row, col)
         board.attack_board = attackBoard
         board.combined_board = combinedBoard
+        board.shot_row = row
+        board.shot_col = col
         board.save()
 
         hit_status, ship_char = isHit(board.ship_board, row, col)
         if hit_status == True:
-            is_hit = 1 
+            board.is_hit = 1 
+            board.save()
 
             #if the hit sunk a ship, updates player's profile stats
             if isShipSunk(combinedBoard, ship_char):
@@ -167,11 +183,6 @@ def fire_shot(request, game_id, player_id, row, col):
 
                 #if hit made the player win the game, updates information about game, player, and opponent
                 if isWinner(combinedBoard):
-                    '''
-                    The following code was in a separate helper function, and the status changed in 
-                    the database, but the JSON dictionary returned the previous status. As a result, 
-                    I'm keeping this code here for now, but I'm working on a helper function.
-                    '''
                     game.status = game.turn
                     game.winner = player_id
                     game.loser = opponent_id
@@ -186,13 +197,9 @@ def fire_shot(request, game_id, player_id, row, col):
                     losing_player.save()  
                               
         else:
-            #if the player missed their shot, updates turn
-            is_hit = 0
-            '''
-            The following code was in a separate helper function, and the turn changed in the 
-            database, but the JSON dictionary returned the previous turn. As a result, I'm keeping 
-            this code here for now, but I'm working on a helper function.
-            '''
+            #if the player missed their shot, updates and saves hit and turn
+            board.is_hit = 0
+            board.save()
             if game.turn == 1:
                 game.turn = 2
                 game.save()
@@ -202,8 +209,8 @@ def fire_shot(request, game_id, player_id, row, col):
             else:
                 raise ValueError("Turn must be 1 or 2")
             
-        return JsonResponse({"is_hit": is_hit,
-                            "attack_board": board.attack_board,
+        return JsonResponse({"attack_board": board.attack_board,
+                            "is_hit": board.is_hit,
                             "turn": game.turn,
                             "status" : game.status})
     
