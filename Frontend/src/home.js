@@ -12,28 +12,29 @@ function PlayButton() {
 }
 
 
-function PlayCompButton({aiID}) {
+function PlayCompButton() {
   let gameID = 1;
+  let playerID = 5;
 
   function redirectBrowser(the_json){
       gameID = the_json["game_id"];
-      let playerID = 5;
       window.location.replace("/game/"+playerID+"/"+gameID);
   }
 
   function handleClick() {
     let playerID = 5;
+    let aiID = 1;
     let numShips = 4;
     let boardSize = 10;
     let isAiGame = "true";
-    let url = "http://web:8000/new-game/" + playerID + "/" + {aiID} + "/" + numShips + "/" + boardSize + "/" + isAiGame;
+    let url = "http://web:8000/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
     alert("fetching URL: "+url); // remove this
-    //fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt
-    window.location.replace("/game/"+playerID+"/0001"); // remove this
+    fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt
+    //window.location.replace("/game/"+playerID+"/0001"); // remove this
   }
   return (
     <button className="button" type="button" onClick={handleClick}>
-      Play AI {aiID}
+      Play Computer
     </button>
   );
 }
@@ -52,9 +53,7 @@ function Home() {
       <HeaderAndNav playerID={playerID}/>
       <div className="buttons-container">
         <PlayButton />
-        <PlayCompButton aiID=1/>
-        <PlayCompButton aiID=2/>
-        <PlayCompButton aiID=3/>
+        <PlayCompButton />
         <StatsButton />
 
       </div>
