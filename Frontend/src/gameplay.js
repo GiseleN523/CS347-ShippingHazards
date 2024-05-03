@@ -15,6 +15,9 @@ function updatePlayerBoard({the_json, myTurn}) {
   let shipBoard = the_json["ship_board"];
   let turn = the_json["turn"];
   let status = the_json["status"];
+  let is_hit = the_json["is_hit"];
+  let shot_row = the_json["shot_row"];
+  let shot_col = the_json["shot_col"];
 
   if(myTurn && turn == 2) {
     myTurn = false;
@@ -34,6 +37,9 @@ function updateOpponentBoard({the_json, myTurn}) {
   let attackBoard = the_json["attack_board"];
   let turn = the_json["turn"];
   let status = the_json["status"];
+  let is_hit = the_json["is_hit"];
+  let shot_row = the_json["shot_row"];
+  let shot_col = the_json["shot_col"];
 
   if(myTurn && turn == 2) {
     myTurn = false;
