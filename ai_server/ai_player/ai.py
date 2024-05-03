@@ -1,6 +1,38 @@
 import sys
 import random
-from game_logic.logic import * 
+# from ..game_logic.logic import * 
+
+####### the following functions are copied from game_logic.logic (once we are pushed to main we will fix the import structure )
+def isHit(shipBoard, attackRow, attackCol):
+    '''
+    Input: shipBoard, row and col of next attack
+    Output: Whether there is a ship at the coordinates of the attack (True or False), and the char at the location of the attack
+    '''
+    char = charAt(shipBoard, attackRow, attackCol)
+    if char != "-":
+        return True, char
+    else:
+        return False, char
+    
+def isValidAttack(attackBoard, attackRow, attackCol):
+    '''
+    Input: attackBoard with only previous hits and misses, row and col of next attack
+    Output: True if there has not been an attack at those coordinates before, otherwise False
+    '''
+    if attackRow > 9 or attackRow < 0 or attackCol > 9 or attackCol < 0:
+        return False
+    if charAt(attackBoard, attackRow, attackCol) == "-":
+        return True
+    else:
+        return False
+    
+def charAt(board, row, col): # from Matt Lepinski connect4-server.py
+    '''
+    Input: any 10x10 board, int row, int col
+    Output: the character at the (row, col) of the 10x10 board
+    '''
+    index = col + row*10
+    return board[index]
 
 
 class BattleShipAI:
