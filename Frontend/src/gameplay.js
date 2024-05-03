@@ -10,7 +10,7 @@ let opponentBoard = "-----------------------------------------------------------
 let playerID;
 let gameID;
 
-function updatePlayerBoard({the_json, myTurn}) {
+function updatePlayerBoard({the_json, myTurn, setMyTurn}) {
   let attackBoard = the_json["attack_board"];
   let shipBoard = the_json["ship_board"];
   let turn = the_json["turn"];
@@ -20,10 +20,10 @@ function updatePlayerBoard({the_json, myTurn}) {
   let shot_col = the_json["shot_col"];
 
   if(myTurn && turn == 2) {
-    myTurn = false;
+    setMyTurn(false);
   }
   if(!myTurn && turn == 1) {
-    myTurn = true;
+    setMyTurn(true);
   }
   if(status == 1) {
     alert("Game over; you won!");
@@ -33,7 +33,7 @@ function updatePlayerBoard({the_json, myTurn}) {
   }
 }
 
-function updateOpponentBoard({the_json, myTurn}) {
+function updateOpponentBoard({the_json, myTurn, setMyTurn}) {
   let attackBoard = the_json["attack_board"];
   let turn = the_json["turn"];
   let status = the_json["status"];
@@ -42,10 +42,10 @@ function updateOpponentBoard({the_json, myTurn}) {
   let shot_col = the_json["shot_col"];
 
   if(myTurn && turn == 2) {
-    myTurn = false;
+    setMyTurn(false);
   }
   if(!myTurn && turn == 1) {
-    myTurn = true;
+    setMyTurn(true);
   }
   if(status == 1) {
     alert("Game over; you won!");
@@ -55,13 +55,13 @@ function updateOpponentBoard({the_json, myTurn}) {
   }
 }
 
-function fetchUpdate({myTurn}) {
+function fetchUpdate({myTurn, setMyTurn}) {
   let isMyBoard = "true";
-  URL = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  //fetch(URL).then( response => response.json()).then( the_json => updatePlayerBoard(the_json={the_json} myTurn={myTurn}) ); // add this back in
+  let url = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
+  //fetch(URL).then( response => response.json()).then( the_json => updatePlayerBoard(the_json={the_json} myTurn={myTurn} setMyTurn={setMyTurn}) ); // add this back in
   isMyBoard = "false";
-  URL = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  //fetch(URL).then( response => response.json()).then( the_json => updateOpponentBoard(the_json={the_json} myTurn={myTurn}) ); // add this back in
+  url = "http://web:8000/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
+  //fetch(URL).then( response => response.json()).then( the_json => updateOpponentBoard(the_json={the_json} myTurn={myTurn} setMyTurn={setMyTurn}) ); // add this back in
 }
 
 function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
@@ -195,7 +195,7 @@ function GamePlay() {
     //pass these states around so components know when they update; they must be states and not variables so components automatically update
     const [isSetupStage, setIsSetupStage] = useState(true);
     const [myTurn, setMyTurn] = useState(true);
-    setInterval(() => fetchUpdate({myTurn}), 5000)
+    setInterval(() => fetchUpdate({myTurn, setMyTurn}), 5000)
     return (
       <div>
         <HeaderAndNav playerID={playerID}/>
