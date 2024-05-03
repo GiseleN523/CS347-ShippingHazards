@@ -4,8 +4,6 @@ WORKDIR /code
 
 RUN pip install flask
 RUN pip install requests
-RUN pip install threading
-RUN pip install time
 
 EXPOSE 7000
 
