@@ -1,18 +1,39 @@
 import './home.css'
 import HeaderAndNav from './header_and_nav.js';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+
+let playerID;
 
 function PlayButton() {
   return (
-    <Link to="/game" className="button" type="button">
-      Play Person
-    </Link>
+    <button className="button" type="button">Play Person</button>
   );
 }
 
+
 function PlayCompButton() {
+  let gameID = 1;
+
+  function redirectBrowser(the_json){
+      gameID = the_json["game_id"];
+      window.location.replace("/game/"+playerID+"/"+gameID);
+  }
+
+  function handleClick() {
+    let aiID = 1;
+    let numShips = 4;
+    let boardSize = 10;
+    let isAiGame = "true";
+    let url = "http://web:8000/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
+    alert("fetching URL: "+url); // remove this
+    fetch(URL).then( response => response.json()).then( the_json => redirectBrowser(the_json)); // Matt
+    //window.location.replace("/game/"+playerID+"/0001"); // remove this
+  }
   return (
-    <button className="button" type="button">Play Computer</button>
+    <button className="button" type="button" onClick={handleClick}>
+      Play Computer
+    </button>
   );
 }
 
@@ -24,9 +45,10 @@ function StatsButton() {
 
 
 function Home() {
+  ({playerID} = useParams());
   return (
     <div className="header/nav">
-      <HeaderAndNav />
+      <HeaderAndNav playerID={playerID}/>
       <div className="buttons-container">
         <PlayButton />
         <PlayCompButton />

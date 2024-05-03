@@ -10,7 +10,7 @@
 .board-square {
     display: table-cell;
     border: 2px solid black;
-    padding: 1em;
+    padding: 1.5vw;
     cursor: pointer;
 }
 
@@ -55,6 +55,6 @@
     padding: .5% 0%;
 }
 
-.ship {
-    background-color: #ff8ac7;
+button {
+    text-align: center;
 }

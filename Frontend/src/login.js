@@ -12,7 +12,7 @@ const Login = (props) => {
 
   const onButtonClick = () => {
     if (email && password) { // If both email and password are provided, navigate to "/home"
-      navigate('/home');
+      navigate('/home/'+email);
     } else {
       // If email or password is empty, set error messages accordingly
       setEmailError(email? '' : 'Email is required');

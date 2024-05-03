@@ -14,11 +14,11 @@ ReactDOM.render(
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/myaccount" element={<MyAccount />} />
-        <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="/game" element={<GamePlay />} />
+        <Route path="/home/:playerID" element={<Home />} />
+        <Route path="/settings/:playerID" element={<Settings />} />
+        <Route path="/myaccount/:playerID" element={<MyAccount />} />
+        <Route path="/aboutus/:playerID" element={<AboutUs />} />
+        <Route path="/game/:playerID/:gameID" element={<GamePlay />} />
       </Routes>
     </Router>
   </React.StrictMode>,
