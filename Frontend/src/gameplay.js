@@ -20,66 +20,15 @@ function updatePlayerBoardAndTurn(the_json, myTurn) {
   let shot_row = the_json["shot_row"];
   let shot_col = the_json["shot_col"];
 
-  if(myTurn && turn == 2) {
-    return false;
-  }
-  if(!myTurn && turn == 1) {
-    return true;
-  }
-  if(status == 1) {
-    alert("Game over; you won!");
-  }
-  else if(status == 2) {
-    alert("Game over; opponent won :(");
-  }
-  return myTurn;
-}
+  if(shot_row != -1 && shot_col != -1) { // game has started
+    let id = "my-"+"square-"+shot_row+"-"+shot_col;
+    if(is_hit) {
+      document.getElementById(id).style.backgroundColor = "red";
+    }
+    else {
+      document.getElementById(id).style.backgroundColor = "white";
+    }
 
-function updateOpponentBoardAndTurn(the_json, myTurn) {
-  let attackBoard = the_json["attack_board"];
-  let turn = the_json["turn"];
-  let status = the_json["status"];
-  let is_hit = the_json["is_hit"];
-  let shot_row = the_json["shot_row"];
-  let shot_col = the_json["shot_col"];
-
-  if(myTurn && turn == 2) {
-    return false;
-  }
-  if(!myTurn && turn == 1) {
-    return true;
-  }
-  if(status == 1) {
-    alert("Game over; you won!");
-  }
-  else if(status == 2) {
-    alert("Game over; opponent won :(");
-  }
-  return myTurn;
-}
-
-function fetchUpdate({myTurn, setMyTurn}) {
-  let isMyBoard = "true";
-  let url = "/play/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(url).then( response => response.json()).then( the_json => setMyTurn(updatePlayerBoardAndTurn(the_json, myTurn)) );
-  isMyBoard = "false";
-  url = "/play/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(url).then( response => response.json()).then( the_json => setMyTurn(updateOpponentBoardAndTurn(the_json, myTurn)) );
-}
-
-function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn}) {
-  const [isOccupied, setIsOccupied] = useState(occupied === true);
-  const [isEmpty, setIsEmpty] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const isMyBoard = myBoard;
-  function applyUpdate(the_json) {
-    let isHit = the_json["is_hit"];
-    let attackBoard = the_json["attack_board"];
-    let turn = the_json["turn"];
-    let status = the_json["status"];
-    
-    setIsOccupied(isHit == 1);
-    setIsEmpty(isHit == 0);
     if(status == 1) {
       alert("Game over; you won!");
     }
@@ -87,48 +36,64 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn, setM
       alert("Game over; opponent won :(");
     }
   }
+  return turn == 1 ? true : false;
+}
+
+function fetchUpdate({myTurn, setMyTurn}) {
+  let isMyBoard = "true";
+  let url = "/play/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
+  fetch(url)
+    .then( response => response.json())
+    .then( the_json => setMyTurn(updatePlayerBoardAndTurn(the_json, myTurn)) )
+    .then(setTimeout(() => fetchUpdate({myTurn, setMyTurn}), 5000));
+}
+
+function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn}) {
+  const myShip = occupied;
+  const [isHovered, setIsHovered] = useState(false);
+  function applyPlayerMoveUpdate(the_json) {
+    let isHit = the_json["is_hit"];
+    let attackBoard = the_json["attack_board"];
+    let turn = the_json["turn"];
+    let status = the_json["status"];
+
+    if(isHit) {
+      document.getElementById(id).style.backgroundColor = "red";
+    }
+    else {
+      document.getElementById(id).style.backgroundColor = "white";
+    }
+
+    setMyTurn(turn == 1);
+  }
   function handleClickSetup() {
-    if(isMyBoard) {
+    if(myBoard) {
       return;
     }
   }
   function handleClickGameplay() {
-    if(!isMyBoard && myTurn) {
+    if(!myBoard && myTurn) {
       let url = "/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
-      fetch(url).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt
-      fetchUpdate({myTurn, setMyTurn})
+      fetch(url)
+        .then( response => response.json() )
+        .then( the_json => applyPlayerMoveUpdate(the_json) )
+        .then(fetchUpdate({myTurn, setMyTurn}));
     }
   }
   return (
-    <div className="board-square"
+    <div className="board-square" id={id}
       onClick={isSetupStage? handleClickSetup : handleClickGameplay}
       onMouseEnter = {() => setIsHovered(true)}
       onMouseLeave = {() => setIsHovered(false)}
       style={{backgroundColor:
            (function() {
-            if(isMyBoard) {
-              if(isOccupied && isHovered && isSetupStage) {
+            if(myBoard && myShip) {
+              if(isHovered && isSetupStage) {
                 return 'pink';
               }
-              if(isOccupied) {
+              else {
                 return '#ff8ac7';
               }
-              if(!isOccupied && isEmpty) {
-                return 'white';
-              }
-              return 'inherit';
-            }
-            else {
-              if(isOccupied) {
-                return 'red';
-              }
-              if(isEmpty) {
-                return 'white';
-              }
-              if(!isOccupied && !isEmpty && !isSetupStage && isHovered && myTurn) {
-                return 'blue';
-              }
-              return 'inherit';
             }
            })()
       }}>
@@ -139,7 +104,8 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn, setM
 function BoardRow({row, boardSize, ships, myBoard, isSetupStage, myTurn, setMyTurn}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
-      arr.push(<BoardSquare key={"square"+{row}+"-"+i} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn}/>);
+      let key = (myBoard? "my-" : "opponent-")+"square-"+row+"-"+i;
+      arr.push(<BoardSquare key={key} id={key} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn}/>);
     }
     return (
       <div className="board-row">{arr}</div>
@@ -196,7 +162,7 @@ function GamePlay() {
     //pass these states around so components know when they update; they must be states and not variables so components automatically update
     const [isSetupStage, setIsSetupStage] = useState(true);
     const [myTurn, setMyTurn] = useState(true);
-    setInterval(() => fetchUpdate({myTurn, setMyTurn}), 5000)
+    setTimeout(() => fetchUpdate({myTurn, setMyTurn}), 5000)
     return (
       <div>
         <HeaderAndNav playerID={playerID}/>
