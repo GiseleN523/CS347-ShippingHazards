@@ -61,13 +61,13 @@ function updateOpponentBoardAndTurn(the_json, myTurn) {
 function fetchUpdate({myTurn, setMyTurn}) {
   let isMyBoard = "true";
   let url = "/play/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(url).then( response => response.json()).then( the_json => setMyTurn(updatePlayerBoardAndTurn(the_json, myTurn)) ); // add this back in
+  fetch(url).then( response => response.json()).then( the_json => setMyTurn(updatePlayerBoardAndTurn(the_json, myTurn)) );
   isMyBoard = "false";
   url = "/play/get-state/"+gameID+"/"+playerID+"/"+isMyBoard;
-  fetch(url).then( response => response.json()).then( the_json => setMyTurn(updateOpponentBoardAndTurn(the_json, myTurn)) ); // add this back in
+  fetch(url).then( response => response.json()).then( the_json => setMyTurn(updateOpponentBoardAndTurn(the_json, myTurn)) );
 }
 
-function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
+function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn}) {
   const [isOccupied, setIsOccupied] = useState(occupied === true);
   const [isEmpty, setIsEmpty] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -94,10 +94,9 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
   }
   function handleClickGameplay() {
     if(!isMyBoard && myTurn) {
-      //applyUpdate({'result': Math.floor(Math.random()*2)}) //randomly chooses hit or miss // remove this
       let url = "/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
-      alert("fetching URL: " + url);
-      fetch(url).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt // add this back in
+      fetch(url).then( response => response.json() ).then( the_json => applyUpdate(the_json) ); // Matt
+      fetchUpdate({myTurn, setMyTurn})
     }
   }
   return (
@@ -137,20 +136,20 @@ function BoardSquare({row, column, occupied, myBoard, isSetupStage, myTurn}) {
   )
 }
   
-function BoardRow({row, boardSize, ships, myBoard, isSetupStage, myTurn}) {
+function BoardRow({row, boardSize, ships, myBoard, isSetupStage, myTurn, setMyTurn}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
-      arr.push(<BoardSquare key={"square"+{row}+"-"+i} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn}/>);
+      arr.push(<BoardSquare key={"square"+{row}+"-"+i} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn}/>);
     }
     return (
       <div className="board-row">{arr}</div>
     )
 }
   
-function Board({boardSize, presetBoard, myBoard, isSetupStage, myTurn}) {
+function Board({boardSize, presetBoard, myBoard, isSetupStage, myTurn, setMyTurn}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
-      arr.push(<BoardRow key={"row"+i} row={i} boardSize={10} ships={presetBoard.slice((i*boardSize), ((i+1)*boardSize))} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn}/>);
+      arr.push(<BoardRow key={"row"+i} row={i} boardSize={10} ships={presetBoard.slice((i*boardSize), ((i+1)*boardSize))} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn}/>);
     }
     return (
       <div className="board">{arr}</div>
@@ -179,8 +178,7 @@ function ConfirmButton({isSetupStage, setIsSetupStage}) {
   function handleClick() {
     setIsSetupStage(false);
     let url = "/play/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
-    alert("fetching URL: "+url);
-    fetch(url); // add this back in
+    fetch(url);
   }
   return (
     <div style={{width: '100%', textAlign: 'center'}}>
@@ -211,10 +209,10 @@ function GamePlay() {
           </div>
           <div className="content-row" id="board-row">
             <div className="content-cell">
-              <Board boardSize={boardSize} presetBoard={playerBoard} myBoard={true} isSetupStage={isSetupStage} myTurn={myTurn}/>
+              <Board boardSize={boardSize} presetBoard={playerBoard} myBoard={true} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn}/>
             </div>
             <div className="content-cell">
-              <Board boardSize={boardSize} presetBoard={opponentBoard} myBoard={false} isSetupStage={isSetupStage} myTurn={myTurn}/>
+              <Board boardSize={boardSize} presetBoard={opponentBoard} myBoard={false} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn}/>
             </div>
           </div>
         </div>
