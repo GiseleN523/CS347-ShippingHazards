@@ -44,7 +44,7 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
 
     # while the game isnt over (game_status == 0) 
     while game_status == 0:
-        time.sleep(5)
+        time.sleep(2)
         # params = {'game_id': game_id,
         #       'player2_id': player2_id}
         url = 'http://web:8000/play/get-state/{}/{}/false'.format(game_id, player2_id)
@@ -63,7 +63,7 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
             #         'row': row,
             #         'col': col}
             # do we need to sleep here??
-            time.sleep(5)
+            time.sleep(2)
             url = 'http://web:8000/play/fire-shot/{}/{}/{}/{}'.format(game_id, player2_id, row, col) 
             response = requests.get(url)
      
