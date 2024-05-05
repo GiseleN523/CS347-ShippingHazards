@@ -16,7 +16,7 @@ header .logo {
   
 #header-text {
     font-size: 250%;
-    font-family: "Copperplate", "Copperplate Gothic Light", fantasy;
+    font-family: Georgia, serif;
     font-weight: bold;
 }
 
@@ -46,7 +46,7 @@ nav a{
     display: inline;
     font-weight: bold;
     font-size: 150%;
-    font-family: "Copperplate", "Copperplate Gothic Light", "fantasy";
+    font-family: Georgia, serif;
     text-decoration: none;
     text-align: center;
     cursor: pointer;
