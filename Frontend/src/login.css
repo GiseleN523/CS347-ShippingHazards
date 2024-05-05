@@ -26,7 +26,7 @@
     font-weight: bolder;
     align-items: center;
     justify-content: center;
-    font-family: "Copperplate", "Copperplate Gothic Light", "fantasy";
+    font-family: Georgia, serif;
     }
 
 .resultContainer,
@@ -62,7 +62,7 @@
     padding-left: 50px;
     padding-right: 50px;
     font-size: 20px;
-    font-family: "Copperplate", "Copperplate Gothic Light", "fantasy";
+    font-family: Georgia, serif;
     text-align: center;
     text-decoration: none;
     color: white;
