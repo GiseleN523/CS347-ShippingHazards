@@ -45,7 +45,7 @@ function fetchUpdate({myTurn, setMyTurn}) {
   fetch(url)
     .then( response => response.json())
     .then( the_json => setMyTurn(updatePlayerBoardAndTurn(the_json, myTurn)) )
-    .then(setTimeout(() => fetchUpdate({myTurn, setMyTurn}), 5000));
+    .then(setTimeout(() => fetchUpdate({myTurn, setMyTurn}), 2000));
 }
 
 function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn}) {
@@ -162,7 +162,7 @@ function GamePlay() {
     //pass these states around so components know when they update; they must be states and not variables so components automatically update
     const [isSetupStage, setIsSetupStage] = useState(true);
     const [myTurn, setMyTurn] = useState(true);
-    setTimeout(() => fetchUpdate({myTurn, setMyTurn}), 5000)
+    setTimeout(() => fetchUpdate({myTurn, setMyTurn}), 2000)
     return (
       <div>
         <HeaderAndNav playerID={playerID}/>
