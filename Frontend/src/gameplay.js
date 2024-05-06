@@ -3,8 +3,6 @@ import HeaderAndNav from './header_and_nav.js';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-let shipSizes = [5, 4, 3, 3, 2];
-let boardSize = 10;
 let playerBoard = "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd";
 let opponentBoard = "----------------------------------------------------------------------------------------------------";
 let playerID;
@@ -158,7 +156,8 @@ function ConfirmButton({isSetupStage, setIsSetupStage}) {
 }
   
 function GamePlay() {
-    ({gameID, playerID} = useParams());
+    let boardSize;
+    ({gameID, playerID, boardSize} = useParams());
     //pass these states around so components know when they update; they must be states and not variables so components automatically update
     const [isSetupStage, setIsSetupStage] = useState(true);
     const [myTurn, setMyTurn] = useState(true);

@@ -18,7 +18,7 @@ ReactDOM.render(
         <Route path="/settings/:playerID" element={<Settings />} />
         <Route path="/myaccount/:playerID" element={<MyAccount />} />
         <Route path="/aboutus/:playerID" element={<AboutUs />} />
-        <Route path="/game/:playerID/:gameID" element={<GamePlay />} />
+        <Route path="/game/:playerID/:gameID/:boardSize" element={<GamePlay />} />
       </Routes>
     </Router>
   </React.StrictMode>,

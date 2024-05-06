@@ -15,10 +15,11 @@ function PlayButton() {
 function PlayCompButton({aiID}) {
   let gameID = 1;
   let playerID = 5;
+  let boardSize = 10;
 
   function redirectBrowser(the_json){
       gameID = the_json["game_id"];
-      window.location.replace("/game/"+playerID+"/"+gameID);
+      window.location.replace("/game/"+playerID+"/"+gameID+"/"+boardSize);
   }
 
   function handleClick() {
