@@ -2,6 +2,7 @@ import './home.css'
 import HeaderAndNav from './header_and_nav.js';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { useState } from 'react';
 
 let playerID;
 
@@ -11,6 +12,40 @@ function PlayButton() {
   );
 }
 
+function PlayMainCompButton () {
+
+  const [popupOpen, setPopupOpen] = useState(false); // State to control popup visibility
+
+  const openPopup = () => {
+    setPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
+
+
+  const Popup = ({closePopup }) => {
+    return (
+      <div className="popup-container">
+        <div className="popup-body">
+          <PlayCompButton aiID={1}/>
+          <PlayCompButton aiID={2}/>
+          <PlayCompButton aiID={3}/>
+        <button className="popup-button"onClick={closePopup}>X</button>
+        </div>
+      </div>
+    );
+  };
+
+
+  return (
+    <div>
+      <button className="button" type="button" onClick={openPopup}>Play AI</button>
+      {popupOpen && <Popup closePopup={closePopup} />} 
+    </div>
+  );
+}
 
 function PlayCompButton({aiID}) {
   let gameID = 1;
@@ -31,7 +66,7 @@ function PlayCompButton({aiID}) {
     fetch(url).then( response => response.json() ).then( the_json => redirectBrowser(the_json)); // Matt
   }
   return (
-    <button className="button" type="button" onClick={handleClick}>
+    <button className="popup-button" type="button" onClick={handleClick}>
       Play AI #{aiID}
     </button>
   );
@@ -44,6 +79,7 @@ function StatsButton() {
 }
 
 
+
 function Home() {
   ({playerID} = useParams());
   return (
@@ -51,9 +87,7 @@ function Home() {
       <HeaderAndNav playerID={playerID}/>
       <div className="buttons-container">
         <PlayButton />
-        <PlayCompButton aiID={1}/>
-        <PlayCompButton aiID={2}/>
-        <PlayCompButton aiID={3}/>
+        <PlayMainCompButton />
 
       </div>
     </div>

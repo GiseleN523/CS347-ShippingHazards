@@ -38,3 +38,43 @@ align-items: center;
 .button:not(:last-child) {
 margin-bottom: 50px;
 }
+
+
+.popup-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-body {
+  text-align: center;
+  padding: 20px;
+  border-radius: 15px;
+  background: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.popup-button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.popup-button.close {
+  background-color: #dc3545;
+}
+
+.popup-button.close:hover {
+  background-color: #c82333;
+}
