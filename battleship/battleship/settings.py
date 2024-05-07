@@ -31,10 +31,9 @@ ALLOWED_HOSTS = ['web', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'shdatabase',
-
     'rest_framework',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,6 +69,8 @@ TEMPLATES = [
         },
     },
 ]
+
+ASGI_APPLICATION = 'battleship.asgi.application'
 
 WSGI_APPLICATION = 'battleship.wsgi.application'
 
