@@ -1,6 +1,7 @@
 .board {
     display: table;
     margin: auto;
+    background-image: url('./images/water_background.png');
 }
 
 .board-row {
@@ -38,7 +39,6 @@
 
 #board-row {
     padding-top: 5%;
-    background-image: url('./images/water_background.png');
     background-repeat: no-repeat;
 }
 
