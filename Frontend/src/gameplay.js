@@ -166,8 +166,6 @@ function GamePlay() {
     return (
       <div>
         <HeaderAndNav playerID={playerID}/>
-        <Instructions isSetupStage={isSetupStage} myTurn={myTurn}/>
-        <ConfirmButton isSetupStage={isSetupStage} setIsSetupStage={setIsSetupStage}></ConfirmButton>
         <div id="content">
           <div className="content-row">
             <div className="content-cell">YOUR BOARD</div>
@@ -182,6 +180,8 @@ function GamePlay() {
             </div>
           </div>
         </div>
+        <Instructions isSetupStage={isSetupStage} myTurn={myTurn}/>
+        <ConfirmButton isSetupStage={isSetupStage} setIsSetupStage={setIsSetupStage}></ConfirmButton>
       </div>
     )
 }

@@ -53,7 +53,6 @@ function Home() {
         <PlayCompButton aiID={1}/>
         <PlayCompButton aiID={2}/>
         <PlayCompButton aiID={3}/>
-        <StatsButton />
 
       </div>
     </div>
