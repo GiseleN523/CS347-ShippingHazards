@@ -30,6 +30,9 @@ class BoardViewSet(viewsets.ModelViewSet):
     serializer_class = BoardSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+def room(request, room_name):
+    return render(request, "chat/room.html", {"room_name": room_name})
+
 def new_board(board_size):
     """
     Creates a new Board object and returns its ID.
