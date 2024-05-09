@@ -72,13 +72,42 @@ function PlayCompButton({aiID}) {
   );
 }
 
-function StatsButton() {
+
+function HowToPlayButton() {
+
+  const [popupOpen, setPopupOpen] = useState(false); 
+
+  const openPopup = () => {
+    setPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
+
+
+  const Popup = ({closePopup }) => {
+    return (
+      <div className="popup-container">
+        <div className="howto-popup-paragraph">
+          Choose if you want to play with another person or with and AI.
+          Then place your ships in the postitions you would like.
+          Each player will try to hit the ships of their opoenents on the grid. 
+          Whoever sinks all of your oppenent's ships first, WINS!
+        <button className="popup-button"onClick={closePopup}>Close</button>
+        </div>
+      </div>
+    );
+  };
+
+
   return (
-    <button className="button" type="button">Your Stats</button>
+    <div>
+      <button className="button" type="button" onClick={openPopup}> How to Play?</button>
+      {popupOpen && <Popup closePopup={closePopup} />} 
+    </div>
   );
 }
-
-
 
 function Home() {
   ({playerID} = useParams());
@@ -88,6 +117,7 @@ function Home() {
       <div className="buttons-container">
         <PlayButton />
         <PlayMainCompButton />
+        <HowToPlayButton/>
 
       </div>
     </div>

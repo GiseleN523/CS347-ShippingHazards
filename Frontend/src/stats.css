@@ -40,5 +40,8 @@ tbody tr:hover {
 }
 
 .statstable {
-    display: flex;
+    display: inline-block
+}
+.stats-page-container{
+    display: inline-block
 }
