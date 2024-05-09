@@ -71,7 +71,7 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
     }
   }
   function handleClickGameplay() {
-    if(!myBoard && myTurn && gameStatus == 0) {
+    if(!myBoard && myTurn && gameStatus == 0 && document.getElementById(id).style.backgroundColor != "white" && document.getElementById(id).style.backgroundColor != "red") {
       let url = "/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
       fetch(url)
         .then( response => response.json() )
@@ -93,6 +93,9 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
               else {
                 return '#ff8ac7';
               }
+            }
+            else if(isSetupStage || myBoard) {
+              return 'transparent';
             }
            })()
       }}>
@@ -202,7 +205,7 @@ function ComicPopup({isVisible, image}) {
   return (
     <div style={{
       width: '120%',
-      visibility: (isVisible == true) ? 'visible' : 'hidden',
+      display: (isVisible == true) ? 'block' : 'none',
       position: 'absolute',
       top: '5%',
       left: '-10%'
