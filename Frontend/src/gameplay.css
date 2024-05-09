@@ -2,6 +2,7 @@
     display: table;
     margin: auto;
     background-image: url('./images/water_background.png');
+    position: relative;
 }
 
 .board-row {
@@ -20,16 +21,14 @@
 }
 
 #gameplay-instructions {
-    font-size: 200%;
-    width: 100%;
-    text-align: center;
+    /* text-align: center; */
     font-weight: bold;
-    padding: 2% 0% 1% 0%;
 }
 
 #content {
     display: table;
     width: 100%;
+    padding-top: 2%;
 }
 
 .content-row {
@@ -48,11 +47,12 @@
 
 .content-cell {
     display: table-cell;
-    width: 50%;
-    margin: auto;
+    width: auto;
+    margin: 0;
     text-align: center;
+    vertical-align: middle;
     font-size: 180%;
-    padding: .5% 0%;
+    /* padding-bottom: 2%; */
 }
 
 button {
