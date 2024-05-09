@@ -8,7 +8,7 @@ let playerID;
 
 function PlayButton() {
   return (
-    <button className="button" type="button">Play Person</button>
+    <button className="button" type="button">Multiplayer</button>
   );
 }
 

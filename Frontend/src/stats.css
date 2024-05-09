@@ -1,0 +1,44 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8; /* Light gray background */
+    padding: 20px;
+}
+
+h1 {
+    font-family: Georgia, serif;
+    text-align: center;
+    padding: 10px;
+
+}
+  
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Gray border between rows */
+}
+
+th {
+    background-color: #f25a8e; /* Pink header background */
+    color: white; /* White text color */
+}
+
+/* Alternating row background color */
+tbody tr:nth-child(even) {
+    background-color: #fce4ec; /* Light pink background */
+}
+
+/* Hover effect on rows */
+tbody tr:hover {
+    background-color: #f8bbd0; /* Lighter pink background on hover */
+}
+
+.statstable {
+    display: flex;
+}
