@@ -11,7 +11,7 @@ header * {
   
 header .logo {
     margin-right: 5%;
-    height: 10em;
+    height: 8em;
 }
   
 #header-text {
@@ -33,14 +33,14 @@ header #user-info a {
 
 nav {
     margin: 0px;
-    padding: 1.4% 0%;
+    padding: 1.2% 0%;
     background-color: black;
     color: white;
     display: block;
 }
   
 nav a{
-    padding: 1.4% 3%;
+    padding: 1.2% 3%;
     background-color: black;
     color: inherit;
     display: inline;
