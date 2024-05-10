@@ -7,7 +7,7 @@ RESETTING YOUR DATABASE
        click on the 3 dots under the ACTION header and then press delete.
 
 POPULATING THE DATABASE
-    Make sure to delete any data associated with the database. Get rid of postgres_data. If continues to not work, try deleting shdatabase/migrations folder.
+    Make sure to delete any data associated with the database. Get rid of postgres_data and your migrations folder in shdatabase.
     1. run docker-compose up -d --build  
     2. run docker-compose exec web python manage.py makemigrations shdatabase
     3. run docker-compose exec web python manage.py migrate 
