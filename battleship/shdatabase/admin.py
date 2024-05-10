@@ -15,7 +15,7 @@ class GameAdmin(admin.ModelAdmin):
 
 class BoardAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
-    list_display = ('id', 'size', 'ship_board', 'attack_board', 'combined_board', 'is_hit', 'shot_row', 'shot_col')
+    list_display = ('id', 'size', 'ship_board', 'attack_board', 'combined_board', 'is_hit', 'is_sunk', 'shot_row', 'shot_col')
 
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Game, GameAdmin)

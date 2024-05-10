@@ -17,4 +17,4 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
 class BoardSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Game
-        fields = ['size', 'ship_board', 'attack_board', 'combined_board', 'is_hit', 'shot_row', 'shot_col']
+        fields = ['size', 'ship_board', 'attack_board', 'combined_board', 'is_hit', 'is_sunk', 'shot_row', 'shot_col']

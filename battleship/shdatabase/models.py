@@ -40,6 +40,7 @@ class Board(models.Model):
     been made yet. Once a shot is made, they become nonnegative
     '''
     is_hit = models.IntegerField(default=-1)
+    is_sunk = models.IntegerField(default=-1)
     shot_row = models.IntegerField(default=-1)
     shot_col = models.IntegerField(default=-1) 
 
