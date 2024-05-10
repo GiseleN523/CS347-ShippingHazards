@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from .models import Player, Game, Board
 from rest_framework import permissions, viewsets
 import requests
-
 from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
+from django.contrib.auth.forms import AuthenticationForm
 
 class UserViewSet(viewsets.ModelViewSet):
     """
