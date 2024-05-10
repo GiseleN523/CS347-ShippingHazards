@@ -1,17 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Player(models.Model):
-    is_ai_player = models.BooleanField(default=True)
-    username = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    is_ai_player = models.BooleanField(default=False)
+    # username = models.CharField(max_length=100)   Will be taken care of with User Authentication. 
+    # password = models.CharField(max_length=100)
     screen_name = models.CharField(max_length=100)
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     num_of_ships_sunk= models.IntegerField(default=0)
 
     def __str__(self):
-        return self.username
+        return self.screen_name
 
 class Game(models.Model):
     is_ai_game = models.BooleanField(default=True)
