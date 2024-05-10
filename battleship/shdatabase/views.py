@@ -231,6 +231,13 @@ def fire_shot(request, game_id, player_id, row, col):
     else:
         raise ValueError("Player cannot fire shot when it is not their turn")
 
+def get_player_info(request, player_id):
+    player = Player.objects.get(id = player_id) 
+    return JsonResponse({"is_ai_player":player.is_ai_player,
+                        "screen_name": player.screen_name,
+                        "wins": player.wins,
+                        "losses": player.losses,
+                        "num_of_ships_sunk": player.num_of_ships_sunk})
 
 '''
 The following game logic code was written by Josh Meier and Willow Gu in logic.py.
