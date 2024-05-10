@@ -28,7 +28,7 @@
 #content {
     display: table;
     width: 100%;
-    padding-top: 2%;
+    padding: 2% 0;
 }
 
 .content-row {
