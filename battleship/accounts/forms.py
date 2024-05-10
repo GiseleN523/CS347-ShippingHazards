@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Player
-from .models import User
+from shdatabase.models import Player
 
-class PlayerRegistrationForm(UserCreationForm):
+
+class RegistrationFormForPlayers(UserCreationForm):
     screen_name = forms.CharField(max_length=100)
 
     def save(self, commit=True):

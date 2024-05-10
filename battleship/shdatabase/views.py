@@ -3,38 +3,8 @@ from django.http import HttpResponse, JsonResponse
 from .models import Player, Game, Board
 from rest_framework import permissions, viewsets
 import requests
-
 from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
-from .forms import PlayerRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
-
-def register(request):
-    if request.method == 'POST':
-        form = PlayerRegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')  # Redirect to login page after successful registration
-    else:
-        form = PlayerRegistrationForm()
-    return render(request, 'shdatabase/registration.html', {'form': form})
-
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                # Redirect to a success page.
-                return redirect('success_page')  # Replace 'success_page' with the name of your success page.
-            else:
-                # Return an 'invalid login' error message.
-                messages.error(request, 'Invalid username or password.')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
 
 class UserViewSet(viewsets.ModelViewSet):
     """
