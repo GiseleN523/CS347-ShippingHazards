@@ -118,7 +118,6 @@ function Home() {
         <PlayButton />
         <PlayMainCompButton />
         <HowToPlayButton/>
-
       </div>
     </div>
   );

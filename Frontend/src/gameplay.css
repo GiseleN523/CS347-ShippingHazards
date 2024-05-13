@@ -22,6 +22,10 @@
 
 #gameplay-instructions {
     /* text-align: center; */
+    font-family: Georgia, serif;;
+    font-size: 200%;
+    width: 100%;
+    text-align: center;
     font-weight: bold;
 }
 
@@ -36,8 +40,9 @@
     width: 100%;
 }
 
-#board-row {
+#board {
     padding-top: 5%;
+    /*background-image: url('./images/water_background.png');
     background-repeat: no-repeat;
 }
 

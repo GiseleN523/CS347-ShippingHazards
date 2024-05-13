@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from .models import Player, Game, Board
 from rest_framework import permissions, viewsets
 import requests
-
 from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
+from django.contrib.auth.forms import AuthenticationForm
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -46,6 +46,7 @@ def new_board(board_size):
     board.is_hit = -1
     board.shot_row = -1
     board.shot_col = -1
+    board.is_sunk = -1
     board.save()
     return board.id
 
@@ -122,6 +123,7 @@ def get_state(request, game_id, player_id, is_my_board):
         return JsonResponse({"ship_board": board.ship_board,
                             "attack_board": board.attack_board,
                             "is_hit": board.is_hit,
+                            "is_sunk": board.is_sunk,
                             "shot_row": board.shot_row,
                             "shot_col": board.shot_col,
                             "turn": game.turn,
@@ -132,6 +134,7 @@ def get_state(request, game_id, player_id, is_my_board):
         board = get_player_board(game, opponent_id)
         return JsonResponse({"attack_board": board.attack_board,
                             "is_hit": board.is_hit,
+                            "is_sunk": board.is_sunk,
                             "shot_row": board.shot_row,
                             "shot_col": board.shot_col,
                             "turn": game.turn,
@@ -179,8 +182,10 @@ def fire_shot(request, game_id, player_id, row, col):
             board.is_hit = 1 
             board.save()
 
-            #if the hit sunk a ship, updates player's profile stats
+            #if the hit sunk a ship, updates the board info and player's profile stats
             if isShipSunk(combinedBoard, ship_char):
+                board.is_sunk = 1
+                board.save()
                 player = Player.objects.get(id = player_id) 
                 player.num_of_ships_sunk += 1
                 player.save()  
@@ -199,10 +204,14 @@ def fire_shot(request, game_id, player_id, row, col):
                     losing_player = Player.objects.get(id = opponent_id)
                     losing_player.losses += 1
                     losing_player.save()  
+            else:
+                board.is_sunk = 0
+                board.save()
                               
         else:
-            #if the player missed their shot, updates and saves hit and turn
+            #if the player missed their shot, updates and saves hit, sink, and turn
             board.is_hit = 0
+            board.is_sunk = 0
             board.save()
             if game.turn == 1:
                 game.turn = 2
@@ -215,12 +224,20 @@ def fire_shot(request, game_id, player_id, row, col):
             
         return JsonResponse({"attack_board": board.attack_board,
                             "is_hit": board.is_hit,
+                            "is_sunk": board.is_sunk,
                             "turn": game.turn,
                             "status" : game.status})
     
     else:
         raise ValueError("Player cannot fire shot when it is not their turn")
 
+def get_player_info(request, player_id):
+    player = Player.objects.get(id = player_id) 
+    return JsonResponse({"is_ai_player":player.is_ai_player,
+                        "screen_name": player.screen_name,
+                        "wins": player.wins,
+                        "losses": player.losses,
+                        "num_of_ships_sunk": player.num_of_ships_sunk})
 
 '''
 The following game logic code was written by Josh Meier and Willow Gu in logic.py.
