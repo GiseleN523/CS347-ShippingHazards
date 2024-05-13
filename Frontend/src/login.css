@@ -11,19 +11,29 @@
     justify-content: center;
     height: 100vh;
 }
+
+.gametitle {
+    text-align: center;
+    font-size: 50px ;
+    color: #c63c83;
+    font-weight: bolder;
+    font-family: Georgia, serif; ;
+}
   
 .loginContainer { 
     background-color: white;
-    padding: 20px;
+    padding: 10px;
     position: center;
     border-radius: 20px;
 }
+
+
 .titleContainer {
     color: black;
     display: flex;
     flex-direction: column;
-    font-size: 64px;
-    font-weight: bolder;
+    font-size: 40px;
+    
     align-items: center;
     justify-content: center;
     font-family: Georgia, serif;
@@ -47,15 +57,17 @@
     justify-content: flex-start;
 }
 
-.buttonContainer {
+/*.buttonContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 260px;
 }
+*/
 
 .inputButton {
+    justify-content: center;
     cursor: pointer;
     border: 0;
     line-height: 2.5;

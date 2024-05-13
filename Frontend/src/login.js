@@ -24,6 +24,9 @@ const Login = (props) => {
   return (
     <div className="mainContainer">
       <div className= 'loginContainer'>
+        <div className= "gametitle">
+          <div> BATTLESHIP</div>
+        </div>
         <div className= "titleContainer">
           <div>Login</div>
         </div>
