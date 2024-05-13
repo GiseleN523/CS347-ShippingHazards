@@ -11,7 +11,7 @@ let playerID;
 let gameID;
 
 // returns true/false whether it is player turn or not
-function updatePlayerBoardAndTurn(the_json, setGameStatus, setHitPopupVisible) {
+function updatePlayerBoardAndTurn(the_json, setGameStatus, setHitPopupVisible, setSunkPopupVisible) {
   let attackBoard = the_json["attack_board"];
   let shipBoard = the_json["ship_board"];
   let turn = the_json["turn"];
@@ -19,6 +19,7 @@ function updatePlayerBoardAndTurn(the_json, setGameStatus, setHitPopupVisible) {
   let is_hit = the_json["is_hit"];
   let shot_row = the_json["shot_row"];
   let shot_col = the_json["shot_col"];
+  let isSunk = the_json["is_sunk"];
 
   if(shot_row != -1 && shot_col != -1) { // game has started
     let id = "my-"+"square-"+shot_row+"-"+shot_col;
@@ -45,7 +46,7 @@ function fetchUpdate({myTurn, setMyTurn, setGameStatus, setHitPopupVisible}) {
     .then(setTimeout(() => fetchUpdate({myTurn, setMyTurn, setGameStatus, setHitPopupVisible}), 2000));
 }
 
-function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, setHitPopupVisible}) {
+function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, setHitPopupVisible, setSunkPopupVisible}) {
   const myShip = occupied;
   const [isHovered, setIsHovered] = useState(false);
   function applyPlayerMoveUpdate(the_json) {
@@ -53,8 +54,14 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
     let attackBoard = the_json["attack_board"];
     let turn = the_json["turn"];
     let status = the_json["status"];
+    let isSunk = the_json["is_sunk"];
 
-    if(isHit) {
+    if(isSunk && isHit) {
+      setSunkPopupVisible(true);
+      document.getElementById(id).style.backgroundColor = "red";
+      setTimeout(() => setSunkPopupVisible(false), 2000);
+    }
+    else if(isHit) {
       setHitPopupVisible(true);
       document.getElementById(id).style.backgroundColor = "red";
       setTimeout(() => setHitPopupVisible(false), 2000);
@@ -103,11 +110,11 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
   )
 }
   
-function BoardRow({row, boardSize, ships, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, setHitPopupVisible}) {
+function BoardRow({row, boardSize, ships, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, setHitPopupVisible, setSunkPopupVisible}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
       let key = (myBoard? "my-" : "opponent-")+"square-"+row+"-"+i;
-      arr.push(<BoardSquare key={key} id={key} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus} setHitPopupVisible={setHitPopupVisible}/>);
+      arr.push(<BoardSquare key={key} id={key} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus} setHitPopupVisible={setHitPopupVisible} setSunkPopupVisible={setSunkPopupVisible}/>);
     }
     return (
       <div className="board-row">{arr}</div>
@@ -119,7 +126,7 @@ function Board({boardSize, presetBoard, myBoard, isSetupStage, myTurn, setMyTurn
     const [sunkPopupVisible, setSunkPopupVisible] = useState(false);
     let arr = [];
     for(let i=0; i<boardSize; i++) {
-      arr.push(<BoardRow key={"row"+i} row={i} boardSize={10} ships={presetBoard.slice((i*boardSize), ((i+1)*boardSize))} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus} setHitPopupVisible={setHitPopupVisible}/>);
+      arr.push(<BoardRow key={"row"+i} row={i} boardSize={10} ships={presetBoard.slice((i*boardSize), ((i+1)*boardSize))} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus} setHitPopupVisible={setHitPopupVisible} setSunkPopupVisible={setSunkPopupVisible}/>);
     }
     return (
       <div className="board">
@@ -181,7 +188,7 @@ function GameOverPopup({gameStatus}) {
   }
   return (
     <div style={{
-      backgroundColor: '#ff8ac7',
+      backgroundColor: 'white',
       color: 'black',
       fontSize: '200%',
       position: 'fixed',

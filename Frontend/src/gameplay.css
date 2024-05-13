@@ -21,9 +21,8 @@
 }
 
 #gameplay-instructions {
-    /* text-align: center; */
-    font-family: Georgia, serif;;
-    font-size: 200%;
+    font-family: Georgia, serif;
+    padding: 0 2%;
     width: 100%;
     text-align: center;
     font-weight: bold;
@@ -41,9 +40,7 @@
 }
 
 #board {
-    padding-top: 5%;
-    /*background-image: url('./images/water_background.png');
-    background-repeat: no-repeat;
+    padding-top: 2%;
 }
 
 .content-cell * {
