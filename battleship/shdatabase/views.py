@@ -32,7 +32,7 @@ class BoardViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 def room(request, room_name):
-    return render(request, "chat/room.html", {"room_name": room_name})
+    return render(request, "shdatabase/room.html", {"room_name": room_name})
 
 def new_board(board_size):
     """
