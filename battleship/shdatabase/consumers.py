@@ -19,17 +19,19 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        # message = text_data_json["message"]
+        # text_data_json = json.loads(text_data)
+        # message = text_data_json["message"] 
+        # we dont care about message content right now
 
         # Send wake-up to all players group
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "wake_up", "message": "Hey You"}
+            self.room_group_name, {"type": "wake_up", "message": "a player changed the game state"}
         )
 
     # Receive message from room group
     async def wake_up(self, event):
-        # message = event["message"]
+        # message = event["message"] 
+        # we dont care about message content right now
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({"message": "Hey, Wake Up"}))
+        await self.send(text_data=json.dumps({"message": "check game state"}))
