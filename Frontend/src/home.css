@@ -2,6 +2,7 @@
     cursor: pointer;
     border: 0;
     line-height: 2.5;
+    margin-bottom: 50px;
     padding-left: 50px;
     padding-right: 50px;
     font-size: 34px;
@@ -35,9 +36,6 @@ align-items: center;
 }
 
 
-.button:not(:last-child) {
-margin-bottom: 50px;
-}
 
 
 .popup-container {
@@ -64,13 +62,15 @@ margin-bottom: 50px;
   margin: 10px;
   padding: 10px 20px;
   border: none;
-  display: inline;
+  display: inline-block;
   border-radius: 5px;
   background-color: #007bff;
   color: white;
   font-size: 16px;
   cursor: pointer;
 }
+
+
 
 .popup-button.close {
   background-color: #dc3545;
@@ -101,5 +101,7 @@ margin-bottom: 50px;
   border-radius: 15px;
   background: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  width: 32%;
+  height: 30%;
 }
 

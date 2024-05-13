@@ -1,12 +1,13 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f8f8; /* Light gray background */
+    background-color: #f8f8f8; 
     padding: 20px;
 }
 
 h1 {
     font-family: Georgia, serif;
     text-align: center;
+    font-size: 5opx;
     padding: 10px;
 
 }
@@ -21,27 +22,22 @@ table {
 th, td {
     padding: 8px;
     text-align: left;
-    border-bottom: 1px solid #ddd; /* Gray border between rows */
+    border-bottom: 1px solid #ddd; 
 }
 
 th {
-    background-color: #f25a8e; /* Pink header background */
-    color: white; /* White text color */
+    background-color: #f25a8e; 
+    color: white; 
 }
 
-/* Alternating row background color */
+
 tbody tr:nth-child(even) {
-    background-color: #fce4ec; /* Light pink background */
+    background-color: #fce4ec; 
 }
 
-/* Hover effect on rows */
+
 tbody tr:hover {
-    background-color: #f8bbd0; /* Lighter pink background on hover */
+    background-color: #f8bbd0; 
 }
 
-.statstable {
-    display: inline-block
-}
-.stats-page-container{
-    display: inline-block
-}
+

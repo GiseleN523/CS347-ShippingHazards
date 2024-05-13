@@ -94,7 +94,7 @@ function HowToPlayButton() {
           Then place your ships in the postitions you would like.
           Each player will try to hit the ships of their opoenents on the grid. 
           Whoever sinks all of your oppenent's ships first, WINS!
-        <button className="popup-button"onClick={closePopup}>Close</button>
+        <button className="popup-button"onClick={closePopup}>X</button>
         </div>
       </div>
     );

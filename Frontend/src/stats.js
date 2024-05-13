@@ -19,7 +19,7 @@ const StatsTable = () => {
 
   return (
     <div className='statstable'>
-      <h1>Stats</h1>
+      <h1>Your Stats!</h1>
       <table>
         <thead>
           <tr>
@@ -54,11 +54,11 @@ const StatsTable = () => {
 function StatsPage() {
   const { playerID } = useParams();
   return (
-    <div className="stats-page-container">
-      <AccountPageSidebar />
-      <StatsTable />
-      
-    </div>
+    <div>
+    <HeaderAndNav/>
+     <StatsTable /> 
+     </div>
+  
   );
 }
 

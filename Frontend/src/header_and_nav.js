@@ -19,15 +19,21 @@ function Header({username}) {
 }
   
 function NavigationBar() {
-    return (
-      <nav>
-        <a href={"/home/"+playerID}>Home</a>
-        <a href={"/myaccount/"+playerID}>My Account</a>
-        <a href={"/aboutus/"+playerID}>About Us</a>
-      </nav>
-    )
+  return (
+    <nav className="nav">
+      <a href={"/home/" + playerID}>Home</a>
+      <div className="dropdown">
+        <span>My Account</span>
+        <div className="dropdown-content">
+          <a href={"/profile/" + playerID}>Profile</a>
+          <a href={`/myaccount/stats/${playerID}` + playerID}>Stats</a>
+          <a href={"/settings/" + playerID}>Settings</a>
+        </div>
+      </div>
+      <a href={"/aboutus/" + playerID}>About Us</a>
+    </nav>
+  );
 }
-
 function HeaderAndNav() {
   ({playerID} = useParams());
     return (
