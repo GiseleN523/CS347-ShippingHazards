@@ -2,13 +2,12 @@ import logo from './images/logo.png';
 import './header_and_nav.css'
 import { useParams } from 'react-router-dom';
 
+let username;
 
-let playerID;
-
-function Header({username}) {
+function Header() {
     return (
       <header>
-        <img src= {logo} alt="Logo" className="logo"/>
+        <img src= {logo} alt="Logo" id="logo"/>
         <span id="header-text">SHIPPING HAZARDS: A Game By Pink Puffy Rhinos</span>
         <div id="user-info">
           <p>Hello, {username}!</p>
@@ -20,25 +19,25 @@ function Header({username}) {
   
 function NavigationBar() {
   return (
-    <nav className="nav">
-      <a href={"/home/" + playerID}>Home</a>
+    <nav>
+      <a href={"/home/" + username}>Home</a>
       <span className="dropdown">
         <span>My Account</span>
         <span className="dropdown-content">
-          <a href={"/profile/" + playerID}>Profile</a>
-          <a href={"/myaccount/stats/" + playerID}>Stats</a>
-          <a href={"/settings/" + playerID}>Settings</a>
+          <a href={"/profile/" + username}>Profile</a>
+          <a href={"/myaccount/stats/" + username}>Stats</a>
+          <a href={"/settings/" + username}>Settings</a>
         </span>
       </span>
-      <a href={"/aboutus/" + playerID}>About Us</a>
+      <a href={"/aboutus/" + username}>About Us</a>
     </nav>
   );
 }
 function HeaderAndNav() {
-  ({playerID} = useParams());
+  ({username} = useParams());
     return (
         <div>
-            <Header username={playerID}/>
+            <Header />
             <NavigationBar />
         </div>
     )

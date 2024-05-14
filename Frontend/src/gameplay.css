@@ -5,10 +5,6 @@
     position: relative;
 }
 
-.board-row {
-    display: table-row;
-}
-
 .board-square {
     display: table-cell;
     border: 2px solid black;
@@ -16,12 +12,11 @@
     cursor: crosshair;
 }
 
-.board-square:hover {
+/*.board-square:hover {
     background-color: blue;
-}
+} */
 
 #gameplay-instructions {
-    font-family: Georgia, serif;
     padding: 0 2%;
     width: 100%;
     text-align: center;
@@ -54,9 +49,22 @@
     text-align: center;
     vertical-align: middle;
     font-size: 180%;
-    /* padding-bottom: 2%; */
 }
 
 button {
+    text-align: center;
+}
+
+#gameOverPopup {
+    background-color: white;
+    color: black;
+    font-size: 200%;
+    position: fixed;
+    width: 40%;
+    left: 27%;
+    top: 30%;
+    border: 5px solid black;
+    border-radius: 20px;
+    padding: 3%;
     text-align: center;
 }

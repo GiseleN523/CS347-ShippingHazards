@@ -5,7 +5,7 @@ import AccountPageSidebar from './myaccount.js';
 import { useParams } from 'react-router-dom';
 
 
-let playerID;
+let username;
 const StatsTable = () => {
  /*
   let attackBoard = the_json["attack_board"];
@@ -52,10 +52,10 @@ const StatsTable = () => {
 
 
 function StatsPage() {
-  const { playerID } = useParams();
+  const { username } = useParams();
   return (
     <div>
-    <HeaderAndNav/>
+    <HeaderAndNav usrename={username}/>
      <StatsTable /> 
      </div>
   

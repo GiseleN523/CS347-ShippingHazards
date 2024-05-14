@@ -1,22 +1,21 @@
 header {
     background-color: #ff8ac7;
     color: rgb(1, 1, 1);
-    margin: 0px;
+    margin: 0;
 }
   
 header * {
     vertical-align: middle;
-    margin: 0px;
+    margin: 0;
 }
   
-header .logo {
+header #logo {
     margin-right: 5%;
     height: 8em;
 }
   
 #header-text {
     font-size: 250%;
-    font-family: Georgia, serif;
     font-weight: bold;
 }
 
@@ -32,8 +31,8 @@ header #user-info a {
 }
 
 nav {
-    margin: 0px;
-    padding: 1.2% 0%;
+    margin: 0;
+    padding: 1.2% 0;
     background-color: black;
     color: white;
     display: block;
@@ -46,7 +45,6 @@ nav a{
     display: inline;
     font-weight: bold;
     font-size: 150%;
-    font-family: Georgia, serif;
     text-decoration: none;
     text-align: center;
     cursor: pointer;
@@ -64,7 +62,6 @@ nav a:hover {
     display: inline;
     font-weight: bold;
     font-size: 20px;
-    font-family: Georgia, serif;
     text-decoration: none;
     text-align: center;
     cursor: pointer;

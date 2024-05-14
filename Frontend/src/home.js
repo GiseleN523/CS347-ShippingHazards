@@ -4,7 +4,10 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 
-let playerID;
+let username;
+const playerID = 5;
+const boardSize = 10;
+const numShips = 4;
 
 function PlayButton() {
   return (
@@ -48,21 +51,14 @@ function PlayMainCompButton () {
 }
 
 function PlayCompButton({aiID}) {
-  let gameID = 1;
-  let playerID = 5;
-  let boardSize = 10;
 
   function redirectBrowser(the_json){
-      gameID = the_json["game_id"];
-      window.location.replace("/game/"+playerID+"/"+gameID+"/"+boardSize);
+      let gameID = the_json["game_id"];
+      window.location.replace("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username);
   }
 
   function handleClick() {
-    let playerID = 5;
-    let numShips = 4;
-    let boardSize = 10;
-    let isAiGame = "true";
-    let url = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
+    let url = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + "true";
     fetch(url).then( response => response.json() ).then( the_json => redirectBrowser(the_json)); // Matt
   }
   return (
@@ -110,10 +106,10 @@ function HowToPlayButton() {
 }
 
 function Home() {
-  ({playerID} = useParams());
+  ({username} = useParams());
   return (
     <div className="header/nav">
-      <HeaderAndNav playerID={playerID}/>
+      <HeaderAndNav username={username}/>
       <div className="buttons-container">
         <PlayButton />
         <PlayMainCompButton />
