@@ -113,35 +113,22 @@ def get_opponent(game, player_id):
     else:
         raise ValueError("Game ID does not correspond to Player ID")     
 
-def get_state(request, game_id, player_id, is_my_board):
+def get_state(request, game_id, player_id):
     """
-    API endpoint that returns board and game states.
+    API endpoint that returns the board state and game state of the specified player and game.
     """
     game = Game.objects.get(id = game_id) 
-    if is_my_board == "true":
-        board = get_player_board(game, player_id)
-        return JsonResponse({"ship_board": board.ship_board,
-                            "attack_board": board.attack_board,
-                            "is_hit": board.is_hit,
-                            "is_sunk": board.is_sunk,
-                            "shot_row": board.shot_row,
-                            "shot_col": board.shot_col,
-                            "turn": game.turn,
-                            "status": game.status})
-    
-    elif is_my_board == "false":
-        opponent_id = get_opponent(game, player_id)
-        board = get_player_board(game, opponent_id)
-        return JsonResponse({"attack_board": board.attack_board,
-                            "is_hit": board.is_hit,
-                            "is_sunk": board.is_sunk,
-                            "shot_row": board.shot_row,
-                            "shot_col": board.shot_col,
-                            "turn": game.turn,
-                            "status": game.status}) 
-                   
-    else:
-        raise ValueError("is_my_board must be 'true' or 'false'")
+    board = get_player_board(game, player_id)
+    return JsonResponse({"ship_board": board.ship_board,
+                        "attack_board": board.attack_board,
+                        "combined_board": board.combined_board,
+                        "is_hit": board.is_hit,
+                        "is_sunk": board.is_sunk,
+                        "shot_row": board.shot_row,
+                        "shot_col": board.shot_col,
+                        "turn": game.turn,
+                        "status": game.status})
+
 
 def is_player_turn(game, player_id):
     """
