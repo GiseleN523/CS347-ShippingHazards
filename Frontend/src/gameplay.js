@@ -28,7 +28,7 @@ function entireShipAt(id, board) {
   return coords;
 }
 
-function updateBoardAndTurn(the_json, myBoard, setGameStatus, myTurn, setMyTurn, setHitPopupVisible=null, setSunkPopupVisible=null) {
+function updateBoardAndTurn(the_json, myBoard, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible) {
   let shipBoard = the_json["ship_board"];
   let attackBoard = the_json["attack_board"];
   let combinedBoard = the_json["combined_board"];
@@ -42,23 +42,15 @@ function updateBoardAndTurn(the_json, myBoard, setGameStatus, myTurn, setMyTurn,
   if(shotRow != -1 && shotCol != -1 && (turn == 0) != myTurn) { // game has started and this turn just happened
     let id = myBoard ? "mysquare-"+shotRow+"-"+shotCol : "opponentsquare-"+shotRow+"-"+shotCol;
     if(isHit && isSunk) {
-      if(setSunkPopupVisible != null) {
-        setSunkPopupVisible(true);
-      }
+      setSunkPopupVisible(true);
       document.getElementById(id).style.backgroundColor = "red";
-      if(setSunkPopupVisible != null) {
-        setTimeout(() => setSunkPopupVisible(false), 2000);
-      }
+      setTimeout(() => setSunkPopupVisible(false), 2000);
       entireShipAt(id, shipBoard).forEach((square) => document.getElementById((myBoard ? "mysquare-" : "opponentsquare-")+square[0]+"-"+square[1]).style.backgroundColor = "gray");
     }
     else if(isHit) {
-      if(setHitPopupVisible != null) {
-        setHitPopupVisible(true);
-      }
+      setHitPopupVisible(true);
       document.getElementById(id).style.backgroundColor = "red";
-      if(setHitPopupVisible != null) {
-        setTimeout(() => setHitPopupVisible(false), 2000)
-      };
+      setTimeout(() => setHitPopupVisible(false), 2000)
     }
     else {
       document.getElementById(id).style.backgroundColor = "white";
@@ -68,12 +60,12 @@ function updateBoardAndTurn(the_json, myBoard, setGameStatus, myTurn, setMyTurn,
   }
 }
 
-function fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus, setHitPopupVisible}) {
+function fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible}) {
   let url = "/play/get-state/"+gameID+"/"+playerID;
   fetch(url)
     .then( response => response.json())
-    .then( the_json => updateBoardAndTurn(the_json, true, setGameStatus, myTurn, setMyTurn, setHitPopupVisible) )
-    .then(setTimeout(() => fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus, setHitPopupVisible}), 2000));
+    .then( the_json => updateBoardAndTurn(the_json, true, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible) )
+    .then(setTimeout(() => fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible}), 2000));
 }
 
 function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, setHitPopupVisible, setSunkPopupVisible}) {
@@ -150,6 +142,9 @@ function Board({presetBoard=blankBoard, myBoard, isSetupStage, myTurn, setMyTurn
     for(let i=0; i<boardSize; i++) {
       let ships = presetBoard.slice((i*boardSize), ((i+1)*boardSize));
       arr.push(<BoardRow key={"row"+i} row={i} ships={ships} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus} setHitPopupVisible={setHitPopupVisible} setSunkPopupVisible={setSunkPopupVisible}/>);
+    }
+    if(myBoard) {
+      setTimeout(() => fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible}), 2000);
     }
     return (
       <div className="board">
@@ -239,7 +234,6 @@ function GamePlay() {
     const [isSetupStage, setIsSetupStage] = useState(true);
     const [myTurn, setMyTurn] = useState(true);
     const [gameStatus, setGameStatus] = useState(0);
-    setTimeout(() => fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus}), 2000)
     return (
       <div>
         <HeaderAndNav username={username}/>
