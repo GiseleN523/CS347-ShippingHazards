@@ -4,6 +4,7 @@ import threading
 from ai_player.ai import BattleShipAI
 import time
 import websockets
+import asyncio
 
 app = Flask(__name__)
 
@@ -21,17 +22,16 @@ def start_new_game(player1_id, player2_id, num_ships, board_size, game_id):
 
 async def run_game(player1_id, player2_id, num_ships, board_size, game_id):
     
-    
-    
     # setup the ships
     ship_board = "-a---------a--------------------cccc-----------d---------d---------d---------d------bbb-------------"
 
+    url = 'http://web:8000/play/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
+    response = requests.get(url)
+    
     ### establish the websocket
     url = "ws://web:8000/ws/play/{}/".format(game_id) 
     async with websockets.connect(url) as websocket:
 
-        url = 'http://web:8000/play/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
-        response = requests.get(url)
 
         # initialize the ai player
         ai = BattleShipAI()
