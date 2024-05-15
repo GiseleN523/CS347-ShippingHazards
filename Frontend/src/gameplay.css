@@ -2,35 +2,31 @@
     display: table;
     margin: auto;
     background-image: url('./images/water_background.png');
-}
-
-.board-row {
-    display: table-row;
+    position: relative;
 }
 
 .board-square {
     display: table-cell;
     border: 2px solid black;
     padding: 1.5vw;
-    cursor: pointer;
+    cursor: crosshair;
 }
 
-.board-square:hover {
+/*.board-square:hover {
     background-color: blue;
-}
+} */
 
 #gameplay-instructions {
-    font-family: Georgia, serif;;
-    font-size: 200%;
+    padding: 0 2%;
     width: 100%;
     text-align: center;
     font-weight: bold;
-    padding: 2% 0% 1% 0%;
 }
 
 #content {
     display: table;
     width: 100%;
+    padding: 2% 0;
 }
 
 .content-row {
@@ -39,9 +35,7 @@
 }
 
 #board {
-    padding-top: 5%;
-    /*background-image: url('./images/water_background.png'); */
-    background-repeat: no-repeat;
+    padding-top: 2%;
 }
 
 .content-cell * {
@@ -50,13 +44,27 @@
 
 .content-cell {
     display: table-cell;
-    width: 50%;
-    margin: auto;
+    width: auto;
+    margin: 0;
     text-align: center;
+    vertical-align: middle;
     font-size: 180%;
-    padding: .5% 0%;
 }
 
 button {
+    text-align: center;
+}
+
+#gameOverPopup {
+    background-color: white;
+    color: black;
+    font-size: 200%;
+    position: fixed;
+    width: 40%;
+    left: 27%;
+    top: 30%;
+    border: 5px solid black;
+    border-radius: 20px;
+    padding: 3%;
     text-align: center;
 }

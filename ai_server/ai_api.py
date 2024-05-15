@@ -34,7 +34,7 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
     # call get_state
     # params = {'game_id': game_id,
     #           'player2_id': player2_id}
-    url = 'http://web:8000/play/get-state/{}/{}/false'.format(game_id, player2_id)
+    url = 'http://web:8000/play/get-state/{}/{}'.format(game_id, player1_id)
     response = requests.get(url)
     data = response.json()
     # save game_status, my_turn, and attack_board in vars
@@ -47,7 +47,7 @@ def run_game(player1_id, player2_id, num_ships, board_size, game_id):
         time.sleep(2)
         # params = {'game_id': game_id,
         #       'player2_id': player2_id}
-        url = 'http://web:8000/play/get-state/{}/{}/false'.format(game_id, player2_id)
+        url = 'http://web:8000/play/get-state/{}/{}'.format(game_id, player1_id)
         response = requests.get(url)
         data = response.json()
         ai.attackBoard = data["attack_board"] 
