@@ -3,6 +3,7 @@ import requests
 import threading
 from ai_player.ai import BattleShipAI
 import time
+import websockets
 
 app = Flask(__name__)
 
@@ -18,54 +19,61 @@ def start_new_game(player1_id, player2_id, num_ships, board_size, game_id):
 
     return ""
 
-def run_game(player1_id, player2_id, num_ships, board_size, game_id):
+async def run_game(player1_id, player2_id, num_ships, board_size, game_id):
+    
+    
+    
     # setup the ships
     ship_board = "-a---------a--------------------cccc-----------d---------d---------d---------d------bbb-------------"
-    # params = {'game_id': game_id,
-    #           'player2_id': player2_id,
-    #           'ship_board': ship_board}
-    url = 'http://web:8000/play/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
-    response = requests.get(url)
-    # initialize the ai player
-    ai = BattleShipAI()
-    ai.attackBoard = "-"*100
-    ai.type = ai_player_ids[player2_id]    # set its type to the corresponding player2_id
-    
-    # call get_state
-    # params = {'game_id': game_id,
-    #           'player2_id': player2_id}
-    url = 'http://web:8000/play/get-state/{}/{}'.format(game_id, player1_id)
-    response = requests.get(url)
-    data = response.json()
-    # save game_status, my_turn, and attack_board in vars
-    ai.attackBoard = data["attack_board"] 
-    my_turn = data["turn"]
-    game_status = data["status"]
 
-    # while the game isnt over (game_status == 0) 
-    while game_status == 0:
-        time.sleep(2)
-        # params = {'game_id': game_id,
-        #       'player2_id': player2_id}
-        url = 'http://web:8000/play/get-state/{}/{}'.format(game_id, player1_id)
+    ### establish the websocket
+    url = "ws://web:8000/ws/play/{}/".format(game_id) 
+    async with websockets.connect(url) as websocket:
+
+        url = 'http://web:8000/play/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
         response = requests.get(url)
+
+        # initialize the ai player
+        ai = BattleShipAI()
+        ai.attackBoard = "-"*100
+        ai.type = ai_player_ids[player2_id]    # set its type to the corresponding player2_id
+        
+
+        
+        # any time I have a get state, change for response = await websocket.recv()
+        # url = 'http://web:8000/play/get-state/{}/{}'.format(game_id, player1_id)
+        # response = requests.get(url)
+        response = await websocket.recv()
+
         data = response.json()
+        # save game_status, my_turn, and attack_board in vars
         ai.attackBoard = data["attack_board"] 
         my_turn = data["turn"]
         game_status = data["status"]
-        ai.previousShotHit = data["is_hit"]
-        ai.previousShotRow = data["shot_row"]
-        ai.previousShotCol = data["shot_col"]
-        if my_turn == 2:
-            row, col = ai.getMove()
-            # params = {'game_id': game_id,
-            #         'player2_id': player2_id,
-            #         'row': row,
-            #         'col': col}
-            # do we need to sleep here??
+
+        # while the game isnt over (game_status == 0) 
+        while game_status == 0:
             time.sleep(2)
-            url = 'http://web:8000/play/fire-shot/{}/{}/{}/{}'.format(game_id, player2_id, row, col) 
-            response = requests.get(url)
+                
+            # any time I have a get state, change for response = await websocket.recv()
+            # url = 'http://web:8000/play/get-state/{}/{}'.format(game_id, player1_id)
+            # response = requests.get(url)
+            response = await websocket.recv()
+
+            data = response.json()
+            ai.attackBoard = data["attack_board"] 
+            my_turn = data["turn"]
+            game_status = data["status"]
+            ai.previousShotHit = data["is_hit"]
+            ai.previousShotRow = data["shot_row"]
+            ai.previousShotCol = data["shot_col"]
+            if my_turn == 2:
+                row, col = ai.getMove()
+               
+
+                time.sleep(2)
+                url = 'http://web:8000/play/fire-shot/{}/{}/{}/{}'.format(game_id, player2_id, row, col) 
+                response = requests.get(url)
      
     return
 
