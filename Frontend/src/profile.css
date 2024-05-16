@@ -1,0 +1,27 @@
+main {
+    font-size: 150%;
+    font-weight: bold;
+    margin: 2.5% 2%;
+}
+
+#account {
+    font-size: 175%;
+    margin-bottom: 1.5em;
+}
+
+label {
+    font-weight: bold;
+    padding-right: 1%;
+}
+
+input {
+    margin-bottom: 1.5em;
+}
+
+#password2 {
+    margin-bottom: 2em;
+}
+
+button {
+    margin-top: 2em;
+}

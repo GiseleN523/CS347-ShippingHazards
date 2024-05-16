@@ -22,11 +22,10 @@ function NavigationBar() {
     <nav>
       <a href={"/home/" + username}>Home</a>
       <span className="dropdown">
-        <span>My Account</span>
+        My Account
         <span className="dropdown-content">
-          <a href={"/profile/" + username}>Profile</a>
+          <a href={"/profile/" + username}>Profile & Settings</a>
           <a href={"/myaccount/stats/" + username}>Stats</a>
-          <a href={"/settings/" + username}>Settings</a>
         </span>
       </span>
       <a href={"/aboutus/" + username}>About Us</a>
