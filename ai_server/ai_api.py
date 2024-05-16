@@ -3,9 +3,12 @@ import requests
 import threading
 from ai_player.ai import BattleShipAI
 import time
-import websockets
-import asyncio
+# Now using this library:
+#   https://websocket-client.readthedocs.io/en/latest/index.html
+import websocket
+import json
 import sys
+import random
 
 app = Flask(__name__)
 
@@ -17,22 +20,48 @@ ai_player_ids = {"1": "inOrder",
 @app.route('/new-game/<player1_id>/<player2_id>/<num_ships>/<board_size>/<game_id>') 
 def start_new_game(player1_id, player2_id, num_ships, board_size, game_id):
     
-    ai_thread = threading.Thread(target=start_async, args=(player1_id, player2_id, num_ships, board_size, game_id))
+    ai_thread = threading.Thread(target=start_ai, args=(player1_id, player2_id, num_ships, board_size, game_id))
     ai_thread.start()
-
-    #asyncio.run(run_game(player1_id, player2_id, num_ships, board_size, game_id))
     
     return ""
 
-def start_async(player1_id, player2_id, num_ships, board_size, game_id):
+def start_ai(player1_id, player2_id, num_ships, board_size, game_id):
+    
+    def on_message(ws, message):
+        sys.stderr.write("AI Received: " + message + "/n")
+        message_dict = json.loads(message)
+        inner_dict = json.loads(message_dict['message'])
+        if (inner_dict['turn'] == 2):
+            row = random.randint(0,6)
+            col = random.randint(0,6)
+            url = 'http://web:8000/play/fire-shot/{}/{}/{}/{}'.format(game_id, player2_id, row, col)
+            response = requests.get(url)
 
-    async def run_game():
+    def on_open(ws):
+        ship_board = "-a---------a--------------------cccc-----------d---------d---------d---------d------bbb-------------"
+        url = 'http://web:8000/play/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
+        response = requests.get(url)
+
+    ###############################
+    #BODY of start_ai function
+    ws_url = "ws://web:8000/ws/play/{}/".format(game_id) 
+    wsapp = websocket.WebSocketApp(ws_url, on_message=on_message, on_open=on_open)
+    wsapp.run_forever()
+    ###############################
+
+        
+
+    #run_game is not currently being called
+    def run_game():
         sys.stderr.write("run game" + str(game_id) + "\n")
     
         ### establish the websocket
         ws_url = "ws://web:8000/ws/play/{}/".format(game_id) 
-        async with websockets.connect(ws_url) as websocket:
 
+        if ws_url != None:
+
+            sys.stderr.write("websocket established \n")
+            
             # setup the ships
             ship_board = "-a---------a--------------------cccc-----------d---------d---------d---------d------bbb-------------"
             url = 'http://web:8000/play/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
@@ -49,7 +78,7 @@ def start_async(player1_id, player2_id, num_ships, board_size, game_id):
             # url = 'http://web:8000/play/get-state/{}/{}'.format(game_id, player1_id)
             # response = requests.get(url)
 
-            response = await websocket.recv()
+            #response = await websocket.recv()
 
             data = response.json()
             # save game_status, my_turn, and attack_board in vars
@@ -63,7 +92,7 @@ def start_async(player1_id, player2_id, num_ships, board_size, game_id):
                 # any time I have a get state, change for response = await websocket.recv()
                 # url = 'http://web:8000/play/get-state/{}/{}'.format(game_id, player1_id)
                 # response = requests.get(url)
-                response = await websocket.recv()
+                #response = await websocket.recv()
 
                 data = response.json()
                 ai.attackBoard = data["attack_board"] 
@@ -77,13 +106,8 @@ def start_async(player1_id, player2_id, num_ships, board_size, game_id):
                     url = 'http://web:8000/play/fire-shot/{}/{}/{}/{}'.format(game_id, player2_id, row, col) 
                     response = requests.get(url)
      
-        return
+    
 
-    sys.stderr.write("Testing \n")
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(run_game())
-    loop.close()
-    return
 
 if __name__ == '__main__':
     host = '0.0.0.0'

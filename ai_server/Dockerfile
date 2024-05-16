@@ -4,7 +4,8 @@ WORKDIR /code
 
 RUN pip install flask
 RUN pip install requests
-RUN pip install websockets
+#RUN pip install websockets
+RUN pip install websocket-client
 
 EXPOSE 5555
 
