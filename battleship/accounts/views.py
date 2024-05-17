@@ -9,5 +9,6 @@ class SignUpView(CreateView):
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
 
+
 #Calls the authenticate on the data. 
 
