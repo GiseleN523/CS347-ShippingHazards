@@ -10,7 +10,6 @@ urlpatterns = [
 ]
 
 
-
 #Example Paths
     # path("", views.StartingPageView.as_view(), name="starting-page"),
     # path("posts", views.AllPostView.as_view(), name="posts-page"),
