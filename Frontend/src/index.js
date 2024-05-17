@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './home.js';
+import CreateAccount from './createaccount.js'
 import AboutUs from './aboutus.js';
 import MyAccount from './myaccount.js';
 import GamePlay from './gameplay.js';
@@ -15,6 +16,7 @@ ReactDOM.render(
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/createaccount/" element={<CreateAccount />} />
         <Route path="/home/:username" element={<Home />} />
         <Route path="/myaccount/:username" element={<MyAccount />} />
         <Route path="/aboutus/:username" element={<AboutUs />} />
