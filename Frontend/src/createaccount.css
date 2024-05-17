@@ -1,0 +1,117 @@
+
+
+.mainContainer {
+
+    background-image: url('./images/login_background.png');
+    background-size: cover;
+    background-position: center; 
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.gametitle {
+    text-align: center;
+    font-size: 50px ;
+    color: #c63c83;
+    font-weight: bolder;
+    font-family: Georgia, serif; ;
+}
+  
+.loginContainer { 
+    background-color: white;
+    padding: 10px;
+    position: center;
+    border-radius: 20px;
+}
+
+
+.titleContainer {
+    color: black;
+    display: flex;
+    flex-direction: column;
+    font-size: 40px;
+    
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, serif;
+    }
+
+.resultContainer,
+.historyItem {
+    flex-direction: row;
+    display: flex;
+    width: 400px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.historyContainer {
+    flex-direction: column;
+    display: flex;
+    height: 200px;
+    align-items: center;
+    flex-grow: 5;
+    justify-content: flex-start;
+}
+
+/*.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 260px;
+}
+*/
+
+.inputButton {
+    justify-content: center;
+    cursor: pointer;
+    border: 0;
+    line-height: 2.5;
+    padding-left: 50px;
+    padding-right: 50px;
+    font-size: 20px;
+    font-family: Georgia, serif;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    text-shadow: 1px 1px 1px #000;
+    border-radius: 10px;
+    background-color: black;
+    background-image: linear-gradient(
+      to top left,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0.2) 30%,
+      rgba(0, 0, 0, 0)
+    );
+    box-shadow:
+      inset 2px 2px 3px rgba(255, 255, 255, 0.6),
+      inset -2px -2px 3px rgba(0, 0, 0, 0.6);
+}
+
+.inputButton:hover {
+    background-color: #ff8ac7;
+    }
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.inputContainer > .errorLabel {
+    color: red;
+    font-size: 12px;
+}
+
+.inputBox {
+    height: 48px;
+    width: 400px;
+    font-size: large;
+    border-radius: 8px;
+    border: 1px solid grey;
+    padding-left: 8px;
+}
