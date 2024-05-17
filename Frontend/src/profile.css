@@ -9,19 +9,19 @@ main {
     margin-bottom: 1.5em;
 }
 
-label {
+#profileSettings label {
     font-weight: bold;
     padding-right: 1%;
 }
 
-input {
+#profileSettings input {
     margin-bottom: 1.5em;
 }
 
-#password2 {
+#profileSettings #password2 {
     margin-bottom: 2em;
 }
 
-button {
+#profileSettings button {
     margin-top: 2em;
 }

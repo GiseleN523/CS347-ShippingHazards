@@ -14,7 +14,7 @@ function ProfilePage() {
       <HeaderAndNav username={username}/>
       <main>
         <div id="account">Account name: {username}</div>
-        <form>
+        <form id="profileSettings">
             <label for="password">New password:</label><br></br>
             <input type="password" id="password" name="password"></input><br></br>
             <label for="password2">Retype new password:</label><br></br>
