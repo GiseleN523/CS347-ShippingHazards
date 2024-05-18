@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import {useNavigate } from 'react-router-dom'
 import './login.css'
+import lobbyMusic from './sounds/lobbyMusic.mp3';
+
+
+
 
 function TextInputField({password, placeholder, value, setValue, errorVisible}) {
   return (
@@ -48,6 +52,10 @@ function LoginFields({setShowAccountCreation, navigate}) {
       fetch(url)
         .then( response => response.json())
         .then(the_json => attemptLogin(the_json));
+
+      const audio = new Audio(lobbyMusic);
+      audio.loop = true;
+      audio.play(); 
     }
   }
 
@@ -100,6 +108,7 @@ function AccountCreationFields({setShowAccountCreation, navigate}) {
         .then( response => response.json())
         .then(the_json => attemptCreation(the_json));
     }
+    
   }
   return (
     <div>

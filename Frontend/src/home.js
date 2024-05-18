@@ -3,11 +3,8 @@ import HeaderAndNav from './header_and_nav.js';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import lobbyMusic from './sounds/lobbyMusic.mp3';
 
-/*const audio = new Audio(lobbyMusic);
-audio.loop = true;
-audio.play(); */
+
 
 let username;
 const playerID = 5;

@@ -6,7 +6,12 @@ import { useParams } from 'react-router-dom';
 let playerID
 let username;
 
-function StatsTable({ wins, losses, num_of_ships_sunk }) {
+function StatsTable({ the_json}) {
+
+  let winStats = the_json["wins"];
+  let lossStats = the_json["losses"];
+  let shipsStats = the_json["num_of_ships_sunk"];
+
   return (
     <div className='statstable'>
       <h1>Your Stats!</h1>
@@ -20,15 +25,15 @@ function StatsTable({ wins, losses, num_of_ships_sunk }) {
         <tbody>
           <tr>
             <td>Wins</td>
-            <td>{wins}</td>
+            <td>{winStats}</td>
           </tr>
           <tr>
             <td>Losses</td>
-            <td>{losses}</td>
+            <td>{lossStats}</td>
           </tr>
           <tr>
             <td>Ships Sunk</td>
-            <td>{num_of_ships_sunk}</td>
+            <td>{shipsStats}</td>
           </tr>
         </tbody>
       </table>
@@ -40,21 +45,15 @@ function StatsPage() {
   const { username } = useParams();
   const [stats, setStats] = useState(null);
 
-  useEffect(() => {
-    let playerID = username;  
-    let url = `/get-player-info/${playerID}`;
-
+    let url = "/get-player-info/"+playerID;
     fetch(url)
       .then(response => response.json())
-      .then(the_json => {
-        setStats(the_json);
-      });
-  }, [username]);
+      .then(the_json => {setStats(the_json)});
 
   return (
     <div>
       <HeaderAndNav username={username} />
-      <StatsTable stats={stats} />
+      <StatsTable />
     </div>
   );
 }
