@@ -5,21 +5,19 @@ import { useParams } from 'react-router-dom';
 import hitImage from './images/HitPopup.png';
 import sunkImage from './images/SunkPopup.png';
 
+const blankBoard = "----------------------------------------------------------------------------------------------------";
 let playerBoard = "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd";
 let playerID;
 let opponentID;
 let username;
 let gameID;
 let boardSize;
-const blankBoard = "----------------------------------------------------------------------------------------------------";
-let socket = new WebSocket("ws://web:8000/ws/play/"+gameID+"/");
+let socket;
 
-// Based on Matt's initializeNumbers function
-function initializeSocket(myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible){
-  socket = new WebSocket("ws://web:8000/ws/play/"+gameID+"/");
-  socket.onmessage = (e) => fetchUpdateFromOpponent(e.data["message"], myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible);
-}
 
+//returns a list of coordinates of the other squares that make up the ship at given coordinates
+//input ex: [0, 0]
+//output ex: [[0, 1], [0, 2], [0, 3]]
 function entireShipAt(id, board) {
   let row = Number(id.slice(id.indexOf("-")+1, id.lastIndexOf("-")));
   let col = Number(id.slice(id.lastIndexOf("-")+1));
@@ -35,48 +33,7 @@ function entireShipAt(id, board) {
   return coords;
 }
 
-function updateBoardAndTurn(the_json, myBoard, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible) {
-  let shipBoard = the_json["ship_board"];
-  let attackBoard = the_json["attack_board"];
-  let combinedBoard = the_json["combined_board"];
-  let isHit = the_json["is_hit"];
-  let isSunk = the_json["is_sunk"];
-  let shotRow = the_json["shot_row"];
-  let shotCol = the_json["shot_col"];
-  let turn = the_json["turn"];
-  let status = the_json["status"];
-
-  if(shotRow != -1 && shotCol != -1 && (turn == 0) != myTurn) { // game has started and this turn just happened
-    let id = myBoard ? "mysquare-"+shotRow+"-"+shotCol : "opponentsquare-"+shotRow+"-"+shotCol;
-    if(isHit && isSunk) {
-      setSunkPopupVisible(true);
-      document.getElementById(id).style.backgroundColor = "red";
-      setTimeout(() => setSunkPopupVisible(false), 2000);
-      entireShipAt(id, shipBoard).forEach((square) => document.getElementById((myBoard ? "mysquare-" : "opponentsquare-")+square[0]+"-"+square[1]).style.backgroundColor = "gray");
-    }
-    else if(isHit) {
-      setHitPopupVisible(true);
-      document.getElementById(id).style.backgroundColor = "red";
-      setTimeout(() => setHitPopupVisible(false), 2000)
-    }
-    else {
-      document.getElementById(id).style.backgroundColor = "white";
-    }
-    setGameStatus(status);
-    setMyTurn(turn == 1 ? true : false);
-  }
-}
-
-function fetchUpdateFromOpponent(the_json, myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible) {
-  updateBoardAndTurn(the_json, true, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible);
-  //let url = "/play/get-state/"+gameID+"/"+playerID;
-  //fetch(url)
-    //.then( response => response.json())
-    //.then( the_json => updateBoardAndTurn(the_json, true, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible) )
-    //.then(setTimeout(() => fetchUpdateFromOpponent(myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible), 2000));
-}
-
-function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, setHitPopupVisible, setSunkPopupVisible}) {
+function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, gameStatus}) {
   const myShip = occupied;
   const [hoverable, setHoverable] = useState(true);
   function handleClickSetup() {
@@ -88,13 +45,7 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
     if(!myBoard && myTurn && gameStatus == 0 && document.getElementById(id).style.backgroundColor != "white" && document.getElementById(id).style.backgroundColor != "red") {
       setHoverable(false);
       let url = "/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
-      let url2 = "/play/get-state/"+gameID+"/"+opponentID;
-      fetch(url)
-        .then(function() {
-          fetch(url2)
-            .then(response => response.json())
-            .then(the_json => updateBoardAndTurn(the_json, false, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible));
-        })
+      fetch(url);
     }
   }
   function handleMouseEnter() {
@@ -132,30 +83,30 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
   )
 }
   
-function BoardRow({row, ships, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, setHitPopupVisible, setSunkPopupVisible}) {
+function BoardRow({row, ships, myBoard, isSetupStage, myTurn, gameStatus}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
       let key = (myBoard? "mysquare-" : "opponentsquare-")+row+"-"+i;
-      arr.push(<BoardSquare key={key} id={key} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus} setHitPopupVisible={setHitPopupVisible} setSunkPopupVisible={setSunkPopupVisible}/>);
+      arr.push(<BoardSquare key={key} id={key} row={row} column={i} occupied={(ships[i] != "-")} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} gameStatus={gameStatus} />);
     }
     return (
       <div className="board-row">{arr}</div>
     )
 }
   
-function Board({myBoard, presetBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, hitPopupVisible, setHitPopupVisible, sunkPopupVisible, setSunkPopupVisible}) {
-    let arr = [];
-    for(let i=0; i<boardSize; i++) {
-      let ships = presetBoard.slice((i*boardSize), ((i+1)*boardSize));
-      arr.push(<BoardRow key={"row"+i} row={i} ships={ships} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus} setHitPopupVisible={setHitPopupVisible} setSunkPopupVisible={setSunkPopupVisible}/>);
-    }
-    return (
-      <div className="board">
-        {arr}
-        <ComicPopup isVisible={hitPopupVisible} image={hitImage}></ComicPopup>
-        <ComicPopup isVisible={sunkPopupVisible} image={sunkImage}></ComicPopup>
-      </div>
-    )
+function Board({myBoard, presetBoard, isSetupStage, myTurn, gameStatus, hitPopupVisible, sunkPopupVisible}) {
+  let arr = [];
+  for(let i=0; i<boardSize; i++) {
+    let ships = presetBoard.slice((i*boardSize), ((i+1)*boardSize));
+    arr.push(<BoardRow key={"row"+i} row={i} ships={ships} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} gameStatus={gameStatus} />);
+  }
+  return (
+    <div className="board">
+      {arr}
+      <ComicPopup isVisible={hitPopupVisible} image={hitImage}></ComicPopup>
+      <ComicPopup isVisible={sunkPopupVisible} image={sunkImage}></ComicPopup>
+    </div>
+  )
 }
   
 function Instructions({isSetupStage, myTurn}) {
@@ -230,65 +181,121 @@ function ComicPopup({isVisible, image}) {
     </div>
   )
 }
+
+function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupStage, myTurn, setMyTurn, hitPopup1Visible, setHitPopup1Visible, hitPopup2Visible, setHitPopup2Visible, sunkPopup1Visible, setSunkPopup1Visible, sunkPopup2Visible, setSunkPopup2Visible}) {
+
+    if(socket == undefined) {
+      socket = new WebSocket("ws://localhost:8000/ws/play/"+gameID+"/");
+      socket.onmessage = function(e) {
+        let message = JSON.parse(JSON.parse(e.data)["message"]);
+        updateBoardAndTurn(message);
+      };
+    }
+    
+    function updateBoardAndTurn(the_json) {
+      let myBoard = the_json["player_id"] == playerID;
+      let shipBoard = the_json["ship_board"];
+      let attackBoard = the_json["attack_board"];
+      let combinedBoard = the_json["combined_board"];
+      let isHit = the_json["is_hit"];
+      let isSunk = the_json["is_sunk"];
+      let shotRow = the_json["shot_row"];
+      let shotCol = the_json["shot_col"];
+      let turn = the_json["turn"];
+      let status = the_json["status"];
+    
+      let id = myBoard ? "mysquare-"+shotRow+"-"+shotCol : "opponentsquare-"+shotRow+"-"+shotCol;
+      if(isHit && isSunk) {
+        myBoard ? setSunkPopup1Visible(true) : setSunkPopup2Visible(true);
+        document.getElementById(id).style.backgroundColor = "red";
+        setGameStatus(status);
+        setMyTurn(turn === 1);
+        setTimeout(function () {
+          myBoard ? setSunkPopup1Visible(false) : setSunkPopup2Visible(false);
+          entireShipAt(id, shipBoard).forEach((square) => document.getElementById((myBoard ? "mysquare-" : "opponentsquare-")+square[0]+"-"+square[1]).style.backgroundColor = "gray");
+        }, 2000);
+      }
+      else if(isHit) {
+        myBoard ? setHitPopup1Visible(true) : setHitPopup2Visible(true);
+        document.getElementById(id).style.backgroundColor = "red";
+        setGameStatus(status);
+        setMyTurn(turn === 1);
+        setTimeout(() => myBoard ? setHitPopup1Visible(false) : setHitPopup2Visible(false), 2000);
+      }
+      else {
+        document.getElementById(id).style.backgroundColor = "white";
+        setGameStatus(status);
+        setMyTurn(turn === 1);
+      }
+    }
+    return (
+      <div id="content">
+        <div className="content-row">
+          <div className="content-cell" style={{width: '40%'}}>YOUR BOARD</div>
+          <div className="content-cell" style={{width: '20%'}}></div>
+          <div className="content-cell" style={{width: '40%'}}>OPPONENT BOARD</div>
+        </div>
+        <div className="content-row">
+          <div className="content-cell" style={{width: '40%'}}>
+            <Board 
+              myBoard={true} 
+              presetBoard={playerBoard} 
+              isSetupStage={isSetupStage} 
+              myTurn={myTurn} 
+              gameStatus={gameStatus} 
+              hitPopupVisible={hitPopup1Visible} 
+              sunkPopupVisible={sunkPopup1Visible} />
+          </div>
+          <div className="content-cell" style={{width: '20%'}}>
+            <Instructions isSetupStage={isSetupStage} myTurn={myTurn}/><br></br>
+            <ConfirmButton isSetupStage={isSetupStage} setIsSetupStage={setIsSetupStage}></ConfirmButton>
+          </div>
+          <div className="content-cell" style={{width: '40%'}}>
+            <Board 
+              myBoard={false} 
+              presetBoard={blankBoard} 
+              isSetupStage={isSetupStage} 
+              myTurn={myTurn} 
+              gameStatus={gameStatus} 
+              hitPopupVisible={hitPopup2Visible}
+              sunkPopupVisible={sunkPopup2Visible} />
+          </div>
+        </div>
+      </div>
+    );
+}
   
 function GamePlay() {
     ({gameID, boardSize, opponentID, playerID, username} = useParams());
-    //pass the following states around so components know when they update
+    const [gameStatus, setGameStatus] = useState(0);
     const [isSetupStage, setIsSetupStage] = useState(true);
     const [myTurn, setMyTurn] = useState(true);
-    const [gameStatus, setGameStatus] = useState(0);
     const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
     const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
     const [sunkPopup2Visible, setSunkPopup2Visible] = useState(false);
-    socket.onmessage = (e) => fetchUpdateFromOpponent(e.data["message"], myTurn, setMyTurn, setGameStatus, setHitPopup1Visible, setSunkPopup1Visible);
     return (
       <div>
         <HeaderAndNav username={username}/>
-        <div id="content">
-          <div className="content-row">
-            <div className="content-cell" style={{width: '40%'}}>YOUR BOARD</div>
-            <div className="content-cell" style={{width: '20%'}}></div>
-            <div className="content-cell" style={{width: '40%'}}>OPPONENT BOARD</div>
-          </div>
-          <div className="content-row">
-            <div className="content-cell" style={{width: '40%'}}>
-              <Board 
-                myBoard={true} 
-                presetBoard={playerBoard} 
-                isSetupStage={isSetupStage} 
-                myTurn={myTurn} 
-                setMyTurn={setMyTurn} 
-                gameStatus={gameStatus} 
-                setGameStatus={setGameStatus} 
-                hitPopupVisible={hitPopup1Visible} 
-                setHitPopupVisible={setHitPopup1Visible} 
-                sunkPopupVisible={sunkPopup1Visible} 
-                setSunkPopupVisible={setSunkPopup1Visible}/>
-            </div>
-            <div className="content-cell" style={{width: '20%'}}>
-              <Instructions isSetupStage={isSetupStage} myTurn={myTurn}/><br></br>
-              <ConfirmButton isSetupStage={isSetupStage} setIsSetupStage={setIsSetupStage}></ConfirmButton>
-            </div>
-            <div className="content-cell" style={{width: '40%'}}>
-              <Board 
-                myBoard={false} 
-                presetBoard={blankBoard} 
-                isSetupStage={isSetupStage} 
-                myTurn={myTurn} 
-                setMyTurn={setMyTurn} 
-                gameStatus={gameStatus} 
-                setGameStatus={setGameStatus}
-                hitPopupVisible={hitPopup2Visible}
-                setHitPopupVisible={setHitPopup2Visible}
-                sunkPopupVisible={sunkPopup2Visible}
-                setSunkPopupVisible={setSunkPopup2Visible}/>
-            </div>
-          </div>
-        </div>
-        <GameOverPopup gameStatus={gameStatus}></GameOverPopup>
+        <BoardsAndTitles 
+          gameStatus={gameStatus} 
+          setGameStatus={setGameStatus}
+          isSetupStage={isSetupStage}
+          setIsSetupStage={setIsSetupStage}
+          myTurn={myTurn}
+          setMyTurn={setMyTurn}
+          hitPopup1Visible={hitPopup1Visible}
+          setHitPopup1Visible={setHitPopup1Visible}
+          hitPopup2Visible={hitPopup2Visible}
+          setHitPopup2Visible={setHitPopup2Visible}
+          sunkPopup1Visible={sunkPopup1Visible}
+          setSunkPopup1Visible={setSunkPopup1Visible}
+          sunkPopup2Visible={sunkPopup2Visible}
+          setSunkPopup2Visible={setSunkPopup2Visible}
+        />
+        <GameOverPopup gameStatus={gameStatus} />
       </div>
     )
 }
 
-export default GamePlay
+export default GamePlay;
