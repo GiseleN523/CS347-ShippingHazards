@@ -5,6 +5,7 @@
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.16",
     "react-pro-sidebar": "^1.1.0",
-    "react-router-dom": "^6.23.0"
+    "react-router-dom": "^6.23.0",
+    "use-sound": "^4.0.1"
   }
 }

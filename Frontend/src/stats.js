@@ -1,22 +1,12 @@
-import React, { useState } from 'react';
-import './stats.css'
+import React, { useState, useEffect } from 'react';
+import './stats.css';
 import HeaderAndNav from './header_and_nav.js';
-import AccountPageSidebar from './myaccount.js';
 import { useParams } from 'react-router-dom';
 
-
+let playerID
 let username;
-const StatsTable = () => {
- /*
-  let attackBoard = the_json["attack_board"];
-  let shipBoard = the_json["ship_board"];
-  let turn = the_json["turn"];
-  let status = the_json["status"];
-  let is_hit = the_json["is_hit"];
-  let shot_row = the_json["shot_row"];
-  let shot_col = the_json["shot_col"];
-  */
 
+function StatsTable({ wins, losses, num_of_ships_sunk }) {
   return (
     <div className='statstable'>
       <h1>Your Stats!</h1>
@@ -30,35 +20,42 @@ const StatsTable = () => {
         <tbody>
           <tr>
             <td>Wins</td>
-            <td>{50}</td>
+            <td>{wins}</td>
           </tr>
           <tr>
             <td>Losses</td>
-            <td>{20}</td>
+            <td>{losses}</td>
           </tr>
           <tr>
             <td>Ships Sunk</td>
-            <td>{1000}</td>
-          </tr>
-          <tr>
-            <td>Total Games</td>
-            <td>{84}</td>
+            <td>{num_of_ships_sunk}</td>
           </tr>
         </tbody>
       </table>
     </div>
   );
-};
-
+}
 
 function StatsPage() {
   const { username } = useParams();
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    let playerID = username;  
+    let url = `/get-player-info/${playerID}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(the_json => {
+        setStats(the_json);
+      });
+  }, [username]);
+
   return (
     <div>
-    <HeaderAndNav usrename={username}/>
-     <StatsTable /> 
-     </div>
-  
+      <HeaderAndNav username={username} />
+      <StatsTable stats={stats} />
+    </div>
   );
 }
 

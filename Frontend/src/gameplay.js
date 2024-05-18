@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import hitImage from './images/HitPopup.png';
 import sunkImage from './images/SunkPopup.png';
+import hitSound from './sounds/hitSound.mp3'; 
+import missSound from './sounds/missSound.mp3'; 
+import sunkSound from './sounds/sunkSound.mp3'; 
 
 let playerBoard = "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd";
 let playerID;
@@ -39,6 +42,7 @@ function updateBoardAndTurn(the_json, myBoard, setGameStatus, myTurn, setMyTurn,
   let turn = the_json["turn"];
   let status = the_json["status"];
 
+
   if(shotRow != -1 && shotCol != -1 && (turn == 0) != myTurn) { // game has started and this turn just happened
     let id = myBoard ? "mysquare-"+shotRow+"-"+shotCol : "opponentsquare-"+shotRow+"-"+shotCol;
     if(isHit && isSunk) {
@@ -46,14 +50,20 @@ function updateBoardAndTurn(the_json, myBoard, setGameStatus, myTurn, setMyTurn,
       document.getElementById(id).style.backgroundColor = "red";
       setTimeout(() => setSunkPopupVisible(false), 2000);
       entireShipAt(id, shipBoard).forEach((square) => document.getElementById((myBoard ? "mysquare-" : "opponentsquare-")+square[0]+"-"+square[1]).style.backgroundColor = "gray");
+      const audio = new Audio(sunkSound);
+      audio.play();
     }
     else if(isHit) {
       setHitPopupVisible(true);
       document.getElementById(id).style.backgroundColor = "red";
       setTimeout(() => setHitPopupVisible(false), 2000)
+      const audio = new Audio(hitSound);
+      audio.play();
     }
     else {
       document.getElementById(id).style.backgroundColor = "white";
+      const audio = new Audio(missSound);
+      audio.play();
     }
     setGameStatus(status);
     setMyTurn(turn == 1 ? true : false);
@@ -234,6 +244,7 @@ function GamePlay() {
     const [isSetupStage, setIsSetupStage] = useState(true);
     const [myTurn, setMyTurn] = useState(true);
     const [gameStatus, setGameStatus] = useState(0);
+
     return (
       <div>
         <HeaderAndNav username={username}/>

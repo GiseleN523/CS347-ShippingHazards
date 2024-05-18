@@ -16,6 +16,7 @@
     "react-pro-sidebar": "^1.1.0",
     "react-router": "^6.22.3",
     "react-router-dom": "^6.23.0",
+    "use-sound": "^4.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
