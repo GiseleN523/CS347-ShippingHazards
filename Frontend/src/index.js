@@ -8,6 +8,7 @@ import GamePlay from './gameplay.js';
 import StatsPage from './stats.js';
 import './index.css'
 import Login from './login.js';
+import ProfilePage from './profile.js';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -18,6 +19,7 @@ ReactDOM.render(
         <Route path="/myaccount/:username" element={<MyAccount />} />
         <Route path="/aboutus/:username" element={<AboutUs />} />
         <Route path="/game/:gameID/:boardSize/:opponentID/:playerID/:username/" element={<GamePlay />} />
+        <Route path="/profile/:username" element={<ProfilePage />} />
         <Route path="/myaccount/stats/:username" element={<StatsPage />} />
       </Routes>
     </Router>

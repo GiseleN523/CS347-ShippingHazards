@@ -12,6 +12,13 @@ let username;
 let gameID;
 let boardSize;
 const blankBoard = "----------------------------------------------------------------------------------------------------";
+let socket = new WebSocket("ws://web:8000/ws/play/"+gameID+"/");
+
+// Based on Matt's initializeNumbers function
+function initializeSocket(myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible){
+  socket = new WebSocket("ws://web:8000/ws/play/"+gameID+"/");
+  socket.onmessage = (e) => fetchUpdateFromOpponent(e.data["message"], myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible);
+}
 
 function entireShipAt(id, board) {
   let row = Number(id.slice(id.indexOf("-")+1, id.lastIndexOf("-")));
@@ -60,12 +67,13 @@ function updateBoardAndTurn(the_json, myBoard, setGameStatus, myTurn, setMyTurn,
   }
 }
 
-function fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible}) {
-  let url = "/play/get-state/"+gameID+"/"+playerID;
-  fetch(url)
-    .then( response => response.json())
-    .then( the_json => updateBoardAndTurn(the_json, true, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible) )
-    .then(setTimeout(() => fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible}), 2000));
+function fetchUpdateFromOpponent(the_json, myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible) {
+  updateBoardAndTurn(the_json, true, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible);
+  //let url = "/play/get-state/"+gameID+"/"+playerID;
+  //fetch(url)
+    //.then( response => response.json())
+    //.then( the_json => updateBoardAndTurn(the_json, true, setGameStatus, myTurn, setMyTurn, setHitPopupVisible, setSunkPopupVisible) )
+    //.then(setTimeout(() => fetchUpdateFromOpponent(myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible), 2000));
 }
 
 function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, setHitPopupVisible, setSunkPopupVisible}) {
@@ -135,16 +143,11 @@ function BoardRow({row, ships, myBoard, isSetupStage, myTurn, setMyTurn, gameSta
     )
 }
   
-function Board({presetBoard=blankBoard, myBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus}) {
-    const [hitPopupVisible, setHitPopupVisible] = useState(false);
-    const [sunkPopupVisible, setSunkPopupVisible] = useState(false);
+function Board({myBoard, presetBoard, isSetupStage, myTurn, setMyTurn, gameStatus, setGameStatus, hitPopupVisible, setHitPopupVisible, sunkPopupVisible, setSunkPopupVisible}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
       let ships = presetBoard.slice((i*boardSize), ((i+1)*boardSize));
       arr.push(<BoardRow key={"row"+i} row={i} ships={ships} myBoard={myBoard} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus} setHitPopupVisible={setHitPopupVisible} setSunkPopupVisible={setSunkPopupVisible}/>);
-    }
-    if(myBoard) {
-      setTimeout(() => fetchUpdateFromOpponent({myTurn, setMyTurn, setGameStatus, setHitPopupVisible, setSunkPopupVisible}), 2000);
     }
     return (
       <div className="board">
@@ -234,6 +237,11 @@ function GamePlay() {
     const [isSetupStage, setIsSetupStage] = useState(true);
     const [myTurn, setMyTurn] = useState(true);
     const [gameStatus, setGameStatus] = useState(0);
+    const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
+    const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
+    const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
+    const [sunkPopup2Visible, setSunkPopup2Visible] = useState(false);
+    socket.onmessage = (e) => fetchUpdateFromOpponent(e.data["message"], myTurn, setMyTurn, setGameStatus, setHitPopup1Visible, setSunkPopup1Visible);
     return (
       <div>
         <HeaderAndNav username={username}/>
@@ -245,14 +253,36 @@ function GamePlay() {
           </div>
           <div className="content-row">
             <div className="content-cell" style={{width: '40%'}}>
-              <Board presetBoard={playerBoard} myBoard={true} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus}/>
+              <Board 
+                myBoard={true} 
+                presetBoard={playerBoard} 
+                isSetupStage={isSetupStage} 
+                myTurn={myTurn} 
+                setMyTurn={setMyTurn} 
+                gameStatus={gameStatus} 
+                setGameStatus={setGameStatus} 
+                hitPopupVisible={hitPopup1Visible} 
+                setHitPopupVisible={setHitPopup1Visible} 
+                sunkPopupVisible={sunkPopup1Visible} 
+                setSunkPopupVisible={setSunkPopup1Visible}/>
             </div>
             <div className="content-cell" style={{width: '20%'}}>
               <Instructions isSetupStage={isSetupStage} myTurn={myTurn}/><br></br>
               <ConfirmButton isSetupStage={isSetupStage} setIsSetupStage={setIsSetupStage}></ConfirmButton>
             </div>
             <div className="content-cell" style={{width: '40%'}}>
-              <Board myBoard={false} isSetupStage={isSetupStage} myTurn={myTurn} setMyTurn={setMyTurn} gameStatus={gameStatus} setGameStatus={setGameStatus}/>
+              <Board 
+                myBoard={false} 
+                presetBoard={blankBoard} 
+                isSetupStage={isSetupStage} 
+                myTurn={myTurn} 
+                setMyTurn={setMyTurn} 
+                gameStatus={gameStatus} 
+                setGameStatus={setGameStatus}
+                hitPopupVisible={hitPopup2Visible}
+                setHitPopupVisible={setHitPopup2Visible}
+                sunkPopupVisible={sunkPopup2Visible}
+                setSunkPopupVisible={setSunkPopup2Visible}/>
             </div>
           </div>
         </div>
