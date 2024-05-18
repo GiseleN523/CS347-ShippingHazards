@@ -142,15 +142,16 @@ def ws_get_state(game_id, player_id):
     """
     game = Game.objects.get(id = game_id) 
     board = get_player_board(game, player_id)
-    dict = {"ship_board": board.ship_board,
-                        "attack_board": board.attack_board,
-                        "combined_board": board.combined_board,
-                        "is_hit": board.is_hit,
-                        "is_sunk": board.is_sunk,
-                        "shot_row": board.shot_row,
-                        "shot_col": board.shot_col,
-                        "turn": game.turn,
-                        "status": game.status}
+    dict = {"player_id": player_id,
+            "ship_board": board.ship_board,
+            "attack_board": board.attack_board,
+            "combined_board": board.combined_board,
+            "is_hit": board.is_hit,
+            "is_sunk": board.is_sunk,
+            "shot_row": board.shot_row,
+            "shot_col": board.shot_col,
+            "turn": game.turn,
+            "status": game.status}
     return json.dumps(dict)
 
 def is_player_turn(game, player_id):
