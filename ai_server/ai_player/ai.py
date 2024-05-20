@@ -66,7 +66,6 @@ class BattleShipAI:
     # chooses spots randomly that haven't been shot before
     def randomAttack(self):
         index = random.randint(0,len(self.attackBoard)-1)
-        print("index is: ", index)
         while self.attackBoard[index] != "-":
             # index += 1
             index = random.randint(0,len(self.attackBoard)-1)

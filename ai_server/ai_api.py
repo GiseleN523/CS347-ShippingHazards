@@ -45,8 +45,10 @@ def start_ai(player1_id, player2_id, num_ships, board_size, game_id):
         
         game_status = inner_dict["status"]
         if game_status == 0: # while the game is not over (I think its an if and not a while now)
-            
-            update_ai(ai, inner_dict)
+
+            # if the message from the websocket has information about the correct player's board, update the ai object
+            if (int(inner_dict["player_id"]) != int(player2_id)):
+                update_ai(ai, inner_dict)
 
             if (inner_dict['turn'] == 2):
                 # row = random.randint(0,6) ### for testing purposes
