@@ -25,16 +25,15 @@ SECRET_KEY = 'django-insecure-tgo&kn!)zlbz5#p^xvq5o%y4+rk(41$nwy6!c0r+q*hyb_f27=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web', 'localhost']
+ALLOWED_HOSTS = ['web', 'localhost', 'redis', '*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'shdatabase',
-
     'rest_framework',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,6 +69,16 @@ TEMPLATES = [
         },
     },
 ]
+
+ASGI_APPLICATION = 'battleship.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 WSGI_APPLICATION = 'battleship.wsgi.application'
 

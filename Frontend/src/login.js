@@ -3,9 +3,6 @@ import {useNavigate } from 'react-router-dom'
 import './login.css'
 import lobbyMusic from './sounds/lobbyMusic.mp3';
 
-
-
-
 function TextInputField({password, placeholder, value, setValue, errorVisible}) {
   return (
     <div className="inputContainer">
@@ -108,7 +105,6 @@ function AccountCreationFields({setShowAccountCreation, navigate}) {
         .then( response => response.json())
         .then(the_json => attemptCreation(the_json));
     }
-    
   }
   return (
     <div>
