@@ -182,15 +182,12 @@ function ComicPopup({isVisible, image}) {
   )
 }
 
-function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupStage, myTurn, setMyTurn, hitPopup1Visible, setHitPopup1Visible, hitPopup2Visible, setHitPopup2Visible, sunkPopup1Visible, setSunkPopup1Visible, sunkPopup2Visible, setSunkPopup2Visible}) {
+function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupStage, myTurn, setMyTurn, popups1, popups2}) {
 
-    if(socket == undefined) {
-      socket = new WebSocket("ws://localhost:8000/ws/play/"+gameID+"/");
-      socket.onmessage = function(e) {
-        let message = JSON.parse(JSON.parse(e.data)["message"]);
-        updateBoardAndTurn(message);
-      };
-    }
+  socket.onmessage = function(e) {
+    let message = JSON.parse(JSON.parse(e.data)["message"]);
+    updateBoardAndTurn(message);
+  }
     
     function updateBoardAndTurn(the_json) {
       let myBoard = the_json["player_id"] == playerID;
@@ -206,21 +203,21 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
     
       let id = myBoard ? "mysquare-"+shotRow+"-"+shotCol : "opponentsquare-"+shotRow+"-"+shotCol;
       if(isHit && isSunk) {
-        myBoard ? setSunkPopup1Visible(true) : setSunkPopup2Visible(true);
+        myBoard ? popups1["setSunkPopupVisible"](true) : popups2["setSunkPopupVisible"](true);
         document.getElementById(id).style.backgroundColor = "red";
         setGameStatus(status);
         setMyTurn(turn === 1);
         setTimeout(function () {
-          myBoard ? setSunkPopup1Visible(false) : setSunkPopup2Visible(false);
+          myBoard ? popups1["setSunkPopupVisible"](false) : popups2["setSunkPopupVisible"](false);
           entireShipAt(id, shipBoard).forEach((square) => document.getElementById((myBoard ? "mysquare-" : "opponentsquare-")+square[0]+"-"+square[1]).style.backgroundColor = "gray");
         }, 2000);
       }
       else if(isHit) {
-        myBoard ? setHitPopup1Visible(true) : setHitPopup2Visible(true);
+        myBoard ? popups1["setHitPopupVisible"](true) : popups2["setHitPopupVisible"](true);
         document.getElementById(id).style.backgroundColor = "red";
         setGameStatus(status);
         setMyTurn(turn === 1);
-        setTimeout(() => myBoard ? setHitPopup1Visible(false) : setHitPopup2Visible(false), 2000);
+        setTimeout(() => myBoard ? popups1["setHitPopupVisible"](false) : popups2["setHitPopupVisible"](false), 2000);
       }
       else {
         document.getElementById(id).style.backgroundColor = "white";
@@ -243,8 +240,8 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
               isSetupStage={isSetupStage} 
               myTurn={myTurn} 
               gameStatus={gameStatus} 
-              hitPopupVisible={hitPopup1Visible} 
-              sunkPopupVisible={sunkPopup1Visible} />
+              hitPopupVisible={popups1["hitPopupVisible"]} 
+              sunkPopupVisible={popups1["sunkPopupVisible"]} />
           </div>
           <div className="content-cell" style={{width: '20%'}}>
             <Instructions isSetupStage={isSetupStage} myTurn={myTurn}/><br></br>
@@ -257,8 +254,8 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
               isSetupStage={isSetupStage} 
               myTurn={myTurn} 
               gameStatus={gameStatus} 
-              hitPopupVisible={hitPopup2Visible}
-              sunkPopupVisible={sunkPopup2Visible} />
+              hitPopupVisible={popups2["hitPopupVisible"]}
+              sunkPopupVisible={popups2["sunkPopupVisible"]} />
           </div>
         </div>
       </div>
@@ -274,6 +271,25 @@ function GamePlay() {
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
     const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
     const [sunkPopup2Visible, setSunkPopup2Visible] = useState(false);
+
+    let popups1 = {
+      "hitPopupVisible" : hitPopup1Visible,
+      "setHitPopupVisible" : setHitPopup1Visible,
+      "sunkPopupVisible" : sunkPopup1Visible,
+      "setSunkPopupVisible" : setSunkPopup1Visible
+    }
+
+    let popups2 = {
+      "hitPopupVisible" : hitPopup2Visible,
+      "setHitPopupVisible" : setHitPopup2Visible,
+      "sunkPopupVisible" : sunkPopup2Visible,
+      "setSunkPopupVisible" : setSunkPopup2Visible
+    }
+
+    if(socket == undefined) {
+      socket = new WebSocket("ws://localhost:8000/ws/play/"+gameID+"/");
+    }
+
     return (
       <div>
         <HeaderAndNav username={username}/>
@@ -284,14 +300,8 @@ function GamePlay() {
           setIsSetupStage={setIsSetupStage}
           myTurn={myTurn}
           setMyTurn={setMyTurn}
-          hitPopup1Visible={hitPopup1Visible}
-          setHitPopup1Visible={setHitPopup1Visible}
-          hitPopup2Visible={hitPopup2Visible}
-          setHitPopup2Visible={setHitPopup2Visible}
-          sunkPopup1Visible={sunkPopup1Visible}
-          setSunkPopup1Visible={setSunkPopup1Visible}
-          sunkPopup2Visible={sunkPopup2Visible}
-          setSunkPopup2Visible={setSunkPopup2Visible}
+          popups1={popups1}
+          popups2={popups2}
         />
         <GameOverPopup gameStatus={gameStatus} />
       </div>
