@@ -224,8 +224,18 @@ def get_player_info(request, player_id):
                         "screen_name": player.screen_name,
                         "wins": player.wins,
                         "losses": player.losses,
-                        "num_of_ships_sunk": player.num_of_ships_sunk})
+                        "num_of_ships_sunk": player.num_of_ships_sunk,
+                        "color_preference": player.color_preference})
 
+def change_preferences(request, user_name, screen_name, color_preference):
+    u = User.objects.get(username=username)
+    player = get_object_or_404(Player, user=user)
+    player.screen_name = screen_name
+    player.color_preference = color_preference
+    player.save()
+
+    return JsonResponse({'message': 'Player info updated successfully'})
+    
 '''
 The following game logic code was written by Josh Meier and Willow Gu in logic.py.
 The code was copied and pasted here because this backend code is currently in a separate branch.
