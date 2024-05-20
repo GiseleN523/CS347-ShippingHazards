@@ -126,7 +126,7 @@ def get_state(request, game_id, player_id):
     """
     game = Game.objects.get(id = game_id) 
     board = get_player_board(game, player_id)
-  return JsonResponse({"player_id": player_id,
+    return JsonResponse({"player_id": player_id,
                        "ship_board": board.ship_board,
                        "attack_board": board.attack_board,
                        "combined_board": board.combined_board,
