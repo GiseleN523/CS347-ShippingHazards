@@ -10,6 +10,7 @@ import './index.css'
 import Login from './login.js';
 import ProfilePage from './profile.js';
 
+
 ReactDOM.render(
   <React.StrictMode>
     <Router>
@@ -26,3 +27,4 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
+

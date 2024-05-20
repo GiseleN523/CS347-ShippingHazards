@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from .models import Player, Game, Board
 from rest_framework import permissions, viewsets
@@ -126,16 +126,16 @@ def get_state(request, game_id, player_id):
     """
     game = Game.objects.get(id = game_id) 
     board = get_player_board(game, player_id)
-    return JsonResponse({"player_id": player_id,
-                        "ship_board": board.ship_board,
-                        "attack_board": board.attack_board,
-                        "combined_board": board.combined_board,
-                        "is_hit": board.is_hit,
-                        "is_sunk": board.is_sunk,
-                        "shot_row": board.shot_row,
-                        "shot_col": board.shot_col,
-                        "turn": game.turn,
-                        "status": game.status})
+  return JsonResponse({"player_id": player_id,
+                       "ship_board": board.ship_board,
+                       "attack_board": board.attack_board,
+                       "combined_board": board.combined_board,
+                       "is_hit": board.is_hit,
+                       "is_sunk": board.is_sunk,
+                       "shot_row": board.shot_row,
+                       "shot_col": board.shot_col,
+                       "turn": game.turn,
+                       "status": game.status})
 
 def ws_get_state(game_id, player_id):
     """
@@ -154,6 +154,7 @@ def ws_get_state(game_id, player_id):
             "turn": game.turn,
             "status": game.status}
     return json.dumps(dict)
+
 
 def is_player_turn(game, player_id):
     """

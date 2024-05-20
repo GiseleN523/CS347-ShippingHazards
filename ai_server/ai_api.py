@@ -60,6 +60,7 @@ def start_ai(player1_id, player2_id, num_ships, board_size, game_id):
         # ai "selects" its ship placement (will eventually have shipBoard be different every time)
         ship_board = "-a---------a--------------------cccc-----------d---------d---------d---------d------bbb-------------"
         url = 'http://web:8000/play/confirm-ships/{}/{}/{}'.format(game_id, player2_id, ship_board)
+
         response = requests.get(url)
 
     ###############################

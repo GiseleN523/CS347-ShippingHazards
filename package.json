@@ -1,5 +1,12 @@
 {
   "dependencies": {
     "websocket": "^1.0.35"
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.16",
+    "@mui/material": "^5.15.16",
+    "react-pro-sidebar": "^1.1.0",
+    "react-router-dom": "^6.23.0",
+    "use-sound": "^4.0.1"
   }
 }

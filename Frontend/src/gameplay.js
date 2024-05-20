@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import hitImage from './images/HitPopup.png';
 import sunkImage from './images/SunkPopup.png';
+import hitSound from './sounds/hitSound.mp3'; 
+import missSound from './sounds/missSound.mp3'; 
+import sunkSound from './sounds/sunkSound.mp3';
 
 const blankBoard = "----------------------------------------------------------------------------------------------------";
 let playerBoard = "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd";
@@ -205,6 +208,8 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
       if(isHit && isSunk) {
         myBoard ? popups1["setSunkPopupVisible"](true) : popups2["setSunkPopupVisible"](true);
         document.getElementById(id).style.backgroundColor = "red";
+        const audio = new Audio(sunkSound);
+        audio.play();
         setGameStatus(status);
         setMyTurn(turn === 1);
         setTimeout(function () {
@@ -215,12 +220,16 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
       else if(isHit) {
         myBoard ? popups1["setHitPopupVisible"](true) : popups2["setHitPopupVisible"](true);
         document.getElementById(id).style.backgroundColor = "red";
+        const audio = new Audio(hitSound);
+        audio.play();
         setGameStatus(status);
         setMyTurn(turn === 1);
         setTimeout(() => myBoard ? popups1["setHitPopupVisible"](false) : popups2["setHitPopupVisible"](false), 2000);
       }
       else {
         document.getElementById(id).style.backgroundColor = "white";
+        const audio = new Audio(missSound);
+        audio.play();
         setGameStatus(status);
         setMyTurn(turn === 1);
       }

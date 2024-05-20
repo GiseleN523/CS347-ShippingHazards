@@ -30,3 +30,9 @@ CREATING A SUPERUSER FOR DJANGO ADMIN (localhost:8000/admin)
 UPDATING THE populateData.json
     1. run docker-compose exec web python manage.py dumpdata > populateData.json
     2. Make sure the json file has updated and is in the location you wanted. 
+
+DATABASE TROUBLESHOOTING
+    1. run docker-compose exec web python manage.py makemigrations
+    2. run docker-compose exec web python manage.py migrate 
+    3. if this doesn't work try running docker-compose exec web python manage.py makemigrations shdatabase
+    4. run docker-compose exec web python manage.py migrate 
