@@ -1,7 +1,7 @@
 main {
     font-size: 150%;
     font-weight: bold;
-    margin: 2.5% 2%;
+    margin: 3% 2%;
 }
 
 #account {
@@ -9,17 +9,8 @@ main {
     margin-bottom: 1.5em;
 }
 
-#profileSettings label {
-    font-weight: bold;
-    padding-right: 1%;
-}
-
 #profileSettings input {
-    margin-bottom: 1.5em;
-}
-
-#profileSettings #password2 {
-    margin-bottom: 2em;
+    margin-bottom: 1em;
 }
 
 #profileSettings button {
