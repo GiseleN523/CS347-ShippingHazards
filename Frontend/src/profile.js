@@ -45,7 +45,7 @@ function ProfilePage() {
     newPassword1.length == 0 ? setNewPassword1ErrorVisible(true) : setNewPassword1ErrorVisible(false);
     newPassword2.length == 0 ? setNewPassword2ErrorVisible(true) : setNewPassword2ErrorVisible(false);
     screenName.length == 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
-    let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color;
+    let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
     let url2 = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
     fetch(url)
       .then(function() {

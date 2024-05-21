@@ -218,8 +218,8 @@ def fire_shot(request, game_id, player_id, row, col):
     else:
         raise ValueError("Player cannot fire shot when it is not their turn")
 
-def get_player_info(request, player_id):
-    player = Player.objects.get(id = player_id) 
+def get_player_info(request, username):
+    player = Player.objects.get(username=username) 
     return JsonResponse({"is_ai_player":player.is_ai_player,
                         "screen_name": player.screen_name,
                         "wins": player.wins,
