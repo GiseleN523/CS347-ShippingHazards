@@ -47,12 +47,10 @@ function ProfilePage() {
     screenName.length == 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
     let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
     let url2 = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
-    fetch(url)
-      .then(function() {
-        fetch(url2)
-          .then(response => response.json())
-          .then(the_json => attemptPasswordChange(the_json));
-      });
+    fetch(url);
+    fetch(url2)
+      .then(response => response.json())
+      .then(the_json => attemptPasswordChange(the_json));
   }
   return (
     <div>

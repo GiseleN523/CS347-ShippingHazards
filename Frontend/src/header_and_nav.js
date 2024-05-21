@@ -1,13 +1,15 @@
 import logo from './images/logo.png';
-import './header_and_nav.css'
+import './header_and_nav.css';
+import {useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 let username;
 
 function Header() {
+    const navigate = useNavigate();
     return (
       <header>
-        <img src= {logo} alt="Logo" id="logo"/>
+        <img src= {logo} alt="Logo" id="logo" style={{cursor: 'pointer'}} onClick={() => navigate('/home/'+username)}/>
         <span id="header-text">SHIPPING HAZARDS: A Game By Pink Puffy Rhinos</span>
         <div id="user-info">
           <p>Hello, {username}!</p>
