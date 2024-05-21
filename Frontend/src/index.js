@@ -18,6 +18,7 @@ ReactDOM.render(
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/createaccount/:fillerUsername" element={<CreateAccount />} />
+        <Route path="/createaccount/" element={<CreateAccount />} />
         <Route path="/home/:username" element={<Home />} />
         <Route path="/myaccount/:username" element={<MyAccount />} />
         <Route path="/aboutus/:username" element={<AboutUs />} />
