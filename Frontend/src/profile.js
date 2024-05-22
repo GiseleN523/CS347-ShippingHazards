@@ -68,6 +68,7 @@ function ProfilePage() {
             <TextFieldWithError password={true} value={newPassword1} setValue={setNewPassword1} errorVisible={newPassword1ErrorVisible}/>
             Retype New Password
             <TextFieldWithError password={true} value={newPassword2} setValue={setNewPassword2} errorVisible={newPassword2ErrorVisible}/>
+            <label className="errorLabel" style={{display: backendErrorVisible ? "block" : "none"}}>{backendErrorText}</label>
             <button onClick={handlePasswordClick}>Update</button><br />
             
             Screen Name
@@ -76,7 +77,6 @@ function ProfilePage() {
             <input type="color" 
                   id="color"
                   name="color"
-                  value="#ff8ac7"
                   onChange={(ev) => setColor(ev.target.value)}
                   style={{marginLeft: '1em'}}
             ></input><br />

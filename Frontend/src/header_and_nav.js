@@ -4,6 +4,7 @@ import {useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 let username;
+let screenName;
 
 function Header() {
     const navigate = useNavigate();
@@ -36,12 +37,16 @@ function NavigationBar() {
 }
 function HeaderAndNav() {
   ({username} = useParams());
-    return (
-        <div>
-            <Header />
-            <NavigationBar />
-        </div>
-    )
+  /*let url = "play/get-player-info/"+username;
+  fetch(url)
+    .then(response => response.json())
+    .then(the_json => screenName = the_json["screen_name"]);*/
+  return (
+    <div>
+      <Header />
+      <NavigationBar />
+    </div>
+  )
 }
 
 export default HeaderAndNav;
