@@ -40,18 +40,22 @@ function ProfilePage() {
     }
   }
 
-  function handleClick() {
+  function handlePasswordClick() {
     currentPassword.length == 0 ? setCurrentPasswordErrorVisible(true) : setCurrentPasswordErrorVisible(false);
     newPassword1.length == 0 ? setNewPassword1ErrorVisible(true) : setNewPassword1ErrorVisible(false);
     newPassword2.length == 0 ? setNewPassword2ErrorVisible(true) : setNewPassword2ErrorVisible(false);
-    screenName.length == 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
-    let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
-    let url2 = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
-    fetch(url);
-    fetch(url2)
+    let url = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
+    fetch(url)
       .then(response => response.json())
       .then(the_json => attemptPasswordChange(the_json));
   }
+
+  function handleScreenNameColorClick() {
+    screenName.length == 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
+    let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
+    fetch(url).then(navigate('/home/'+username));
+  }
+
   return (
     <div>
       <HeaderAndNav username={username}/>
@@ -64,6 +68,8 @@ function ProfilePage() {
             <TextFieldWithError password={true} value={newPassword1} setValue={setNewPassword1} errorVisible={newPassword1ErrorVisible}/>
             Retype New Password
             <TextFieldWithError password={true} value={newPassword2} setValue={setNewPassword2} errorVisible={newPassword2ErrorVisible}/>
+            <button onClick={handlePasswordClick}>Update</button><br />
+            
             Screen Name
             <TextFieldWithError value={screenName} setValue={setScreenName} errorVisible={screenNameErrorVisible}/>
             Ship Color
@@ -74,7 +80,7 @@ function ProfilePage() {
                   onChange={(ev) => setColor(ev.target.value)}
                   style={{marginLeft: '1em'}}
             ></input><br />
-            <button onClick={handleClick}>Save Changes</button><br />
+            <button onClick={handleScreenNameColorClick}>Update</button>
         </div>
       </main>
     </div>
