@@ -3,6 +3,10 @@ from django.http import HttpResponse, JsonResponse
 from .models import Player, Game, Board
 from rest_framework import permissions, viewsets
 import requests
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+import json
+
 from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
@@ -32,6 +36,9 @@ class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+def room(request, room_name):
+    return render(request, "shdatabase/room.html", {"room_name": room_name})
 
 def new_board(board_size):
     """
@@ -122,15 +129,34 @@ def get_state(request, game_id, player_id):
     """
     game = Game.objects.get(id = game_id) 
     board = get_player_board(game, player_id)
-    return JsonResponse({"ship_board": board.ship_board,
-                        "attack_board": board.attack_board,
-                        "combined_board": board.combined_board,
-                        "is_hit": board.is_hit,
-                        "is_sunk": board.is_sunk,
-                        "shot_row": board.shot_row,
-                        "shot_col": board.shot_col,
-                        "turn": game.turn,
-                        "status": game.status})
+    return JsonResponse({"player_id": player_id,
+                       "ship_board": board.ship_board,
+                       "attack_board": board.attack_board,
+                       "combined_board": board.combined_board,
+                       "is_hit": board.is_hit,
+                       "is_sunk": board.is_sunk,
+                       "shot_row": board.shot_row,
+                       "shot_col": board.shot_col,
+                       "turn": game.turn,
+                       "status": game.status})
+
+def ws_get_state(game_id, player_id):
+    """
+    API endpoint that returns the board state and game state of the specified player and game.
+    """
+    game = Game.objects.get(id = game_id) 
+    board = get_player_board(game, player_id)
+    dict = {"player_id": player_id,
+            "ship_board": board.ship_board,
+            "attack_board": board.attack_board,
+            "combined_board": board.combined_board,
+            "is_hit": board.is_hit,
+            "is_sunk": board.is_sunk,
+            "shot_row": board.shot_row,
+            "shot_col": board.shot_col,
+            "turn": game.turn,
+            "status": game.status}
+    return json.dumps(dict)
 
 
 def is_player_turn(game, player_id):
@@ -211,6 +237,18 @@ def fire_shot(request, game_id, player_id, row, col):
                 game.save()
             else:
                 raise ValueError("Turn must be 1 or 2")
+            
+
+        group_name = "game_%s" % game_id
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "game_message",
+                "message": "%s" % ws_get_state(game_id, opponent_id)
+            }
+        )
             
         return JsonResponse({"attack_board": board.attack_board,
                             "is_hit": board.is_hit,

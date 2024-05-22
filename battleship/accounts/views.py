@@ -32,7 +32,7 @@ def react_signup(request, username, password1, password2, screen_name):
             return JsonResponse({'status':'success', 'message':'Look at you go!! You can type the same password TWICE!!'})
         else:
             return JsonResponse({'status':'error', 'message': 'Passwords do not match'})
-    else: 
+    else:
         return JsonResponse({'status':'error', 'message': 'User Already Exists. Please Login.'})
 
 def react_change_password(request, username, current_password, new_password1, new_password2):
@@ -51,17 +51,3 @@ def react_change_password(request, username, current_password, new_password1, ne
                 return JsonResponse({'status': 'error', 'message': 'Your new passwords do not match.'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Your current password is incorrect.'})
-
-
-    # if user is not None: 
-    #     u = User.objects.get(username=username)
-    #     if new_password1 == new_password2:
-    #         u.set_password(new_password1)
-    #         return JsonResponse({'status':'success', 'message':'Your password has successfully changed!'})
-    #     else: 
-    #         return JsonResponse({'status':'error', 'message': 'Your new passwords do not match.'})
-    # else:
-    #     return JsonResponse({'status':'error', 'message': 'Your password is incorrect.'})
-
-
-    

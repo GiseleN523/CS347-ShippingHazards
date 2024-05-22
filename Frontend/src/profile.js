@@ -23,7 +23,7 @@ function ProfilePage() {
   const [backendErrorVisible, setBackendErrorVisible] = useState(false);
   const [backendErrorText, setBackendErrorText] = useState('');
 
-  function attemptPasswordChange(the_json) {
+  function attemptPasswordScreenNameChange(the_json) {
     setCurrentPasswordErrorVisible(false);
     setNewPassword1ErrorVisible(false);
     setNewPassword2ErrorVisible(false);
@@ -70,7 +70,6 @@ function ProfilePage() {
             <TextFieldWithError password={true} value={newPassword2} setValue={setNewPassword2} errorVisible={newPassword2ErrorVisible}/>
             <label className="errorLabel" style={{display: backendErrorVisible ? "block" : "none"}}>{backendErrorText}</label>
             <button onClick={handlePasswordClick}>Update</button><br />
-            
             Screen Name
             <TextFieldWithError value={screenName} setValue={setScreenName} errorVisible={screenNameErrorVisible}/>
             Ship Color

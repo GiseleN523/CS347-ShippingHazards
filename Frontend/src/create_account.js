@@ -80,4 +80,18 @@ function AccountCreationFields() {
     );
   }
   
+function AccountCreation() {
+    return (
+      <div className="mainContainer">
+        <div className= 'loginContainer'>
+          <div className= "gametitle">
+            <div>BATTLESHIP</div>
+          </div>
+          <div className= "titleContainer">Create Account</div>
+          <AccountCreationFields />
+        </div>
+      </div>
+    )
+  }
+  
   export default AccountCreation;

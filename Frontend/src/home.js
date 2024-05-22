@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 
-
-
 let username;
 const playerID = 5;
 const boardSize = 10;
