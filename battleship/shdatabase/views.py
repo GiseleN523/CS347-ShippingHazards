@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from .models import Player, Game, Board
 from rest_framework import permissions, viewsets
@@ -10,6 +10,9 @@ import sys
 
 from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -258,16 +261,34 @@ def fire_shot(request, game_id, player_id, row, col):
         raise ValueError("Player cannot fire shot when it is not their turn")
 
 def get_player_info(request, username):
+<<<<<<< HEAD
     player = Player.objects.get(username=username)
     dict = {"is_ai_player":player.is_ai_player,
+=======
+    player = Player.objects.get(username=username) 
+    return JsonResponse({"is_ai_player":player.is_ai_player,
+>>>>>>> 5dd2a3bf001f4d28eb48d23637e939f6e6d794f4
                         "screen_name": player.screen_name,
                         "wins": player.wins,
                         "losses": player.losses,
                         "num_of_ships_sunk": player.num_of_ships_sunk,
+<<<<<<< HEAD
                         "color_preference": player.color_preference}
     sys.stderr.write("Get player Info: " + str(dict))
     return JsonResponse(dict)
+=======
+                        "color_preference": player.color_preference})
+>>>>>>> 5dd2a3bf001f4d28eb48d23637e939f6e6d794f4
 
+def change_preferences(request, username, screen_name, color_preference):
+    u = User.objects.get(username=username)
+    player = get_object_or_404(Player, user=u)
+    player.screen_name = screen_name
+    player.color_preference = color_preference
+    player.save()
+
+    return JsonResponse({'message': 'Player info updated successfully'})
+    
 '''
 The following game logic code was written by Josh Meier and Willow Gu in logic.py.
 The code was copied and pasted here because this backend code is currently in a separate branch.

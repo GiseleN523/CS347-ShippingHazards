@@ -17,11 +17,12 @@ ReactDOM.render(
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/createaccount/:fillerUsername" element={<CreateAccount />} />
         <Route path="/createaccount/" element={<CreateAccount />} />
         <Route path="/home/:username" element={<Home />} />
         <Route path="/myaccount/:username" element={<MyAccount />} />
         <Route path="/aboutus/:username" element={<AboutUs />} />
-        <Route path="/game/:gameID/:boardSize/:opponentID/:playerID/:username/" element={<GamePlay />} />
+        <Route path="/game/:gameID/:boardSize/:opponentID/:playerID/:username" element={<GamePlay />} />
         <Route path="/profile/:username" element={<ProfilePage />} />
         <Route path="/myaccount/stats/:username" element={<StatsPage />} />
       </Routes>
@@ -29,4 +30,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
