@@ -7,6 +7,8 @@ from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from shdatabase.models import Player
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 class SignUpView(CreateView):
     form_class = RegistrationFormForPlayers
@@ -36,15 +38,30 @@ def react_signup(request, username, password1, password2, screen_name):
 def react_change_password(request, username, current_password, new_password1, new_password2):
     user = authenticate(username=username, password=current_password)
 
-    if user is not None: 
-        u = User.objects.get(username=username)
-        if new_password1 == new_password2:
-            u.set_password(new_password1)
-            return JsonResponse({'status':'success', 'message':'Your password has successfully changed!'})
-        else: 
-            return JsonResponse({'status':'error', 'message': 'Your new passwords do not match.'})
+    if user is not None:
+            if new_password1 == new_password2:
+                try:
+                    validate_password(new_password1, user)
+                    user.set_password(new_password1)
+                    user.save()
+                    return JsonResponse({'status': 'success', 'message': 'Your password has successfully changed!'})
+                except ValidationError as e:
+                    return JsonResponse({'status': 'error', 'message': e.messages})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Your new passwords do not match.'})
     else:
-        return JsonResponse({'status':'error', 'message': 'Your password is incorrect.'})
+        return JsonResponse({'status': 'error', 'message': 'Your current password is incorrect.'})
+
+
+    # if user is not None: 
+    #     u = User.objects.get(username=username)
+    #     if new_password1 == new_password2:
+    #         u.set_password(new_password1)
+    #         return JsonResponse({'status':'success', 'message':'Your password has successfully changed!'})
+    #     else: 
+    #         return JsonResponse({'status':'error', 'message': 'Your new passwords do not match.'})
+    # else:
+    #     return JsonResponse({'status':'error', 'message': 'Your password is incorrect.'})
 
 
     
