@@ -53,7 +53,7 @@ function LoginFields() {
       <label className="errorLabel" style={{display: backendErrorVisible ? "block" : "none"}}>{backendErrorText}</label>
       <div className="inputContainer">
         <input className= "inputButton" type="button" onClick={onSubmitButtonClick} value={'Submit'} />
-        <input className= "inputButton" type="button" onClick={() => navigate('/createaccount')} value={'Create Account'} />
+        <input className= "inputButton" type="button" onClick={() => navigate('/createaccount/'+username)} value={'Create Account'} />
       </div>
     </div>
   );
