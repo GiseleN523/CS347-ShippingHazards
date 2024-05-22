@@ -6,7 +6,11 @@ import { useParams } from 'react-router-dom';
 let playerID
 let username;
 
-function StatsTable({ the_json}) {
+function StatsTable(the_json) {
+
+  if (!the_json) {
+    return <div>Loading...</div>;
+  }
 
   let winStats = the_json["wins"];
   let lossStats = the_json["losses"];
@@ -43,17 +47,20 @@ function StatsTable({ the_json}) {
 
 function StatsPage() {
   const { username } = useParams();
-  const [stats, setStats] = useState(null);
+  const [playerStats, setPlayerStats] = useState(null);
 
-    let url = "/get-player-info/"+playerID;
+  useEffect(() => {
+    let url = "/play/get-player-info/" + username;
     fetch(url)
       .then(response => response.json())
-      .then(the_json => {setStats(the_json)});
+      .then(the_json => setPlayerStats(the_json))
+      .catch(error => console.error('Error fetching player stats:', error));
+  }, [username]);
 
   return (
     <div>
       <HeaderAndNav username={username} />
-      <StatsTable />
+      <StatsTable the_json={playerStats} />
     </div>
   );
 }

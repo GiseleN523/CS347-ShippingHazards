@@ -6,6 +6,7 @@ import requests
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
+import sys
 
 from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
 from django.contrib.auth.forms import AuthenticationForm
@@ -256,13 +257,16 @@ def fire_shot(request, game_id, player_id, row, col):
     else:
         raise ValueError("Player cannot fire shot when it is not their turn")
 
-def get_player_info(request, player_id):
-    player = Player.objects.get(id = player_id) 
-    return JsonResponse({"is_ai_player":player.is_ai_player,
+def get_player_info(request, username):
+    player = Player.objects.get(username=username)
+    dict = {"is_ai_player":player.is_ai_player,
                         "screen_name": player.screen_name,
                         "wins": player.wins,
                         "losses": player.losses,
-                        "num_of_ships_sunk": player.num_of_ships_sunk})
+                        "num_of_ships_sunk": player.num_of_ships_sunk,
+                        "color_preference": player.color_preference}
+    sys.stderr.write("Get player Info: " + str(dict))
+    return JsonResponse(dict)
 
 '''
 The following game logic code was written by Josh Meier and Willow Gu in logic.py.
