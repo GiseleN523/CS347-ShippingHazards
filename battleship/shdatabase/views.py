@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from .models import Player, Game, Board
 from rest_framework import permissions, viewsets
 import requests
 from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -227,9 +230,9 @@ def get_player_info(request, username):
                         "num_of_ships_sunk": player.num_of_ships_sunk,
                         "color_preference": player.color_preference})
 
-def change_preferences(request, user_name, screen_name, color_preference):
+def change_preferences(request, username, screen_name, color_preference):
     u = User.objects.get(username=username)
-    player = get_object_or_404(Player, user=user)
+    player = get_object_or_404(Player, user=u)
     player.screen_name = screen_name
     player.color_preference = color_preference
     player.save()

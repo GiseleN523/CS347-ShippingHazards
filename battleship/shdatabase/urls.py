@@ -8,7 +8,7 @@ urlpatterns = [
     path("play/fire-shot/<int:game_id>/<int:player_id>/<int:row>/<int:col>", views.fire_shot, name="fire_shot"),
     path("play/get-player-info/<str:username>", views.get_player_info, name="get_player_info"),
 
-    path("change-player-preferences/<str:user_name>/<str:screen_name>/<str:color_preference>", views.change_preferences, name="change_preferences")
+    path("change-player-preferences/<str:username>/<str:screen_name>/<str:color_preference>", views.change_preferences, name="change_preferences")
 ]
 
 
