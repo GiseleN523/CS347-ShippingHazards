@@ -70,7 +70,7 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
     if (!selectedShip) return;
 
     switch (e.keyCode) {
-      case 37: // left arrow
+      case 37: //left arrow
         for (let i = 0; i < selectedShip.length; i++) {
           let ship = selectedShip[i];
           let old_id = "mysquare-" + ship[0] + "-" + ship[1];
@@ -80,7 +80,7 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
           document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
         }
         break;
-      // Add cases for other arrow keys if needed
+
     }
   }
 
