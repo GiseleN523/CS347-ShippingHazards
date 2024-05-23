@@ -11,6 +11,7 @@ class Player(models.Model):
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     num_of_ships_sunk= models.IntegerField(default=0)
+    color_preference = models.CharField(max_length=50, default='#ff8ac7', null=True)
 
     def __str__(self):
         return self.screen_name
