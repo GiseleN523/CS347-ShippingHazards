@@ -38,85 +38,20 @@ function entireShipAt(id, board) {
 }
 
 function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, gameStatus}) {
-  const myShip = occupied;
+  let myShip = occupied;
   const [hoverable, setHoverable] = useState(true);
 
-  useEffect(() => {
-    if (isSetupStage && selectedShip !== null) {
-      document.addEventListener('keydown', handleArrowKeys);
-    }
-
-    return () => {
-      if (isSetupStage && selectedShip !== null) {
-        document.removeEventListener('keydown', handleArrowKeys);
-      }
-    };
-  }, [isSetupStage, selectedShip]);
-
-
-
   function handleClickSetup() {
-    if(myBoard) {
+    if(myBoard && myShip) {
       selectedShip = entireShipAt(id, playerBoard);
       selectedShip.forEach(function(ship) {
         let id = "mysquare-" + ship[0] + "-" + ship[1];
         document.getElementById(id).style.backgroundColor = "blue";
       })
 
-      document.getElementById(id).focus();
+      //document.getElementById(id).focus();
     }
   }
-
-
-  function handleArrowKeys(e) {
-    if (!selectedShip) return;
-
-    switch (e.keyCode) {
-      case 37: //left arrow
-        for (let i = 0; i < selectedShip.length; i++) {
-          let ship = selectedShip[i];
-          let old_id = "mysquare-" + ship[0] + "-" + ship[1];
-          ship[1] = ship[1] - 1;
-          let new_id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(new_id).style.backgroundColor = "blue";
-          document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
-        }
-        break;
-      case 39: //right arrow
-        for (let i = 0; i < selectedShip.length; i++) {
-          let ship = selectedShip[i];
-          let old_id = "mysquare-" + ship[0] + "-" + ship[1];
-          ship[1] = ship[1] + 1;
-          let new_id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(new_id).style.backgroundColor = "blue";
-          document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
-        }
-        break;
-      case 38: //up arrow
-        for (let i = 0; i < selectedShip.length; i++) {
-          let ship = selectedShip[i];
-          let old_id = "mysquare-" + ship[0] + "-" + ship[1];
-          ship[0] = ship[0] - 1;
-          let new_id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(new_id).style.backgroundColor = "blue";
-          document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
-        }
-        break;
-      case 40: //down arrow
-        for (let i = 0; i < selectedShip.length; i++) {
-          let ship = selectedShip[i];
-          let old_id = "mysquare-" + ship[0] + "-" + ship[1];
-          ship[0] = ship[0] + 1;
-          let new_id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(new_id).style.backgroundColor = "blue";
-          document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
-        }
-        break;
-
-    }
-  }
-
-
 
   function handleClickGameplay() {
     if(!myBoard && myTurn && gameStatus == 0 && document.getElementById(id).style.backgroundColor != "white" && document.getElementById(id).style.backgroundColor != "red") {
@@ -146,7 +81,6 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
       onClick={isSetupStage? handleClickSetup : handleClickGameplay}
       onMouseEnter = {hoverable ? handleMouseEnter : null}
       onMouseLeave = {hoverable ? handleMouseLeave : null}
-      onKeyDown= {isSetupStage && selectedShip != null ? handleArrowKeys : console.log(selectedShip)}
       style={{backgroundColor:
            (function() {
             if(myBoard && myShip) {
@@ -262,10 +196,52 @@ function ComicPopup({isVisible, image}) {
 
 function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupStage, myTurn, setMyTurn, popups1, popups2}) {
 
-  socket.onmessage = function(e) {
-    let message = JSON.parse(JSON.parse(e.data)["message"]);
-    updateBoardAndTurn(message);
-  }
+    useEffect(() => {
+      if (isSetupStage && selectedShip !== null) {
+        document.addEventListener('keydown', handleKeys);
+      }
+
+      return () => {
+        if (isSetupStage && selectedShip !== null) {
+          document.removeEventListener('keydown', handleKeys);
+        }
+      };
+    }, [isSetupStage, selectedShip]);
+
+    function handleKeys(e) {
+
+      // arrow keys to move ship in setup stage
+      if (selectedShip != null && isSetupStage && (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40)) {
+        let change = [0, 1];
+        if(e.keyCode == 37) { //left arrow
+          change = [0, -1];
+        }
+        else if(e.keyCode == 38) { //up arrow
+          change = [-1, 0];
+        }
+        else if(e.keyCode == 40) { //down arrow
+          change = [1, 0];
+        }
+        for (let i = 0; i < selectedShip.length; i++) {
+          let ship = selectedShip[i];
+          let id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+          document.getElementById(id).myShip = false;
+          ship[0] = ship[0] + change[0];
+          ship[1] = ship[1] + change[1];
+        }
+        selectedShip.forEach(function(ship) {
+          let id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(id).style.backgroundColor = "blue";
+          document.getElementById(id).myShip = true;
+        });
+      }
+    }
+
+    socket.onmessage = function(e) {
+      let message = JSON.parse(JSON.parse(e.data)["message"]);
+      updateBoardAndTurn(message);
+    }
     
     function updateBoardAndTurn(the_json) {
       let myBoard = the_json["player_id"] == playerID;
