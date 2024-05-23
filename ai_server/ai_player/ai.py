@@ -251,12 +251,13 @@ def updateBoards(shipBoard, prevCombinedBoard, prevAttackBoard, attackRow, attac
     newAttackBoard = updateChar(prevAttackBoard, char, attackRow, attackCol)
     return newCombinedBoard, newAttackBoard
 
-def wasAttacked(attackBoard, attackRow, attackCol):
+def wasAttacked(attackBoard, attackRow, attackCol, board_size):
     '''
     Input: attackBoard with only previous hits and misses, row and col of next attack
     Output: True if there has not been an attack at those coordinates before, otherwise False
     '''
-    if attackRow > 9 or attackRow < 0 or attackCol > 9 or attackCol < 0:
+    edge = board_size-1
+    if attackRow > edge or attackRow < 0 or attackCol > edge or attackCol < 0:
         return False
     if charAt(attackBoard, attackRow, attackCol) == "X":
         return True
@@ -362,7 +363,13 @@ class BattleShipAI:
         return getCoords(index, self.boardSize)
     
     def getSmallestShipSizeLeft(self):
-        
+        ### make sure front end returns ship boards with these corresponding characters
+        # ships_composition = {
+        #         4: [2, 3, 4, 5],
+        #         5: [2, 3, 3, 4, 5],
+        #         6: [2, 3, 3, 4, 4, 5],
+        #     }
+
         shipChars = {
             4: ["a", "b", "c", "d"],
             5: ["a", "b", "c", "d", "e"],
@@ -391,6 +398,15 @@ class BattleShipAI:
         possibleTargets = [(aboveRow, aboveCol), (belowRow, belowCol), (rightRow, rightCol), (leftRow, leftCol)]
         random.shuffle(possibleTargets)
         return possibleTargets
+    
+    def outOfBounds(self, location):
+        edge = self.boardSize-1
+        if location > edge or location < 0:
+            return True
+        else:
+            return False
+        
+
 
     # function structure from: https://towardsdatascience.com/coding-an-intelligent-battleship-agent-bf0064a4b319
     # uses smallest ship size to narrow down coordinates that the ship must be on
@@ -472,66 +488,116 @@ class BattleShipAI:
             # aboveIndex = (self.previousShotCol + above*10)
             belowRow = self.previousShotRow + 1
             # if aboveIndex < 100 or aboveIndex < 0:
-        
+            addedTargets = False
             ### need to finish error checking for out of bounds indexes (this is where its breaking for ai 3)
             # if charAt(self.attackBoard, above, below) == "X" or charAt(self.combinedBoard, self.previousShotRow + 1, self.previousShotCol) == "X":
-            if wasAttacked(self.attackBoard, aboveRow, self.previousShotCol) or wasAttacked(self.attackBoard, belowRow, self.previousShotCol):
+            if wasAttacked(self.attackBoard, aboveRow, self.previousShotCol, self.boardSize) or wasAttacked(self.attackBoard, belowRow, self.previousShotCol, self.boardSize):
                 print("passed first if: a hit above or below", flush=True)
 
                 # add above those hits in a line to the higher prio stack
-                aboveRow = self.previousShotRow - 1
+                # aboveRow = self.previousShotRow - 1
                 # keep shifting up until find a "O" or "-"
-                while wasAttacked(self.attackBoard, aboveRow, self.previousShotCol):
-                    aboveRow -= 1
-                # if there has been no attack at this index
-                if charAt(self.attackBoard, aboveRow, self.previousShotCol) != "O":
-                    self.highPriorityStack.append((aboveRow, self.previousShotCol))
+                if not self.outOfBounds(aboveRow):
+                    while charAt(self.attackBoard, aboveRow, self.previousShotCol) == "X":
+                        aboveRow -= 1
+                        if self.outOfBounds(aboveRow):
+                            print("was out of bounds", flush=True)
+                            break
+                # # if there has been no attack at this index
+                    if not self.outOfBounds(aboveRow) and charAt(self.attackBoard, aboveRow, self.previousShotCol) != "O":
+                #     self.highPriorityStack.append((aboveRow, self.previousShotCol))
+                        self.highPriorityStack.append((aboveRow, self.previousShotCol))
 
                 # add below to higher prio stack
                 # keep shifting up until find a "O" or "-"
-                while wasAttacked(self.attackBoard, belowRow, self.previousShotCol):
-                    belowRow += 1
-                # if there has been no attack at this index
-                if charAt(self.attackBoard, belowRow, self.previousShotCol) != "O":
-                    self.highPriorityStack.append((belowRow, self.previousShotCol))
+                if not self.outOfBounds(belowRow):
+                    while charAt(self.attackBoard, belowRow, self.previousShotCol) == "X":
+                        belowRow += 1
+                        if self.outOfBounds(belowRow):
+                            print("was out of bounds", flush=True)
+                            break
+                # # if there has been no attack at this index
+                    if not self.outOfBounds(belowRow) and charAt(self.attackBoard, belowRow, self.previousShotCol) != "O":
+                #     self.highPriorityStack.append((belowRow, self.previousShotCol))
+                        self.highPriorityStack.append((belowRow, self.previousShotCol))
 
                 # add left to lower prio stack
                 if isValidAttack(self.attackBoard, self.previousShotRow, self.previousShotCol - 1):
-                    self.lowPriorityStack.append((self.attackBoard, self.previousShotRow, self.previousShotCol - 1))
+                    self.lowPriorityStack.append((self.previousShotRow, self.previousShotCol - 1))
 
                 # add right to lower prio stack
                 if isValidAttack(self.attackBoard, self.previousShotRow, self.previousShotCol + 1):
-                    self.lowPriorityStack.append((self.attackBoard, self.previousShotRow, self.previousShotCol + 1))
+                    self.lowPriorityStack.append((self.previousShotRow, self.previousShotCol + 1))
+                addedTargets = True
+
 
             ### if there is a hit to left or right of previous hits location
-            if charAt(self.attackBoard, self.previousShotRow, self.previousShotCol-1) == "X" or charAt(self.combinedBoard, self.previousShotRow, self.previousShotCol+1) == "X":
+            leftCol = self.previousShotCol - 1
+            rightCol = self.previousShotCol + 1
+            # if charAt(self.attackBoard, self.previousShotRow, self.previousShotCol-1) == "X" or charAt(self.combinedBoard, self.previousShotRow, self.previousShotCol+1) == "X":
+            if wasAttacked(self.attackBoard, self.previousShotRow, leftCol, self.boardSize) or wasAttacked(self.attackBoard, self.previousShotRow, rightCol, self.boardSize):
                 print("passed second if, hit to left or right", flush=True)
 
                 # add left to high prio stack
-                leftCol = self.previousShotCol - 1
+                # leftCol = self.previousShotCol - 1
                 # keep shifting to the left until find a "O" or "-"
-                while charAt(self.attackBoard, self.previousShotRow, leftCol) == "X":
-                    leftCol -= 1
-                # if there has been no attack at this index
-                if charAt(self.attackBoard, self.previousShotRow, leftCol) != "O":
-                    self.highPriorityStack.append((self.previousShotRow, leftCol))
+                if not self.outOfBounds(leftCol):
+                    # while wasAttacked(self.attackBoard, self.previousShotRow, leftCol, self.boardSize):
+                    while charAt(self.attackBoard, self.previousShotRow, leftCol) == "X":
+                        print("shifting left", flush=True)
+                        leftCol -= 1
+                        if self.outOfBounds(leftCol):
+                            print("was out of bounds", flush=True)
+                            break
+                # # if there has been no attack at this index
+                    if not self.outOfBounds(leftCol) and charAt(self.attackBoard, self.previousShotRow, leftCol) != "O":
+                #     self.highPriorityStack.append((self.previousShotRow, leftCol))
+                        print("adding", self.previousShotRow, leftCol, flush=True)
+                        self.highPriorityStack.append((self.previousShotRow, leftCol))
+
 
                 # add right to higher prio stack
-                rightCol = self.previousShotCol + 1
+                # rightCol = self.previousShotCol + 1
                 # keep shifting to the right until find a "O" or "-"
-                while charAt(self.attackBoard, self.previousShotRow, rightCol) == "X":
-                    rightCol += 1
-                # tif here has been no attack at this index
-                if charAt(self.attackBoard, self.previousShotRow, rightCol) != "O":
-                    self.highPriorityStack.append((self.previousShotRow, rightCol))
+                if not self.outOfBounds(rightCol):
+                    print("right col is not out of bounds", rightCol, flush=True)
+                    while charAt(self.attackBoard, self.previousShotRow, rightCol) == "X":
+                        print("shifting right", flush=True)
+                        rightCol += 1
+                        if self.outOfBounds(rightCol):
+                            print("was out of bounds", flush=True)
+                            break
+                # # tif here has been no attack at this index
+                    if not self.outOfBounds(rightCol) and charAt(self.attackBoard, self.previousShotRow, rightCol) != "O":
+                #     self.highPriorityStack.append((self.previousShotRow, rightCol))
+                        print("adding", self.previousShotRow, rightCol, flush=True)
+
+                        self.highPriorityStack.append((self.previousShotRow, rightCol))
 
                 # add above to lower prio
                 if isValidAttack(self.attackBoard, self.previousShotRow - 1, self.previousShotCol):
-                    self.lowPriorityStack.append((self.attackBoard, self.previousShotRow - 1, self.previousShotCol))
+                    self.lowPriorityStack.append((self.previousShotRow - 1, self.previousShotCol))
 
                 # add below to lower prio stack
                 if isValidAttack(self.attackBoard, self.previousShotRow + 1, self.previousShotCol):
-                    self.lowPriorityStack.append((self.attackBoard, self.previousShotRow + 1, self.previousShotCol))
+                    self.lowPriorityStack.append((self.previousShotRow + 1, self.previousShotCol))
+                print("added targets", flush=True)
+                addedTargets = True
+            
+            # if there was no hit above/below/left/right
+            if addedTargets == False:
+                print("there was no hit above/below/left/right of the previous hit")
+                possibleTargets = self.getSurroundingLocations(self.previousShotRow, self.previousShotCol)
+                print("retrieved targets", flush=True)
+
+                for row, col in possibleTargets:
+                    print("checking targets", flush=True)
+                    if isValidAttack(self.attackBoard, row, col): # there has been no previous shot there
+                        self.lowPriorityStack.append((row, col))
+
+
+
+            
     
         # if the previous hit and sunk a ship
         elif self.previousShotHit == 1 and self.previousShotSunk == 1:
@@ -574,7 +640,7 @@ class BattleShipAI:
             print("getting a better random", flush=True)
 
             attackRow, attackCol = self.betterRandomAttack()
-        print("going to return attack row and col", flush=True)
+        print("going to return attack row and col", attackRow, attackCol, flush=True)
         return attackRow, attackCol
         
 
