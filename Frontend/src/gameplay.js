@@ -1,13 +1,12 @@
 import './gameplay.css';
 import HeaderAndNav from './header_and_nav.js';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import hitImage from './images/HitPopup.png';
 import sunkImage from './images/SunkPopup.png';
 import hitSound from './sounds/hitSound.mp3'; 
 import missSound from './sounds/missSound.mp3'; 
 import sunkSound from './sounds/sunkSound.mp3';
-import React, { useState, useEffect } from 'react';
 
 const blankBoard = "----------------------------------------------------------------------------------------------------";
 let playerBoard = "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd";
@@ -54,6 +53,8 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
     };
   }, [isSetupStage, selectedShip]);
 
+
+
   function handleClickSetup() {
     if(myBoard) {
       selectedShip = entireShipAt(id, playerBoard);
@@ -66,6 +67,7 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
     }
   }
 
+
   function handleArrowKeys(e) {
     if (!selectedShip) return;
 
@@ -75,6 +77,36 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
           let ship = selectedShip[i];
           let old_id = "mysquare-" + ship[0] + "-" + ship[1];
           ship[1] = ship[1] - 1;
+          let new_id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(new_id).style.backgroundColor = "blue";
+          document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+        }
+        break;
+      case 39: //right arrow
+        for (let i = 0; i < selectedShip.length; i++) {
+          let ship = selectedShip[i];
+          let old_id = "mysquare-" + ship[0] + "-" + ship[1];
+          ship[1] = ship[1] + 1;
+          let new_id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(new_id).style.backgroundColor = "blue";
+          document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+        }
+        break;
+      case 38: //up arrow
+        for (let i = 0; i < selectedShip.length; i++) {
+          let ship = selectedShip[i];
+          let old_id = "mysquare-" + ship[0] + "-" + ship[1];
+          ship[0] = ship[0] - 1;
+          let new_id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(new_id).style.backgroundColor = "blue";
+          document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+        }
+        break;
+      case 40: //down arrow
+        for (let i = 0; i < selectedShip.length; i++) {
+          let ship = selectedShip[i];
+          let old_id = "mysquare-" + ship[0] + "-" + ship[1];
+          ship[0] = ship[0] + 1;
           let new_id = "mysquare-" + ship[0] + "-" + ship[1];
           document.getElementById(new_id).style.backgroundColor = "blue";
           document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
@@ -323,6 +355,7 @@ function GamePlay() {
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
     const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
     const [sunkPopup2Visible, setSunkPopup2Visible] = useState(false);
+    const [selectedShip, setSelectedShip] = useState(null);
 
     let popups1 = {
       "hitPopupVisible" : hitPopup1Visible,
