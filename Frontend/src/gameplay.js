@@ -7,6 +7,7 @@ import sunkImage from './images/SunkPopup.png';
 import hitSound from './sounds/hitSound.mp3'; 
 import missSound from './sounds/missSound.mp3'; 
 import sunkSound from './sounds/sunkSound.mp3';
+import React, { useState, useEffect } from 'react';
 
 const blankBoard = "----------------------------------------------------------------------------------------------------";
 let playerBoard = "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd";
@@ -16,6 +17,7 @@ let username;
 let gameID;
 let boardSize;
 let socket;
+let selectedShip; // used in ship placement phase
 
 
 //returns a list of coordinates of the other squares that make up the ship at given coordinates
@@ -39,11 +41,51 @@ function entireShipAt(id, board) {
 function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, gameStatus}) {
   const myShip = occupied;
   const [hoverable, setHoverable] = useState(true);
+
+  useEffect(() => {
+    if (isSetupStage && selectedShip !== null) {
+      document.addEventListener('keydown', handleArrowKeys);
+    }
+
+    return () => {
+      if (isSetupStage && selectedShip !== null) {
+        document.removeEventListener('keydown', handleArrowKeys);
+      }
+    };
+  }, [isSetupStage, selectedShip]);
+
   function handleClickSetup() {
     if(myBoard) {
-      
+      selectedShip = entireShipAt(id, playerBoard);
+      selectedShip.forEach(function(ship) {
+        let id = "mysquare-" + ship[0] + "-" + ship[1];
+        document.getElementById(id).style.backgroundColor = "blue";
+      })
+
+      document.getElementById(id).focus();
     }
   }
+
+  function handleArrowKeys(e) {
+    if (!selectedShip) return;
+
+    switch (e.keyCode) {
+      case 37: // left arrow
+        for (let i = 0; i < selectedShip.length; i++) {
+          let ship = selectedShip[i];
+          let old_id = "mysquare-" + ship[0] + "-" + ship[1];
+          ship[1] = ship[1] - 1;
+          let new_id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(new_id).style.backgroundColor = "blue";
+          document.getElementById(old_id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+        }
+        break;
+      // Add cases for other arrow keys if needed
+    }
+  }
+
+
+
   function handleClickGameplay() {
     if(!myBoard && myTurn && gameStatus == 0 && document.getElementById(id).style.backgroundColor != "white" && document.getElementById(id).style.backgroundColor != "red") {
       setHoverable(false);
@@ -52,18 +94,18 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
     }
   }
   function handleMouseEnter() {
-    if(myBoard && myShip && isSetupStage) {
+    /*if(myBoard && myShip && isSetupStage) {
       entireShipAt(id, playerBoard).forEach((square) => document.getElementById("mysquare-"+square[0]+"-"+square[1]).style.backgroundColor = "pink");
-    }
+    }*/
     if(!isSetupStage && !myBoard && myTurn) {
       document.getElementById(id).style.backgroundColor = "blue";
     }
   }
   function handleMouseLeave() {
-    if(myBoard && myShip && isSetupStage) {
+    /*if(myBoard && myShip && isSetupStage) {
       document.getElementById(id).style.backgroundColor = '#ff8ac7';
     }
-    else if(hoverable && !myBoard) {
+    else */if(hoverable && !myBoard) {
       document.getElementById(id).style.backgroundColor = 'inherit';
     }
   }
@@ -72,6 +114,7 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
       onClick={isSetupStage? handleClickSetup : handleClickGameplay}
       onMouseEnter = {hoverable ? handleMouseEnter : null}
       onMouseLeave = {hoverable ? handleMouseLeave : null}
+      onKeyDown= {isSetupStage && selectedShip != null ? handleArrowKeys : console.log(selectedShip)}
       style={{backgroundColor:
            (function() {
             if(myBoard && myShip) {
