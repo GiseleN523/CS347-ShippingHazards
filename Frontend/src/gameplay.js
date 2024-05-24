@@ -177,6 +177,11 @@ function Instructions({isSetupStage, myTurn}) {
 
 function ConfirmButton({isSetupStage, setIsSetupStage}) {
   function handleClick() {
+    selectedShip.forEach(function(ship) { // reset selectedShip
+      let id = "mysquare-" + ship[0] + "-" + ship[1];
+      document.getElementById(id).style.backgroundColor = '#ff8ac7';
+    });
+    selectedShip = null;
     setIsSetupStage(false);
     let url = "/play/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
     fetch(url);
@@ -256,10 +261,19 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
           changeFunct = (coords) => [coords[0]-1, coords[1]];
         }
         else if(e.code == "ArrowDown") {
-          changeFunct = (coords) => [coords[0]+1, coords[1]]
+          changeFunct = (coords) => [coords[0]+1, coords[1]];
         }
         else if(e.code == "Space") {
-          changeFunct = (coords) => [coords[1], coords[0]]
+          // for each square, find the difference between the row and column of the first item in the ship
+          // this is the origin square everything else rotates around
+          // add the row difference to the origin's column and the column difference to the origin's row
+          changeFunct = function(coords){
+            let startingRow = selectedShip[0][0];
+            let startingCol = selectedShip[0][1];
+            let rowDiff = selectedShip[0][0] - coords[0];
+            let colDiff = selectedShip[0][1] - coords[1];
+            return [startingRow+colDiff, startingCol+rowDiff];
+          }
         }
         if(legalSelectedShipMovement(changeFunct)) {
           applySelectedShipMovement(changeFunct);
