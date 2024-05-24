@@ -36,19 +36,41 @@ function entireShipAt(id, board) {
   return coords;
 }
 
-// accepts change in form [row, column], the amount the selected ship is to move in each direction (eg [-1, 0])
-// returns true or false
-function legalSelectedShipMovement(change) {
+// changeFunct is a function that takes a length 2 array of coordinates and returns the modified coordinates
+function legalSelectedShipMovement(changeFunct) {
   for(let i=0; i<selectedShip.length; i++) {
     let ship = selectedShip[i];
-    let row = ship[0] + change[0];
-    let col = ship[1] + change[1];
+    let newCoords = changeFunct(ship);
+    let row = newCoords[0];
+    let col = newCoords[1];
     // new square out of board bounds or already contains a ship (not another part of the selected ship)
     if(row < 0 || row >= boardSize || col < 0 || col >= boardSize || (playerBoard[(row*boardSize)+col] != "-" && playerBoard[(row*boardSize)+col] != playerBoard[(ship[0]*boardSize)+ship[1]])) {
       return false;
     }
   }
   return true;
+}
+
+function applySelectedShipMovement(changeFunct) {
+  let shipLetter = playerBoard[(selectedShip[0][0]*boardSize)+selectedShip[0][1]]; // letter for this ship in playerBoard (a, b, c, d)
+  // first reset all old ship squares to blank
+  for (let i = 0; i < selectedShip.length; i++) {
+    let ship = selectedShip[i];
+    let id = "mysquare-" + ship[0] + "-" + ship[1];
+    document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+    let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
+    playerBoard = playerBoard.substring(0, ind) + "-" + playerBoard.substring(ind+1);
+    let newCoords = changeFunct(ship);
+    ship[0] = newCoords[0];
+    ship[1] = newCoords[1];
+  }
+  // then set new ship squares
+  selectedShip.forEach(function(ship) {
+    let id = "mysquare-" + ship[0] + "-" + ship[1];
+    document.getElementById(id).style.backgroundColor = "blue";
+    let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
+    playerBoard = playerBoard.substring(0, ind) + shipLetter + playerBoard.substring(ind+1);
+  });
 }
 
 function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, gameStatus}) {
@@ -224,37 +246,23 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
 
     function handleKeys(e) {
 
-      // arrow keys to move ship in setup stage
-      if (selectedShip != null && isSetupStage && (e.code == "ArrowRight" || e.code == "ArrowLeft" || e.code == "ArrowUp" || e.code == "ArrowDown")) {
-        let change = [0, 1];
+      // arrow keys or spacebar to move ship in setup stage
+      if (selectedShip != null && isSetupStage && (e.code == "Space" || e.code == "ArrowRight" || e.code == "ArrowLeft" || e.code == "ArrowUp" || e.code == "ArrowDown")) {
+        let changeFunct = (coords) => [coords[0], coords[1]+1]; // function that returns new coordinates
         if(e.code == "ArrowLeft") {
-          change = [0, -1];
+          changeFunct = (coords) => [coords[0], coords[1]-1];
         }
         else if(e.code == "ArrowUp") {
-          change = [-1, 0];
+          changeFunct = (coords) => [coords[0]-1, coords[1]];
         }
         else if(e.code == "ArrowDown") {
-          change = [1, 0];
+          changeFunct = (coords) => [coords[0]+1, coords[1]]
         }
-        let shipLetter = playerBoard[(selectedShip[0][0]*boardSize)+selectedShip[0][1]]; // letter for this ship in playerBoard (a, b, c, d)
-        if(legalSelectedShipMovement(change)) {
-          // first reset all old ship squares to blank
-          for (let i = 0; i < selectedShip.length; i++) {
-            let ship = selectedShip[i];
-            let id = "mysquare-" + ship[0] + "-" + ship[1];
-            document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
-            let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
-            playerBoard = playerBoard.substring(0, ind) + "-" + playerBoard.substring(ind+1);
-            ship[0] = ship[0] + change[0];
-            ship[1] = ship[1] + change[1];
-          }
-          // then set new ship squares
-          selectedShip.forEach(function(ship) {
-            let id = "mysquare-" + ship[0] + "-" + ship[1];
-            document.getElementById(id).style.backgroundColor = "blue";
-            let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
-            playerBoard = playerBoard.substring(0, ind) + shipLetter + playerBoard.substring(ind+1);
-          });
+        else if(e.code == "Space") {
+          changeFunct = (coords) => [coords[1], coords[0]]
+        }
+        if(legalSelectedShipMovement(changeFunct)) {
+          applySelectedShipMovement(changeFunct);
         }
         e.preventDefault(); // prevent default scroll on up/down arrows
       }
@@ -264,28 +272,6 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
           document.getElementById(id).style.backgroundColor = '#ff8ac7';
         });
         selectedShip = null;
-      }
-      else if (selectedShip != null && isSetupStage && e.code == "Space") { // space bar: rotate selected ship
-        // switch the row and column to rotate?
-        let shipLetter = playerBoard[(selectedShip[0][0]*boardSize)+selectedShip[0][1]]; // letter for this ship in playerBoard (a, b, c, d)
-        // first reset all old ship squares to blank
-        for (let i = 0; i < selectedShip.length; i++) {
-          let ship = selectedShip[i];
-          let id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
-          let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
-          playerBoard = playerBoard.substring(0, ind) + "-" + playerBoard.substring(ind+1);
-          let temp = ship[0];
-          ship[0] = ship[1];
-          ship[1] = temp;
-        }
-        // then set new ship squares
-        selectedShip.forEach(function(ship) {
-          let id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(id).style.backgroundColor = "blue";
-          let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
-          playerBoard = playerBoard.substring(0, ind) + shipLetter + playerBoard.substring(ind+1);
-        });
       }
     }
 
