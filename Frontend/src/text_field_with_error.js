@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import './text_field_with_error.css'
 
 function TextFieldWithError({password, placeholder="", value, setValue, errorVisible, errorMessage=placeholder.length > 0 ? placeholder+" is required" : "This field is required"}) {

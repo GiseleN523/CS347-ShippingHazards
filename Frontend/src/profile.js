@@ -29,7 +29,7 @@ function ProfilePage() {
     setNewPassword2ErrorVisible(false);
     setScreenNameErrorVisible(false);
     setBackendErrorVisible(false);
-    let success = the_json["status"] == "success";
+    let success = the_json["status"] === "success";
     let message = the_json["message"];
     if(success) {
       navigate('/home/'+username);
@@ -41,21 +41,17 @@ function ProfilePage() {
   }
 
   function handlePasswordClick() {
-    currentPassword.length == 0 ? setCurrentPasswordErrorVisible(true) : setCurrentPasswordErrorVisible(false);
-    newPassword1.length == 0 ? setNewPassword1ErrorVisible(true) : setNewPassword1ErrorVisible(false);
-    newPassword2.length == 0 ? setNewPassword2ErrorVisible(true) : setNewPassword2ErrorVisible(false);
-    //screenName.length == 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
-    //let url = "react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
+    currentPassword.length === 0 ? setCurrentPasswordErrorVisible(true) : setCurrentPasswordErrorVisible(false);
+    newPassword1.length === 0 ? setNewPassword1ErrorVisible(true) : setNewPassword1ErrorVisible(false);
+    newPassword2.length === 0 ? setNewPassword2ErrorVisible(true) : setNewPassword2ErrorVisible(false);
     let url = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
     fetch(url)
         .then( response => response.json())
         .then(the_json => attemptPasswordScreenNameChange(the_json));
-    //let url2 = path("react_change_color/"+color);
-    //fetch(url2);
   }
 
   function handleScreenNameColorClick() {
-    screenName.length == 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
+    screenName.length === 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
     let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
     fetch(url).then(navigate('/home/'+username));
   }

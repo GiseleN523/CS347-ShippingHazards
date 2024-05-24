@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import './login.css';
-import lobbyMusic from './sounds/lobbyMusic.mp3';
 import TextFieldWithError from './text_field_with_error';
 
 let fillerUsername;
@@ -26,7 +25,7 @@ function AccountCreationFields() {
       setPassword2ErrorVisible(false);
       setScreenNameErrorVisible(false);
       setBackendErrorVisible(false);
-      let success = the_json["status"] == "success";
+      let success = the_json["status"] === "success";
       let message = the_json["message"];
       if(success) {
         navigate('/home/'+username);

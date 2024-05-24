@@ -17,7 +17,7 @@ function LoginFields() {
     setUsernameErrorVisible(false);
     setPasswordErrorVisible(false);
     setBackendErrorVisible(false);
-    let success = the_json["status"] == "success";
+    let success = the_json["status"] === "success";
     let message = the_json["message"];
     if(success) { // If both username and password are provided, navigate to "/home"
       navigate('/home/'+username);

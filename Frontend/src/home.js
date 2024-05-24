@@ -1,6 +1,5 @@
 import './home.css'
 import HeaderAndNav from './header_and_nav.js';
-import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -58,7 +57,8 @@ function PlayCompButton({aiID}) {
   }
 
   function handleClick() {
-    let url = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + "true";
+    let isAI = "true";
+    let url = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAI;
     fetch(url).then( response => response.json() ).then( the_json => redirectBrowser(the_json)); // Matt
   }
   return (

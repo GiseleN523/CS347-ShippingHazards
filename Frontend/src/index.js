@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './home.js';
 import CreateAccount from './create_account.js'
@@ -7,12 +7,11 @@ import AboutUs from './aboutus.js';
 import MyAccount from './myaccount.js';
 import GamePlay from './gameplay.js';
 import StatsPage from './stats.js';
-import './index.css'
 import Login from './login.js';
 import ProfilePage from './profile.js';
+import './index.css'
 
-
-ReactDOM.render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Router>
       <Routes>
@@ -28,5 +27,4 @@ ReactDOM.render(
       </Routes>
     </Router>
   </React.StrictMode>,
-  document.getElementById('root')
 );
