@@ -266,7 +266,26 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
         selectedShip = null;
       }
       else if (selectedShip != null && isSetupStage && e.code == "Space") { // space bar: rotate selected ship
-        
+        // switch the row and column to rotate?
+        let shipLetter = playerBoard[(selectedShip[0][0]*boardSize)+selectedShip[0][1]]; // letter for this ship in playerBoard (a, b, c, d)
+        // first reset all old ship squares to blank
+        for (let i = 0; i < selectedShip.length; i++) {
+          let ship = selectedShip[i];
+          let id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+          let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
+          playerBoard = playerBoard.substring(0, ind) + "-" + playerBoard.substring(ind+1);
+          let temp = ship[0];
+          ship[0] = ship[1];
+          ship[1] = temp;
+        }
+        // then set new ship squares
+        selectedShip.forEach(function(ship) {
+          let id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(id).style.backgroundColor = "blue";
+          let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
+          playerBoard = playerBoard.substring(0, ind) + shipLetter + playerBoard.substring(ind+1);
+        });
       }
     }
 
