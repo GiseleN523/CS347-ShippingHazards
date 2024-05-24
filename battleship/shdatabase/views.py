@@ -7,11 +7,11 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
 import sys
+import random
 
 from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -277,6 +277,10 @@ def change_preferences(request, username, screen_name, color_preference):
     player.save()
 
     return JsonResponse({'message': 'Player info updated successfully'})
+
+def random_board(request, num_ships, board_size):
+    newBoardPlacement = placeShips(num_ships, board_size)
+    return JsonResponse({"random_board" : newBoardPlacement})
     
 '''
 The following game logic code was written by Josh Meier and Willow Gu in logic.py.
@@ -371,3 +375,52 @@ def updateBoards(shipBoard, prevCombinedBoard, prevAttackBoard, attackRow, attac
     newAttackBoard = updateChar(prevAttackBoard, char, attackRow, attackCol)
     return newCombinedBoard, newAttackBoard
 
+
+#PlaceShips Code
+
+def placeOneShip(size, ship_board, ship_letter):
+    # horizontal
+    if random.randint(0, 1) == 0:
+        row = random.randint(0, 9)
+        col = random.randint(0, 10 - size)
+        # check that entire ship can be placed
+        for i in range(size):
+            if ship_board[row * 10 + col + i] != "-":
+                return False
+        # place ship
+        for i in range(size):
+                ship_board[row * 10 + col + i] = ship_letter
+    # vertical
+    else: 
+        row = random.randint(0, 10 - size)
+        col = random.randint(0, 9)
+        # check that entire ship can be placed
+        for i in range(size):
+            if ship_board[(row + i) * 10 + col] != "-":
+                return False
+        # place ship
+        for i in range(size):
+                ship_board[(row + i) * 10 + col] = ship_letter
+    return True
+
+
+ships_composition = {
+        4: [2, 3, 4, 5],
+        5: [2, 3, 3, 4, 5],
+        6: [2, 3, 3, 4, 4, 5],
+    }
+# randomize board configuration based on either 4, 5, or 6 ships
+def placeShips(num_ships, board_size):
+    ship_board = ["-" for _ in range(board_size * board_size)]
+
+    ship_index = 0
+    for size in ships_composition[num_ships]:
+        placed = False
+        ship_index += 1
+        # https://www.pythoncheatsheet.org/builtin/chr
+        # https://en.wikipedia.org/wiki/List_of_Unicode_characters
+        ship_letter = chr(ship_index + 96) 
+        while placed == False:
+            placed = placeOneShip(size, ship_board, ship_letter)
+
+    return ''.join(ship_board)

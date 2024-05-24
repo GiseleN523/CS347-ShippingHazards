@@ -8,8 +8,10 @@ urlpatterns = [
     path("play/fire-shot/<int:game_id>/<int:player_id>/<int:row>/<int:col>", views.fire_shot, name="fire_shot"),
     path("play/get-player-info/<str:username>", views.get_player_info, name="get_player_info"),
     path("play/<str:room_name>/", views.room, name="room"),
+    path("play/<int:num_ships>/<int:board_size>", views.random_board, name="random_board"),
 #     path("play/get-player-info/<int:player_id>", views.get_player_info, name="get_player_info")
-    path("change-player-preferences/<str:username>/<str:screen_name>/<str:color_preference>", views.change_preferences, name="change_preferences")
+    path("change-player-preferences/<str:username>/<str:screen_name>/<str:color_preference>", views.change_preferences, name="change_preferences"),
+
 ]
 
 
