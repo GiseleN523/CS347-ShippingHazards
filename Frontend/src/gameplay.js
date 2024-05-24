@@ -16,12 +16,11 @@ let username;
 let gameID;
 let boardSize;
 let socket;
-let selectedShip; // used in ship placement phase
-
+let selectedShip; // used in ship placement phase - ex - [[0, 0], [0, 1], [0, 2], [0, 3]]
 
 //returns a list of coordinates of the other squares that make up the ship at given coordinates
 //input ex: [0, 0]
-//output ex: [[0, 1], [0, 2], [0, 3]]
+//output ex: [[0, 0], [0, 1], [0, 2], [0, 3]]
 function entireShipAt(id, board) {
   let row = Number(id.slice(id.indexOf("-")+1, id.lastIndexOf("-")));
   let col = Number(id.slice(id.lastIndexOf("-")+1));
@@ -37,19 +36,40 @@ function entireShipAt(id, board) {
   return coords;
 }
 
+// accepts change in form [row, column], the amount the selected ship is to move in each direction (eg [-1, 0])
+// returns true or false
+function legalSelectedShipMovement(change) {
+  for(let i=0; i<selectedShip.length; i++) {
+    let ship = selectedShip[i];
+    let row = ship[0] + change[0];
+    let col = ship[1] + change[1];
+    // new square out of board bounds or already contains a ship (not another part of the selected ship)
+    if(row < 0 || row >= boardSize || col < 0 || col >= boardSize || (playerBoard[(row*boardSize)+col] != "-" && playerBoard[(row*boardSize)+col] != playerBoard[(ship[0]*boardSize)+ship[1]])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, gameStatus}) {
-  let myShip = occupied;
   const [hoverable, setHoverable] = useState(true);
 
   function handleClickSetup() {
-    if(myBoard && myShip) {
-      selectedShip = entireShipAt(id, playerBoard);
-      selectedShip.forEach(function(ship) {
-        let id = "mysquare-" + ship[0] + "-" + ship[1];
-        document.getElementById(id).style.backgroundColor = "blue";
-      })
-
-      //document.getElementById(id).focus();
+    if(myBoard) {
+      if(selectedShip != null) { // reset selected ship
+        selectedShip.forEach(function(ship) {
+          let id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(id).style.backgroundColor = '#ff8ac7';
+        })
+      }
+      selectedShip = null;
+      if(playerBoard[(row*boardSize)+column] != "-") {
+        selectedShip = entireShipAt(id, playerBoard); // set new selected ship
+        selectedShip.forEach(function(ship) {
+          let id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(id).style.backgroundColor = "blue";
+        });
+      }
     }
   }
 
@@ -61,18 +81,12 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
     }
   }
   function handleMouseEnter() {
-    /*if(myBoard && myShip && isSetupStage) {
-      entireShipAt(id, playerBoard).forEach((square) => document.getElementById("mysquare-"+square[0]+"-"+square[1]).style.backgroundColor = "pink");
-    }*/
     if(!isSetupStage && !myBoard && myTurn) {
       document.getElementById(id).style.backgroundColor = "blue";
     }
   }
   function handleMouseLeave() {
-    /*if(myBoard && myShip && isSetupStage) {
-      document.getElementById(id).style.backgroundColor = '#ff8ac7';
-    }
-    else */if(hoverable && !myBoard) {
+    if(hoverable && !myBoard) {
       document.getElementById(id).style.backgroundColor = 'inherit';
     }
   }
@@ -83,7 +97,7 @@ function BoardSquare({id, row, column, occupied, myBoard, isSetupStage, myTurn, 
       onMouseLeave = {hoverable ? handleMouseLeave : null}
       style={{backgroundColor:
            (function() {
-            if(myBoard && myShip) {
+            if(myBoard && playerBoard[(row*boardSize)+column] != "-") {
               return '#ff8ac7';
             }
             else
@@ -126,7 +140,7 @@ function Instructions({isSetupStage, myTurn}) {
       <div id="gameplay-instructions">
         {function() {
           if(isSetupStage) {
-            return "Setup Stage: Click on 'Confirm' to confirm your ship configuration (ship placement feature coming)";
+            return "Setup Stage: Click on a ship to select it, then use the Arrow Keys to move it, the Spacebar to rotate, and the Enter key to place it";
           }
           else if (myTurn) {
             return "Your Turn: Choose a square on your opponent's board to attack";
@@ -211,30 +225,48 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
     function handleKeys(e) {
 
       // arrow keys to move ship in setup stage
-      if (selectedShip != null && isSetupStage && (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40)) {
+      if (selectedShip != null && isSetupStage && (e.code == "ArrowRight" || e.code == "ArrowLeft" || e.code == "ArrowUp" || e.code == "ArrowDown")) {
         let change = [0, 1];
-        if(e.keyCode == 37) { //left arrow
+        if(e.code == "ArrowLeft") {
           change = [0, -1];
         }
-        else if(e.keyCode == 38) { //up arrow
+        else if(e.code == "ArrowUp") {
           change = [-1, 0];
         }
-        else if(e.keyCode == 40) { //down arrow
+        else if(e.code == "ArrowDown") {
           change = [1, 0];
         }
-        for (let i = 0; i < selectedShip.length; i++) {
-          let ship = selectedShip[i];
-          let id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
-          document.getElementById(id).myShip = false;
-          ship[0] = ship[0] + change[0];
-          ship[1] = ship[1] + change[1];
+        let shipLetter = playerBoard[(selectedShip[0][0]*boardSize)+selectedShip[0][1]]; // letter for this ship in playerBoard (a, b, c, d)
+        if(legalSelectedShipMovement(change)) {
+          // first reset all old ship squares to blank
+          for (let i = 0; i < selectedShip.length; i++) {
+            let ship = selectedShip[i];
+            let id = "mysquare-" + ship[0] + "-" + ship[1];
+            document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+            let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
+            playerBoard = playerBoard.substring(0, ind) + "-" + playerBoard.substring(ind+1);
+            ship[0] = ship[0] + change[0];
+            ship[1] = ship[1] + change[1];
+          }
+          // then set new ship squares
+          selectedShip.forEach(function(ship) {
+            let id = "mysquare-" + ship[0] + "-" + ship[1];
+            document.getElementById(id).style.backgroundColor = "blue";
+            let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
+            playerBoard = playerBoard.substring(0, ind) + shipLetter + playerBoard.substring(ind+1);
+          });
         }
+        e.preventDefault(); // prevent default scroll on up/down arrows
+      }
+      else if (selectedShip != null && isSetupStage && e.code == "Enter") { // enter key: reset selected ship
         selectedShip.forEach(function(ship) {
           let id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(id).style.backgroundColor = "blue";
-          document.getElementById(id).myShip = true;
+          document.getElementById(id).style.backgroundColor = '#ff8ac7';
         });
+        selectedShip = null;
+      }
+      else if (selectedShip != null && isSetupStage && e.code == "Space") { // space bar: rotate selected ship
+        
       }
     }
 
