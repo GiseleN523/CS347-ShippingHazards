@@ -261,24 +261,13 @@ def fire_shot(request, game_id, player_id, row, col):
         raise ValueError("Player cannot fire shot when it is not their turn")
 
 def get_player_info(request, username):
-<<<<<<< HEAD
     player = Player.objects.get(username=username)
-    dict = {"is_ai_player":player.is_ai_player,
-=======
-    player = Player.objects.get(username=username) 
     return JsonResponse({"is_ai_player":player.is_ai_player,
->>>>>>> 5dd2a3bf001f4d28eb48d23637e939f6e6d794f4
                         "screen_name": player.screen_name,
                         "wins": player.wins,
                         "losses": player.losses,
                         "num_of_ships_sunk": player.num_of_ships_sunk,
-<<<<<<< HEAD
-                        "color_preference": player.color_preference}
-    sys.stderr.write("Get player Info: " + str(dict))
-    return JsonResponse(dict)
-=======
                         "color_preference": player.color_preference})
->>>>>>> 5dd2a3bf001f4d28eb48d23637e939f6e6d794f4
 
 def change_preferences(request, username, screen_name, color_preference):
     u = User.objects.get(username=username)
