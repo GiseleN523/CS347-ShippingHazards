@@ -9,7 +9,8 @@ import missSound from './sounds/missSound.mp3';
 import sunkSound from './sounds/sunkSound.mp3';
 
 const blankBoard = "----------------------------------------------------------------------------------------------------";
-let playerBoard = "-----------a---------a------------bbbb----------------c---------c---------c--------------------ddddd";
+let playerBoard = "-----------a---------a------------cccc----------------b---------b---------b--------------------ddddd"; // i had to switch the c and b characters bc an ai function depends on them being certain ones
+// let playerBoard = "-----cccc-a---------a----------------------------b---------b---------b-------------------------ddddd"; testing string
 let playerID;
 let opponentID;
 let username;
