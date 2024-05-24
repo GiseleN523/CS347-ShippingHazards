@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
-import {useNavigate } from 'react-router-dom'
-import './login.css'
+import React, { useState } from 'react';
+import {useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import './login.css';
 import lobbyMusic from './sounds/lobbyMusic.mp3';
 import TextFieldWithError from './text_field_with_error';
 
+let fillerUsername;
+
 function AccountCreationFields() {
-    const [username, setUsername] = useState('');
+    const [username, setUsername] = useState(fillerUsername);
     const [password1, setPassword1] = useState('');
     const [password2, setPassword2] = useState('');
     const [screenName, setScreenName] = useState('');
@@ -63,6 +66,7 @@ function AccountCreationFields() {
   }
   
 function AccountCreation() {
+    ({fillerUsername} = useParams());
     return (
       <div className="mainContainer">
         <div className= 'loginContainer'>
