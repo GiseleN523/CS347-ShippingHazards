@@ -15,7 +15,7 @@ function ProfilePage() {
   const [newPassword1, setNewPassword1] = useState('');
   const [newPassword2, setNewPassword2] = useState('');
   const [screenName, setScreenName] = useState(username);
-  const [color, setColor] = useState('');
+  const [color, setColor] = useState("#ff8ac7");
   const [currentPasswordErrorVisible, setCurrentPasswordErrorVisible] = useState(false);
   const [newPassword1ErrorVisible, setNewPassword1ErrorVisible] = useState(false);
   const [newPassword2ErrorVisible, setNewPassword2ErrorVisible] = useState(false);
@@ -40,18 +40,26 @@ function ProfilePage() {
     }
   }
 
-  function handleClick() {
+  function handlePasswordClick() {
     currentPassword.length == 0 ? setCurrentPasswordErrorVisible(true) : setCurrentPasswordErrorVisible(false);
     newPassword1.length == 0 ? setNewPassword1ErrorVisible(true) : setNewPassword1ErrorVisible(false);
     newPassword2.length == 0 ? setNewPassword2ErrorVisible(true) : setNewPassword2ErrorVisible(false);
     //screenName.length == 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
-    let url = "react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
+    //let url = "react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
+    let url = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
     fetch(url)
         .then( response => response.json())
         .then(the_json => attemptPasswordScreenNameChange(the_json));
     //let url2 = path("react_change_color/"+color);
     //fetch(url2);
   }
+
+  function handleScreenNameColorClick() {
+    screenName.length == 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
+    let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
+    fetch(url).then(navigate('/home/'+username));
+  }
+
   return (
     <div>
       <HeaderAndNav username={username}/>
@@ -64,6 +72,9 @@ function ProfilePage() {
             <TextFieldWithError password={true} value={newPassword1} setValue={setNewPassword1} errorVisible={newPassword1ErrorVisible}/>
             Retype New Password
             <TextFieldWithError password={true} value={newPassword2} setValue={setNewPassword2} errorVisible={newPassword2ErrorVisible}/>
+            <label className="errorLabel" style={{display: backendErrorVisible ? "block" : "none"}}>{backendErrorText}</label>
+            <button onClick={handlePasswordClick}>Update</button><br />
+            
             Screen Name
             <TextFieldWithError value={screenName} setValue={setScreenName} errorVisible={screenNameErrorVisible}/>
             Ship Color
@@ -74,7 +85,7 @@ function ProfilePage() {
                   onChange={(ev) => setColor(ev.target.value)}
                   style={{marginLeft: '1em'}}
             ></input><br />
-            <button onClick={handleClick}>Save Changes</button><br />
+            <button onClick={handleScreenNameColorClick}>Update</button><br />
         </div>
       </main>
     </div>

@@ -37,6 +37,7 @@ function NavigationBar() {
 }
 function HeaderAndNav() {
   ({username} = useParams());
+  let url = "/play/get-player-info/" +username;
   /*let url = "play/get-player-info/"+username;
   fetch(url)
     .then(response => response.json())
