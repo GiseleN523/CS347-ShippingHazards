@@ -218,7 +218,7 @@ function GameOverPopup({gameStatus}) {
   return (
     <div id="gameOverPopup" style={{visibility: (gameStatus > 0) ? 'visible' : 'hidden'}}>
       <div>GAME OVER</div>
-      <div>{(gameStatus == 1) ? "You Won!" : "Opponent Won :("}</div><br></br>
+      <div>{(gameStatus == 1) ? "You Won!" : "You Lost :("}</div><br></br>
       <button onClick={handleButtonClick}>Play Again</button>
     </div>
   )
