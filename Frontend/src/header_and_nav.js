@@ -28,7 +28,7 @@ function NavigationBar() {
         My Account
         <span className="dropdown-content">
           <a href={"/profile/" + username}>Profile & Settings</a>
-          <a href={"/myaccount/stats/" + username}>Stats</a>
+          <a href={"/play/get-player-info/" + username}>Stats</a>
         </span>
       </span>
       <a href={"/aboutus/" + username}>About Us</a>

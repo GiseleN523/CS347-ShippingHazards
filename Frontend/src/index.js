@@ -24,7 +24,7 @@ ReactDOM.render(
         <Route path="/aboutus/:username" element={<AboutUs />} />
         <Route path="/game/:gameID/:boardSize/:opponentID/:playerID/:username" element={<GamePlay />} />
         <Route path="/profile/:username" element={<ProfilePage />} />
-        <Route path="/myaccount/stats/:username" element={<StatsPage />} />
+        <Route path="play/get-player-info/:username" element={<StatsPage />} />
       </Routes>
     </Router>
   </React.StrictMode>,
