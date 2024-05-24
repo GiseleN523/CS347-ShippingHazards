@@ -36,28 +36,18 @@ function entireShipAt(id, board) {
   return coords;
 }
 
-function resetSelectedShip() {
-  for (let i = 0; i < selectedShip.length; i++) {
-    let ship = selectedShip[i];
-    let id = "mysquare-" + ship[0] + "-" + ship[1];
-    document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
-    let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
-    playerBoard = playerBoard.substring(0, ind) + "-" + playerBoard.substring(ind+1);
-    let newCoords = changeFunct(ship);
-    ship[0] = newCoords[0];
-    ship[1] = newCoords[1];
-  }
-  selectedShip = null;
-}
-
 function BoardSquare({id, row, column, myBoard, playerBoard, status}) {
   const [hoverable, setHoverable] = useState(true);
 
   function handleClickSetup() {
     if(myBoard) {
       if(selectedShip != null) { // reset selected ship
-        resetSelectedShip();
+        selectedShip.forEach(function(ship) {
+          let id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(id).style.backgroundColor = '#ff8ac7';
+        })
       }
+      selectedShip = null;
       if(playerBoard[(row*boardSize)+column] !== "-") {
         selectedShip = entireShipAt(id, playerBoard); // set new selected ship
         selectedShip.forEach(function(ship) {
@@ -137,6 +127,13 @@ function Instructions({setPlayerBoard, status}) {
         <br />
         <div style={{width: '100%', textAlign: 'center', paddingTop: "8%"}}>
           <button onClick= {() => {
+            if(selectedShip != null) {
+              selectedShip.forEach(function(ship) { // reset selectedShip
+                let id = "mysquare-" + ship[0] + "-" + ship[1];
+                document.getElementById(id).style.backgroundColor = '#ff8ac7';
+              });
+              selectedShip = null;
+            }
             let url = "/play/"+numShips+"/"+boardSize; // get random board setup
             fetch(url)
               .then(response => response.json())
@@ -157,7 +154,11 @@ function Instructions({setPlayerBoard, status}) {
 function ConfirmButton({status, setStatus, playerBoard}) {
   function handleClick() {
     if(selectedShip != null) {
-      resetSelectedShip();
+      selectedShip.forEach(function(ship) { // reset selectedShip
+        let id = "mysquare-" + ship[0] + "-" + ship[1];
+        document.getElementById(id).style.backgroundColor = '#ff8ac7';
+      });
+      selectedShip = null;
     }
     setStatus("player_turn"); // change this
     let url = "/play/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
@@ -207,7 +208,7 @@ function ComicPopup({isVisible, image}) {
       top: '5%',
       left: '-10%'
       }}>
-      <img style={{width: '100%'}} src={image} alt="A comic-book style popup indicating a hit/sink"></img>
+      <img style={{width: '100%'}} src={image} alt="A comic-book style popup with the words 'hit' or 'ship sunk'"></img>
     </div>
   )
 }
@@ -244,7 +245,16 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
     function applySelectedShipMovement(changeFunct) {
       let shipLetter = playerBoard[(selectedShip[0][0]*boardSize)+selectedShip[0][1]]; // letter for this ship in playerBoard (a, b, c, d)
       // first reset all old ship squares to blank
-      resetSelectedShip();
+      for (let i = 0; i < selectedShip.length; i++) {
+        let ship = selectedShip[i];
+        let id = "mysquare-" + ship[0] + "-" + ship[1];
+        document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
+        let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
+        playerBoard = playerBoard.substring(0, ind) + "-" + playerBoard.substring(ind+1);
+        let newCoords = changeFunct(ship);
+        ship[0] = newCoords[0];
+        ship[1] = newCoords[1];
+      }
       // then set new ship squares
       selectedShip.forEach(function(ship) {
         let id = "mysquare-" + ship[0] + "-" + ship[1];
@@ -286,7 +296,11 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
         e.preventDefault(); // prevent default scroll on up/down arrows
       }
       else if (selectedShip !== null && status === "setup" && e.code === "Enter") { // enter key: reset selected ship
-        resetSelectedShip();
+        selectedShip.forEach(function(ship) {
+          let id = "mysquare-" + ship[0] + "-" + ship[1];
+          document.getElementById(id).style.backgroundColor = '#ff8ac7';
+        });
+        selectedShip = null;
       }
     }
 
@@ -296,7 +310,7 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
     }
     
     function updateBoardAndTurn(the_json) {
-      let myBoard = the_json["player_id"] === playerID;
+      let myBoard = the_json["player_id"] == playerID;
       let shipBoard = the_json["ship_board"];
       let attackBoard = the_json["attack_board"];
       let combinedBoard = the_json["combined_board"];
@@ -305,7 +319,7 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
       let shotRow = the_json["shot_row"];
       let shotCol = the_json["shot_col"];
       let turn = the_json["turn"];
-      let status = the_json["status"];
+      let winStatus = the_json["status"];
     
       let id = myBoard ? "mysquare-"+shotRow+"-"+shotCol : "opponentsquare-"+shotRow+"-"+shotCol;
       if(isHit && isSunk) {
@@ -330,10 +344,10 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
         const audio = new Audio(missSound);
         audio.play();
       }
-      if(status === 1) {
+      if(winStatus === 1) {
         setStatus("player_won")
       }
-      else if(status === 2) {
+      else if(winStatus === 2) {
         setStatus("opp_won");
       }
       else if(turn === 1) {
@@ -366,7 +380,7 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
           </div>
           <div className="content-cell" style={{width: '40%'}}>
             <Board 
-              myBoard={false} 
+              myBoard={false}
               presetBoard={blankBoard} 
               playerBoard={playerBoard}
               status={status} 
