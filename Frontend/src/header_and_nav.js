@@ -13,7 +13,7 @@ function Header() {
         <img src= {logo} alt="Logo" id="logo" style={{cursor: 'pointer'}} onClick={() => navigate('/home/'+username)}/>
         <span id="header-text">SHIPPING HAZARDS: A Game By Pink Puffy Rhinos</span>
         <div id="user-info">
-          <p>Hello, {username}!</p>
+          <p>Hello, {screenName}!</p>
           <a href="/">Logout</a>
         </div>
       </header>
@@ -38,8 +38,8 @@ function NavigationBar() {
 function HeaderAndNav() {
   ({username} = useParams());
   let url = "/play/get-player-info/" +username;
-  /*let url = "play/get-player-info/"+username;
-  fetch(url)
+  screenName = username;
+  /*fetch(url)
     .then(response => response.json())
     .then(the_json => screenName = the_json["screen_name"]);*/
   return (
