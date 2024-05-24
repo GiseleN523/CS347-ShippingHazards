@@ -177,11 +177,13 @@ function Instructions({isSetupStage, myTurn}) {
 
 function ConfirmButton({isSetupStage, setIsSetupStage}) {
   function handleClick() {
-    selectedShip.forEach(function(ship) { // reset selectedShip
-      let id = "mysquare-" + ship[0] + "-" + ship[1];
-      document.getElementById(id).style.backgroundColor = '#ff8ac7';
-    });
-    selectedShip = null;
+    if(selectedShip != null) {
+      selectedShip.forEach(function(ship) { // reset selectedShip
+        let id = "mysquare-" + ship[0] + "-" + ship[1];
+        document.getElementById(id).style.backgroundColor = '#ff8ac7';
+      });
+      selectedShip = null;
+    }
     setIsSetupStage(false);
     let url = "/play/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
     fetch(url);
