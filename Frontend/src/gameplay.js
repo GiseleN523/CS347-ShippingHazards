@@ -17,6 +17,7 @@ let gameID;
 let boardSize;
 let socket;
 let selectedShip; // used in ship placement phase - ex - [[0, 0], [0, 1], [0, 2], [0, 3]]
+let shipColor;
 
 //returns a list of coordinates of the other squares that make up the ship at given coordinates
 //input ex: [0, 0]
@@ -44,7 +45,7 @@ function BoardSquare({id, row, column, myBoard, playerBoard, status}) {
       if(selectedShip != null) { // reset selected ship
         selectedShip.forEach(function(ship) {
           let id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(id).style.backgroundColor = '#ff8ac7';
+          document.getElementById(id).style.backgroundColor = shipColor;
         })
       }
       selectedShip = null;
@@ -80,16 +81,7 @@ function BoardSquare({id, row, column, myBoard, playerBoard, status}) {
       onClick={status === "setup" ? handleClickSetup : handleClickGameplay}
       onMouseEnter = {hoverable ? handleMouseEnter : null}
       onMouseLeave = {hoverable ? handleMouseLeave : null}
-      style={{backgroundColor:
-           (function() {
-            if(myBoard && playerBoard[(row*boardSize)+column] !== "-") {
-              return '#ff8ac7';
-            }
-            else
-              return 'transparent';
-            }
-           )()
-      }}>
+      style={{backgroundColor: (myBoard && playerBoard[(row*boardSize)+column] !== "-") ? shipColor : "rgb(0, 0, 0, 0)"}}>
     </div>
   )
 }
@@ -98,17 +90,17 @@ function BoardRow({row, myBoard, status, playerBoard}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
       let key = (myBoard? "mysquare-" : "opponentsquare-")+row+"-"+i;
-      arr.push(<BoardSquare key={key} id={key} row={row} column={i} myBoard={myBoard} playerBoard={playerBoard} status={status} />);
+      arr.push(<BoardSquare key={key} id={key} row={row} column={i} myBoard={myBoard} playerBoard={playerBoard} status={status}/>);
     }
     return (
       <div className="board-row">{arr}</div>
     )
 }
   
-function Board({myBoard, presetBoard, playerBoard, status, hitPopupVisible, sunkPopupVisible}) {
+function Board({myBoard, playerBoard, status, hitPopupVisible, sunkPopupVisible}) {
   let arr = [];
   for(let i=0; i<boardSize; i++) {
-    arr.push(<BoardRow key={"row"+i} row={i} myBoard={myBoard} playerBoard={playerBoard} status={status} />);
+    arr.push(<BoardRow key={"row"+i} row={i} myBoard={myBoard} playerBoard={playerBoard} status={status}/>);
   }
   return (
     <div className="board">
@@ -127,17 +119,12 @@ function Instructions({setPlayerBoard, status}) {
         <br />
         <div style={{width: '100%', textAlign: 'center', paddingTop: "8%"}}>
           <button onClick= {() => {
-            if(selectedShip != null) {
-              selectedShip.forEach(function(ship) { // reset selectedShip
-                let id = "mysquare-" + ship[0] + "-" + ship[1];
-                document.getElementById(id).style.backgroundColor = '#ff8ac7';
-              });
-              selectedShip = null;
-            }
-            let url = "/play/"+numShips+"/"+boardSize; // get random board setup
+            selectedShip = null;
+            // get random board setup
+            let url = "/play/"+numShips+"/"+boardSize;
             fetch(url)
               .then(response => response.json())
-              .then(the_json => setPlayerBoard(the_json["random_board"])); 
+              .then((the_json) => setPlayerBoard(the_json["random_board"])); 
           }}>Randomize</button>
         </div>
       </div>
@@ -156,7 +143,7 @@ function ConfirmButton({status, setStatus, playerBoard}) {
     if(selectedShip != null) {
       selectedShip.forEach(function(ship) { // reset selectedShip
         let id = "mysquare-" + ship[0] + "-" + ship[1];
-        document.getElementById(id).style.backgroundColor = '#ff8ac7';
+        document.getElementById(id).style.backgroundColor = shipColor;
       });
       selectedShip = null;
     }
@@ -298,7 +285,7 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
       else if (selectedShip !== null && status === "setup" && e.code === "Enter") { // enter key: reset selected ship
         selectedShip.forEach(function(ship) {
           let id = "mysquare-" + ship[0] + "-" + ship[1];
-          document.getElementById(id).style.backgroundColor = '#ff8ac7';
+          document.getElementById(id).style.backgroundColor = shipColor;
         });
         selectedShip = null;
       }
@@ -368,20 +355,18 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
           <div className="content-cell" style={{width: '40%'}}>
             <Board 
               myBoard={true} 
-              presetBoard={playerBoard} 
               playerBoard={playerBoard}
               status={status} 
               hitPopupVisible={popups1["hitPopupVisible"]} 
               sunkPopupVisible={popups1["sunkPopupVisible"]} />
           </div>
           <div className="content-cell" style={{width: '20%'}}>
-            <Instructions setPlayerBoard={setPlayerBoard} status={status}/><br></br>
-            <ConfirmButton status={status} setStatus={setStatus} playerBoard={playerBoard}></ConfirmButton>
+            <Instructions setPlayerBoard={setPlayerBoard} status={status} /><br></br>
+            <ConfirmButton status={status} setStatus={setStatus} playerBoard={playerBoard} />
           </div>
           <div className="content-cell" style={{width: '40%'}}>
             <Board 
               myBoard={false}
-              presetBoard={blankBoard} 
               playerBoard={playerBoard}
               status={status} 
               hitPopupVisible={popups2["hitPopupVisible"]}
@@ -393,7 +378,7 @@ function BoardsAndTitles({status, setStatus, playerBoard, setPlayerBoard, popups
 }
   
 function GamePlay() {
-    ({gameID, boardSize, opponentID, playerID, username} = useParams());
+    ({gameID, boardSize, opponentID, playerID, username, shipColor} = useParams());
     const [status, setStatus] = useState("setup"); // "setup", "player_turn", "opp_turn", "player_won", or "opp_won"
     const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
@@ -401,11 +386,15 @@ function GamePlay() {
     const [sunkPopup2Visible, setSunkPopup2Visible] = useState(false);
     const [playerBoard, setPlayerBoard] = useState(blankBoard);
 
+    if(shipColor[0] !== "#") {
+      shipColor = "#" + shipColor;
+    }
+
     if(playerBoard === blankBoard) {
       let url = "/play/"+numShips+"/"+boardSize; // get random board setup
       fetch(url)
         .then(response => response.json())
-        .then(the_json => setPlayerBoard(the_json["random_board"])); 
+        .then(the_json => setPlayerBoard(the_json["random_board"]));
     }
 
     let popups1 = {
