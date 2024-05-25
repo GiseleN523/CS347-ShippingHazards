@@ -11,11 +11,25 @@ Shipping Hazards is an implmentation of the popular game Battleship, in which pl
 1. Clone the repository and navigate to it in the terminal
 2. Type: docker-compose up -d --build
 3. Go to http://localhost:3000/ in your browser
+   
 If you encounter any issues, please follow our [walkthrough](https://github.com/GiseleN523/CS347-ShippingHazards/blob/main/battleship/loaddata_walkthrough.txt).
+
+## Features
+* Various colors, sounds, and pop-ups add excitement to the game.
+* Customizable ship colors, ship placement, and screen names encourage creativity and novelty.
+* Three computer opponents, with different levels of difficulty, add variety to the game.
+* Websockets facilitate real-time communication, ensuring that gameplay is engaging and fast-paced.
+* Users, players, boards, and games can be viewed and changed from the admin site.
 
 ## Folders
 * The Frontend folder contains the code for the graphical user interface of our game.
-* The ai_server folder contains the code for the computer players.
+  - We use JavaScript, React, and CSS for our frontend.
+* The ai_server folder contains Python code for the computer players.
 * The battleship folder contains the code for the database and web server.
-  - We use PostgreSQL for our database and Django for our web framework.
-* The game_logic folder contains the code for the game logic.
+  - We use Django for our web framework, Django Channels for our websockets, and PostgreSQL for our database.
+* The game_logic folder contains Python code for the game logic.
+
+## Other Files
+* Each folder has a DockerFile that assembles the image for a particular component of the app.
+* docker-compose.yml defines and runs the services and volumes for the entire project.
+* populateData.json contains initial data for the database.
