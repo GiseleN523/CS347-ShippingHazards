@@ -116,7 +116,7 @@ function HowToPlayButton() {
 function Home() {
   ({username} = useParams());
   return (
-    <div className="header/nav">
+    <div>
       <HeaderAndNav username={username}/>
       <div className="buttons-container">
         <PlayButton />
