@@ -111,6 +111,12 @@ def confirm_ships(request, game_id, player_id, ship_board):
     API endpoint that saves a player's ship_board and returns it.
     """
     game = Game.objects.get(id = game_id)
+    if game.player1_id == player_id:
+        game.player1_ship_status = 1
+        game.save()
+    elif game.player2_id == player_id:
+        game.player2_ship_status = 1
+        game.save()
     board = get_player_board(game, player_id)
     board.ship_board = ship_board
     board.combined_board = ship_board
@@ -204,80 +210,86 @@ def fire_shot(request, game_id, player_id, row, col):
     API endpoint that fires shot, changes game state, and alerts websockets.
     """
     game = Game.objects.get(id = game_id)
-    if is_player_turn(game, player_id):
-        opponent_id = get_opponent(game, player_id)
-        board = get_player_board(game, opponent_id) 
+    #checks if both players have confirmed their ships
+    if game.player1_ship_status == 1 and game.player2_ship_status == 1:
 
-        #updates and saves attack board, combined board, shot row, and shot col
-        combinedBoard, attackBoard = updateBoards(board.ship_board, board.combined_board, 
-                                                  board.attack_board, row, col)
-        board.attack_board = attackBoard
-        board.combined_board = combinedBoard
-        board.shot_row = row
-        board.shot_col = col
-        board.save()
+        if is_player_turn(game, player_id):
+            opponent_id = get_opponent(game, player_id)
+            board = get_player_board(game, opponent_id) 
 
-        hit_status, ship_char = isHit(board.ship_board, row, col)
-        if hit_status == True:
-            board.is_hit = 1 
+            #updates and saves attack board, combined board, shot row, and shot col
+            combinedBoard, attackBoard = updateBoards(board.ship_board, board.combined_board, 
+                                                    board.attack_board, row, col)
+            board.attack_board = attackBoard
+            board.combined_board = combinedBoard
+            board.shot_row = row
+            board.shot_col = col
             board.save()
 
-            #if the hit sunk a ship, updates the board info and player's profile stats
-            if isShipSunk(combinedBoard, ship_char):
-                board.is_sunk = 1
+            hit_status, ship_char = isHit(board.ship_board, row, col)
+            if hit_status == True:
+                board.is_hit = 1 
                 board.save()
-                player = Player.objects.get(id = player_id) 
-                player.num_of_ships_sunk += 1
-                player.save()  
 
-                #if hit made the player win the game, updates information about game, player, and opponent
-                if isWinner(combinedBoard):
-                    game.status = game.turn
-                    game.winner = player_id
-                    game.loser = opponent_id
-                    game.save()
+                #if the hit sunk a ship, updates the board info and player's profile stats
+                if isShipSunk(combinedBoard, ship_char):
+                    board.is_sunk = 1
+                    board.save()
+                    player = Player.objects.get(id = player_id) 
+                    player.num_of_ships_sunk += 1
+                    player.save()  
 
-                    winning_player = Player.objects.get(id = player_id)
-                    winning_player.wins += 1
-                    winning_player.save()
+                    #if hit made the player win the game, updates information about game, player, and opponent
+                    if isWinner(combinedBoard):
+                        game.status = game.turn
+                        game.winner = player_id
+                        game.loser = opponent_id
+                        game.save()
 
-                    losing_player = Player.objects.get(id = opponent_id)
-                    losing_player.losses += 1
-                    losing_player.save()  
+                        winning_player = Player.objects.get(id = player_id)
+                        winning_player.wins += 1
+                        winning_player.save()
+
+                        losing_player = Player.objects.get(id = opponent_id)
+                        losing_player.losses += 1
+                        losing_player.save()  
+                else:
+                    board.is_sunk = 0
+                    board.save()
+                                
             else:
+                #if the player missed their shot, updates and saves hit, sink, and turn
+                board.is_hit = 0
                 board.is_sunk = 0
                 board.save()
-                              
-        else:
-            #if the player missed their shot, updates and saves hit, sink, and turn
-            board.is_hit = 0
-            board.is_sunk = 0
-            board.save()
-            if game.turn == 1:
-                game.turn = 2
-                game.save()
-            elif game.turn == 2:
-                game.turn = 1
-                game.save()
-            else:
-                raise ValueError("Turn must be 1 or 2")
-            
-        #sends updated game state to all GameConsumers in this game through the websocket
-        group_name = "game_%s" % game_id
-        channel_layer = get_channel_layer()
+                if game.turn == 1:
+                    game.turn = 2
+                    game.save()
+                elif game.turn == 2:
+                    game.turn = 1
+                    game.save()
+                else:
+                    raise ValueError("Turn must be 1 or 2")
+                
+            #sends updated game state to all GameConsumers in this game through the websocket
+            group_name = "game_%s" % game_id
+            channel_layer = get_channel_layer()
 
-        async_to_sync(channel_layer.group_send)(
-            group_name,
-            {
-                "type": "game_message",
-                "message": "%s" % ws_get_state(game_id, opponent_id)
-            }
-        )
-        #response is not used, but we must return something
-        return JsonResponse({"response": 0})
+            async_to_sync(channel_layer.group_send)(
+                group_name,
+                {
+                    "type": "game_message",
+                    "message": "%s" % ws_get_state(game_id, opponent_id)
+                }
+            )
+            #response is not used, but we must return something
+            return JsonResponse({"response": 0})
+        
+        else:
+            raise ValueError("Player cannot fire shot when it is not their turn")
     
     else:
-        raise ValueError("Player cannot fire shot when it is not their turn")
+        raise ValueError("Player cannot fire shot until both players have confirmed their ships")
 
 def get_player_info(request, username):
     u = User.objects.get(username=username)
