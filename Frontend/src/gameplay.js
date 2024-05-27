@@ -10,7 +10,6 @@ import sunkSound from './sounds/sunkSound.mp3';
 
 const blankBoard = "----------------------------------------------------------------------------------------------------";
 let playerBoard = "-----------a---------a------------cccc----------------b---------b---------b--------------------ddddd"; // i had to switch the c and b characters bc an ai function depends on them being certain ones
-// let playerBoard = "-----cccc-a---------a----------------------------b---------b---------b-------------------------ddddd"; testing string
 let playerID;
 let opponentID;
 let username;
@@ -205,13 +204,12 @@ function GameOverPopup({status}) {
   // need to actually save these, not hardcode them like this
   let numShips = 4;
   let isAiGame = "true";
-  let aiID = 3;
   function redirectBrowser(the_json){
     gameID = the_json["game_id"];
-    window.location.replace("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username+"/"+shipColor.substring(1));
+    window.location.replace("/game/"+gameID+"/"+boardSize+"/"+opponentID+"/"+playerID+"/"+username+"/"+shipColor.substring(1));
 }
   function handleButtonClick() {
-    let url = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
+    let url = "/play/new-game/" + playerID + "/" + opponentID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
     fetch(url)
       .then( response => response.json() )
       .then( the_json => redirectBrowser(the_json));
@@ -315,8 +313,6 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
     function updateBoardAndTurn(the_json) {
       let myBoard = the_json["player_id"] != opponentID;
       let shipBoard = the_json["ship_board"];
-      let attackBoard = the_json["attack_board"];
-      let combinedBoard = the_json["combined_board"];
       let isHit = the_json["is_hit"];
       let isSunk = the_json["is_sunk"];
       let shotRow = the_json["shot_row"];

@@ -22,7 +22,7 @@ function AboutUs() {
           <li>Game Logic and AI Players: Willow Gu & Josh Meier</li>
           <li>Backend/Database: Kendra Winhall & Ryan Dunn</li>
         </ul>
-        <p>For more information about the project, including our source code and how to run it, see our <a href="https://github.com/GiseleN523/CS347-ShippingHazards" target="_blank">Github page</a>.</p>
+        <p>For more information about the project, including our source code and how to run it, see our <a href="https://github.com/GiseleN523/CS347-ShippingHazards" target="_blank" rel="noreferrer">Github page</a>.</p>
       </div>
     </div>
   );
