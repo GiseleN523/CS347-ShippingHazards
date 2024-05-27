@@ -64,7 +64,6 @@ function PlayCompButton({aiID}) {
       .then(response => response.json())
       .then((the_json) => {
         let playerID = the_json["player_id"];
-        console.log(playerID);
         let color = the_json["color_preference"];
         let url2 = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAI;
         fetch(url2)
