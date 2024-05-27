@@ -1,3 +1,8 @@
+/*
+  Root of the React project
+  Creates routes to all pages that will be linked/navigated to in the project
+*/
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';

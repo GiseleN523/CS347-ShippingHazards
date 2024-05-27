@@ -5,21 +5,29 @@ import lobbyMusic from './sounds/lobbyMusic.mp3';
 import TextFieldWithError from './text_field_with_error';
 
 function LoginFields() {
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  // errors set by frontend if field is empty
   const [usernameErrorVisible, setUsernameErrorVisible] = useState(false);
   const [passwordErrorVisible, setPasswordErrorVisible] = useState(false);
+
+  // custom error sent by backend if login info is invalid
   const [backendErrorVisible, setBackendErrorVisible] = useState(false);
   const [backendErrorText, setBackendErrorText] = useState('');
+
   const navigate = useNavigate();
 
+  // called with results of react_login endpoint
+  //if login was a success, navigate to home; otherwise, show error from backend
   function attemptLogin(the_json) {
     setUsernameErrorVisible(false);
     setPasswordErrorVisible(false);
     setBackendErrorVisible(false);
     let success = the_json["status"] === "success";
     let message = the_json["message"];
-    if(success) { // If both username and password are provided, navigate to "/home"
+    if(success) {
       navigate('/home/'+username);
       // only play audio if login is a success
       const audio = new Audio(lobbyMusic);
@@ -32,6 +40,8 @@ function LoginFields() {
     }
   }
 
+  // called when 'Submit' button is clicked
+  // if any fields are blank, show error for that field; otherwise, call react_login endpoint and pass results to attemptLogin
   const onSubmitButtonClick = () => {
     if(username.length === 0 || password.length === 0) {
       // If username or password is empty, set error messages accordingly
@@ -59,14 +69,16 @@ function LoginFields() {
   );
 }
 
-function handleKeyDown(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    document.getElementById("loginButton").click();
-  }
-}
-
 function Login() {
+
+  // if Enter key is pressed, click the Submit button automatically
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("loginButton").click();
+    }
+  }
+
   return (
     <div className="mainContainer" onKeyDown={handleKeyDown}>
       <div className= 'loginContainer'>

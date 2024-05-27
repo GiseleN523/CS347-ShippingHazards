@@ -1,3 +1,8 @@
+/*
+  "About Us" page with list of our names and a link to our Github
+  Can be accessed from a button in the navigation bar
+*/
+
 import './aboutus.css'
 import HeaderAndNav from './header_and_nav.js';
 import { useParams } from 'react-router-dom';

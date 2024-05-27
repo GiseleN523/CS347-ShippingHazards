@@ -1,3 +1,10 @@
+/*
+  This is the page where users can change their account settings
+  Users can change their password by typing their old password and then their new password twice
+  In another section, users can change their screen name and ship color
+  These two sections have separate "Update" buttons; after one is clicked, user is redirected to home
+*/
+
 import './profile.css'
 import HeaderAndNav from './header_and_nav.js';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -17,14 +24,18 @@ function ProfilePage() {
   const [newPassword2, setNewPassword2] = useState('');
   const [screenName, setScreenName] = useState(originalScreenName);
   const [color, setColor] = useState("#"+originalColor);
+  // errors set by frontend when a required field is not filled out 
   const [currentPasswordErrorVisible, setCurrentPasswordErrorVisible] = useState(false);
   const [newPassword1ErrorVisible, setNewPassword1ErrorVisible] = useState(false);
   const [newPassword2ErrorVisible, setNewPassword2ErrorVisible] = useState(false);
   const [screenNameErrorVisible, setScreenNameErrorVisible] = useState(false);
+  // custom error sent by backend when value given is invalid
   const [backendErrorVisible, setBackendErrorVisible] = useState(false);
   const [backendErrorText, setBackendErrorText] = useState('');
 
-  function attemptPasswordScreenNameChange(the_json) {
+  // called with results of react_change_password endpoint
+  //if password change was a success, navigate to home; otherwise, show error from backend
+  function attemptPasswordChange(the_json) {
     setCurrentPasswordErrorVisible(false);
     setNewPassword1ErrorVisible(false);
     setNewPassword2ErrorVisible(false);
@@ -41,20 +52,29 @@ function ProfilePage() {
     }
   }
 
+  // called when 'Update' button for password field is clicked
+  // if any fields are blank, show error for that field
+  // call react_change_password endpoint and pass the results to attemptPasswordChange
   function handlePasswordClick() {
     currentPassword.length === 0 ? setCurrentPasswordErrorVisible(true) : setCurrentPasswordErrorVisible(false);
     newPassword1.length === 0 ? setNewPassword1ErrorVisible(true) : setNewPassword1ErrorVisible(false);
     newPassword2.length === 0 ? setNewPassword2ErrorVisible(true) : setNewPassword2ErrorVisible(false);
-    let url = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
-    fetch(url)
-        .then( response => response.json())
-        .then(the_json => attemptPasswordScreenNameChange(the_json));
+    if(currentPassword.length > 0 && newPassword1.length > 0 && newPassword2.length > 0) {
+      let url = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
+      fetch(url)
+          .then( response => response.json())
+          .then(the_json => attemptPasswordChange(the_json));
+    }
   }
 
+  // called when 'Update' button for screen name/ship color field is clicked
+  // if screen name field is blank, show error; otherwise, call change-player-preferences endpoint and navigate to home
   function handleScreenNameColorClick() {
     screenName.length === 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
-    let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
-    fetch(url).then(navigate('/home/'+username));
+    if(screenName.length > 0) {
+      let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
+      fetch(url).then(navigate('/home/'+username));
+    }
   }
 
   return (
