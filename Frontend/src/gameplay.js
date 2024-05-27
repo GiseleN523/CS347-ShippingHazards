@@ -271,12 +271,26 @@ function BoardsAndTitles({gameStatus, setGameStatus, isSetupStage, setIsSetupSta
           // for each square, find the difference between the row and column of the first item in the ship
           // this is the origin square everything else rotates around
           // add the row difference to the origin's column and the column difference to the origin's row
-          changeFunct = function(coords){
-            let startingRow = selectedShip[0][0];
-            let startingCol = selectedShip[0][1];
-            let rowDiff = selectedShip[0][0] - coords[0];
-            let colDiff = selectedShip[0][1] - coords[1];
-            return [startingRow+colDiff, startingCol+rowDiff];
+          // try rotating on different parts of the ship until we find one that is legal
+          // try rotating ships in four different directions
+          findRotation:
+          for(let i=0; i<selectedShip.length; i++) {
+            for(let p=0; p<=1; p++) {
+              for(let q=0; q<=1; q++) {
+                changeFunct = function(coords){
+                  let startingRow = selectedShip[i][0];
+                  let startingCol = selectedShip[i][1];
+                  let rowDiff = startingRow - coords[0];
+                  let colDiff = startingCol - coords[1];
+                  let newRow = p ? startingRow - colDiff : startingRow + colDiff;
+                  let newCol = q ? startingCol - rowDiff : startingCol + rowDiff;
+                  return [newRow, newCol];
+                }
+                if(legalSelectedShipMovement(changeFunct)) {
+                  break findRotation;
+                }
+              }
+            }
           }
         }
         if(legalSelectedShipMovement(changeFunct)) {
