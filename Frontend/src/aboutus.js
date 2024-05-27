@@ -1,3 +1,8 @@
+/*
+  "About Us" page with list of our names and a link to our Github
+  Can be accessed from a button in the navigation bar
+*/
+
 import './aboutus.css'
 import HeaderAndNav from './header_and_nav.js';
 import { useParams } from 'react-router-dom';
@@ -17,7 +22,7 @@ function AboutUs() {
           <li>Game Logic and AI Players: Willow Gu & Josh Meier</li>
           <li>Backend/Database: Kendra Winhall & Ryan Dunn</li>
         </ul>
-        <p>For more information about the project, including our source code and how to run it, see our <a href="https://github.com/GiseleN523/CS347-ShippingHazards" target="_blank">Github page</a>.</p>
+        <p>For more information about the project, including our source code and how to run it, see our <a href="https://github.com/GiseleN523/CS347-ShippingHazards" target="_blank" rel="noreferrer">Github page</a>.</p>
       </div>
     </div>
   );

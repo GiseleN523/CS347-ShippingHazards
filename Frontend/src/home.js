@@ -1,6 +1,6 @@
 import './home.css'
 import HeaderAndNav from './header_and_nav.js';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 let username;
@@ -51,9 +51,17 @@ function PlayMainCompButton () {
 
 function PlayCompButton({aiID}) {
 
+  const navigate = useNavigate();
+
   function redirectBrowser(the_json){
-      let gameID = the_json["game_id"];
-      window.location.replace("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username);
+    let gameID = the_json["game_id"];
+    let url = "/play/get-player-info/" + username;
+    fetch(url)
+      .then(response => response.json())
+      .then((the_json) => {
+        navigate("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username+"/"+the_json["color_preference"]);
+    });
+    //window.location.replace("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username+"/"+color);
   }
 
   function handleClick() {
@@ -108,7 +116,7 @@ function HowToPlayButton() {
 function Home() {
   ({username} = useParams());
   return (
-    <div className="header/nav">
+    <div>
       <HeaderAndNav username={username}/>
       <div className="buttons-container">
         <PlayButton />

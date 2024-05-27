@@ -1,3 +1,8 @@
+/*
+  Root of the React project
+  Creates routes to all pages that will be linked/navigated to in the project
+*/
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -21,8 +26,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/home/:username" element={<Home />} />
         <Route path="/myaccount/:username" element={<MyAccount />} />
         <Route path="/aboutus/:username" element={<AboutUs />} />
-        <Route path="/game/:gameID/:boardSize/:opponentID/:playerID/:username" element={<GamePlay />} />
-        <Route path="/profile/:username" element={<ProfilePage />} />
+        <Route path="/game/:gameID/:boardSize/:opponentID/:playerID/:username/:shipColor" element={<GamePlay />} />
+        <Route path="/profile/:username/:originalColor/:originalScreenName" element={<ProfilePage />} />
         <Route path="play/get-player-info/:username" element={<StatsPage />} />
       </Routes>
     </Router>
