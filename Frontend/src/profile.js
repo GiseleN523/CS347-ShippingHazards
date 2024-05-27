@@ -1,22 +1,21 @@
 import './profile.css'
 import HeaderAndNav from './header_and_nav.js';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import TextFieldWithError from './text_field_with_error.js';
 
 let username;
-let originalColor;
-let originalScreenName;
 
 function ProfilePage() {
   const navigate = useNavigate();
-  ({username, originalColor, originalScreenName} = useParams());
+  ({username} = useParams());
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword1, setNewPassword1] = useState('');
   const [newPassword2, setNewPassword2] = useState('');
-  const [screenName, setScreenName] = useState(originalScreenName);
-  const [color, setColor] = useState("#"+originalColor);
+  const [screenName, setScreenName] = useState(username);
+  const [color, setColor] = useState("#ff8ac7");
   const [currentPasswordErrorVisible, setCurrentPasswordErrorVisible] = useState(false);
   const [newPassword1ErrorVisible, setNewPassword1ErrorVisible] = useState(false);
   const [newPassword2ErrorVisible, setNewPassword2ErrorVisible] = useState(false);
@@ -76,11 +75,11 @@ function ProfilePage() {
             <TextFieldWithError value={screenName} setValue={setScreenName} errorVisible={screenNameErrorVisible}/>
             Ship Color
             <input type="color" 
-                id="color"
-                name="color"
-                value={color}
-                onChange={(ev) => setColor(ev.target.value)}
-                style={{marginLeft: '1em'}}
+                  id="color"
+                  name="color"
+                  value="#ff8ac7"
+                  onChange={(ev) => setColor(ev.target.value)}
+                  style={{marginLeft: '1em'}}
             ></input><br />
             <button onClick={handleScreenNameColorClick}>Update</button><br />
         </div>
