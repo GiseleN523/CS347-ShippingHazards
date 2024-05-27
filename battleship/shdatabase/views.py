@@ -154,10 +154,14 @@ def get_state(request, game_id, player_id):
     Used for login capabilities.
     """
     game = Game.objects.get(id = game_id)
-    ship_status = get_player_ship_status(game, player_id)
+    opponent_id = get_opponent(game, player_id)
+    player_ship_status = get_player_ship_status(game, player_id)
+    opponent_ship_status = get_player_ship_status(game, opponent_id)
     board = get_player_board(game, player_id)
     return JsonResponse({"player_id": player_id,
-                        "ship_status": ship_status,
+                        "opponent_id": opponent_id,
+                        "player_ship_status": player_ship_status,
+                        "opponent_ship_status": opponent_ship_status,
                         "ship_board": board.ship_board,
                         "attack_board": board.attack_board,
                         "combined_board": board.combined_board,
@@ -174,10 +178,14 @@ def ws_get_state(game_id, player_id):
     Used for gameplay capabilities.
     """
     game = Game.objects.get(id = game_id) 
-    ship_status = get_player_ship_status(game, player_id)
+    opponent_id = get_opponent(game, player_id)
+    player_ship_status = get_player_ship_status(game, player_id)
+    opponent_ship_status = get_player_ship_status(game, opponent_id)
     board = get_player_board(game, player_id)
     dict = {"player_id": player_id,
-            "ship_status": ship_status,
+            "opponent_id": opponent_id,
+            "player_ship_status": player_ship_status,
+            "opponent_ship_status": opponent_ship_status,
             "ship_board": board.ship_board,
             "attack_board": board.attack_board,
             "combined_board": board.combined_board,
