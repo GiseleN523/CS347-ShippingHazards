@@ -264,6 +264,7 @@ def get_player_info(request, username):
     u = User.objects.get(username=username)
     player = get_object_or_404(Player, user=u)
     return JsonResponse({"is_ai_player":player.is_ai_player,
+                        "player_id": player.id,
                         "screen_name": player.screen_name,
                         "wins": player.wins,
                         "losses": player.losses,
