@@ -3,11 +3,10 @@ import './stats.css';
 import HeaderAndNav from './header_and_nav.js';
 import { useParams } from 'react-router-dom';
 
-let playerID
 let username;
 
-function StatsTable(the_json) {
 
+function StatsTable({ the_json }) {
   if (!the_json) {
     return <div>Loading...</div>;
   }
@@ -50,7 +49,7 @@ function StatsPage() {
   const [playerStats, setPlayerStats] = useState(null);
 
   useEffect(() => {
-    let url = "/play/get-player-info/" +username;
+    let url = "/play/get-player-info/" + username;
     fetch(url)
       .then(response => response.json())
       .then(the_json => setPlayerStats(the_json))
