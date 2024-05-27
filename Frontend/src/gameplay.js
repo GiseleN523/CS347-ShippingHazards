@@ -208,7 +208,7 @@ function GameOverPopup({gameStatus}) {
   let aiID = 3;
   function redirectBrowser(the_json){
     gameID = the_json["game_id"];
-    window.location.replace("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username);
+    window.location.replace("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username+"/"+shipColor.substring(1));
 }
   function handleButtonClick() {
     let url = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
