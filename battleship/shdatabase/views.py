@@ -39,6 +39,9 @@ class BoardViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 def room(request, room_name):
+    """
+    Creates a room where the user can see all messages being sent through the websocket for a specified game.
+    """
     return render(request, "shdatabase/room.html", {"room_name": room_name})
 
 def new_board(board_size):
@@ -84,7 +87,8 @@ def new_game(request, player1_id, player2_id, num_ships, board_size, is_ai_game)
     game.loser = 0
     game.save()
     
-    requests.get('http://ai-server:5555/new-game/' + str(player1_id) + '/' + str(player2_id)  + '/' + str(num_ships) + '/' + str(board_size) + '/' + str(game.id))
+    requests.get('http://ai-server:5555/new-game/' + str(player1_id) + '/' + str(player2_id)  + '/' + 
+                 str(num_ships) + '/' + str(board_size) + '/' + str(game.id))
 
 
     return JsonResponse({"game_id": game.id})
@@ -122,32 +126,52 @@ def get_opponent(game, player_id):
     elif game.player2_id == player_id:
             return game.player1_id
     else:
-        raise ValueError("Game ID does not correspond to Player ID")     
+        raise ValueError("Game ID does not correspond to Player ID")  
+
+def get_player_ship_status(game, player_id): 
+    """
+    Returns whether a specified player in a specified game has confirmed their ships.
+    """
+    if game.player1_id == player_id:
+            ship_status = game.player1_ship_status
+            return ship_status
+    elif game.player2_id == player_id:
+            ship_status = game.player2_ship_status
+            return ship_status
+    else:
+        raise ValueError("Game ID does not correspond to Player ID")   
 
 def get_state(request, game_id, player_id):
     """
     API endpoint that returns the board state and game state of the specified player and game.
+    Returns this information only to the client that asked.
+    Used for login capabilities.
     """
-    game = Game.objects.get(id = game_id) 
+    game = Game.objects.get(id = game_id)
+    ship_status = get_player_ship_status(game, player_id)
     board = get_player_board(game, player_id)
     return JsonResponse({"player_id": player_id,
-                       "ship_board": board.ship_board,
-                       "attack_board": board.attack_board,
-                       "combined_board": board.combined_board,
-                       "is_hit": board.is_hit,
-                       "is_sunk": board.is_sunk,
-                       "shot_row": board.shot_row,
-                       "shot_col": board.shot_col,
-                       "turn": game.turn,
-                       "status": game.status})
+                        "ship_status": ship_status,
+                        "ship_board": board.ship_board,
+                        "attack_board": board.attack_board,
+                        "combined_board": board.combined_board,
+                        "is_hit": board.is_hit,
+                        "is_sunk": board.is_sunk,
+                        "shot_row": board.shot_row,
+                        "shot_col": board.shot_col,
+                        "turn": game.turn,
+                        "status": game.status})
 
 def ws_get_state(game_id, player_id):
     """
-    API endpoint that returns the board state and game state of the specified player and game.
+    Uses a websocket to send the board state and game state to all players in the game.
+    Used for gameplay capabilities.
     """
     game = Game.objects.get(id = game_id) 
+    ship_status = get_player_ship_status(game, player_id)
     board = get_player_board(game, player_id)
     dict = {"player_id": player_id,
+            "ship_status": ship_status,
             "ship_board": board.ship_board,
             "attack_board": board.attack_board,
             "combined_board": board.combined_board,
@@ -158,7 +182,6 @@ def ws_get_state(game_id, player_id):
             "turn": game.turn,
             "status": game.status}
     return json.dumps(dict)
-
 
 def is_player_turn(game, player_id):
     """
@@ -178,7 +201,7 @@ def is_player_turn(game, player_id):
     
 def fire_shot(request, game_id, player_id, row, col):
     """
-    API endpoint that returns hit status, attack board, turn, and game status after player fires shot.
+    API endpoint that fires shot, changes game state, and alerts websockets.
     """
     game = Game.objects.get(id = game_id)
     if is_player_turn(game, player_id):
@@ -239,7 +262,7 @@ def fire_shot(request, game_id, player_id, row, col):
             else:
                 raise ValueError("Turn must be 1 or 2")
             
-
+        #sends updated game state to all GameConsumers in this game through the websocket
         group_name = "game_%s" % game_id
         channel_layer = get_channel_layer()
 
@@ -250,12 +273,8 @@ def fire_shot(request, game_id, player_id, row, col):
                 "message": "%s" % ws_get_state(game_id, opponent_id)
             }
         )
-            
-        return JsonResponse({"attack_board": board.attack_board,
-                            "is_hit": board.is_hit,
-                            "is_sunk": board.is_sunk,
-                            "turn": game.turn,
-                            "status" : game.status})
+        #response is not used, but we must return something
+        return JsonResponse({"response": 0})
     
     else:
         raise ValueError("Player cannot fire shot when it is not their turn")

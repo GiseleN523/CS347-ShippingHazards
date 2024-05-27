@@ -10,7 +10,7 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
 class GameSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Game
-        fields = ['is_ai_game', 'player1', 'player2', 'board1ID', 'board2ID','turn','status',
+        fields = ['is_ai_game', 'player1', 'player2', 'player1_ship_status', 'player2_ship_status', 'board1ID', 'board2ID','turn','status',
                   'num_ships','winner','loser']
 
 

@@ -20,6 +20,8 @@ class Game(models.Model):
     is_ai_game = models.BooleanField(default=True)
     player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player1_games')
     player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player2_games') #Unsure how we will want to set on_delete but 
+    player1_ship_status = models.IntegerField(default=0) #0 if ships not confirmed, 1 if confirmed
+    player2_ship_status = models.IntegerField(default=0) #0 if ships not confirmed, 1 if confirmed
     board1ID = models.IntegerField(default=0)
     board2ID = models.IntegerField(default=0)
     turn = models.IntegerField(default=0) #1 for player 1's turn, 2 for player 2's turn
