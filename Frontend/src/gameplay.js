@@ -390,7 +390,7 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
 }
   
 function GamePlay() {
-    ({gameID, boardSize, opponentID, playerID, username, shipColor, playerNum} = useParams());
+    ({gameID, boardSize, playerID, opponentID, username, shipColor, playerNum} = useParams());
     const [status, setStatus] = useState("setup"); // "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
     const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
