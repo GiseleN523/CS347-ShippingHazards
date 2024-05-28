@@ -66,7 +66,7 @@ def new_board(board_size):
 
 def new_game(request, player1_id, player2_id, num_ships, board_size, is_ai_game):
     """
-    API endpoint that creates a new Game object and returns its ID.
+    API endpoint that creates a new Game object and returns its ID along with the player IDs.
     """
     game = Game()
     if is_ai_game == "true":
@@ -91,7 +91,9 @@ def new_game(request, player1_id, player2_id, num_ships, board_size, is_ai_game)
                  str(num_ships) + '/' + str(board_size) + '/' + str(game.id))
 
 
-    return JsonResponse({"game_id": game.id})
+    return JsonResponse({"game_id": game.id,
+                         "player_1_id": player1_id,
+                         "player_2_id": player2_id})
 
 def get_player_board(game, player_id): 
     """
