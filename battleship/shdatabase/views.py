@@ -191,7 +191,8 @@ def ws_get_state(game_id, player_id):
     """
     game = Game.objects.get(id = game_id) 
     board = get_player_board(game, player_id)
-    dict = {"player1_id": game.player1_id,
+    dict = {"player_id": player_id,
+            "player1_id": game.player1_id,
             "player2_id": game.player2_id,
             "player1_ship_status": game.player1_ship_status,
             "player2_ship_status": game.player2_ship_status,

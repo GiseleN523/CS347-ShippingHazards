@@ -4,7 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 let username;
-const playerID = 5;
 const boardSize = 10;
 const numShips = 4;
 
@@ -53,21 +52,25 @@ function PlayCompButton({aiID}) {
 
   const navigate = useNavigate();
 
-  function redirectBrowser(the_json){
+  function redirectBrowser(the_json, playerID, color){
     let gameID = the_json["game_id"];
-    let url = "/play/get-player-info/" + username;
-    fetch(url)
-      .then(response => response.json())
-      .then((the_json) => {
-        navigate("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username+"/"+the_json["color_preference"]);
-    });
-    //window.location.replace("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username+"/"+color);
+    let playerNum = 1;
+    navigate("/game/"+gameID+"/"+boardSize+"/"+aiID+"/"+playerID+"/"+username+"/"+color+"/"+playerNum);
   }
 
   function handleClick() {
     let isAI = "true";
-    let url = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAI;
-    fetch(url).then( response => response.json() ).then( the_json => redirectBrowser(the_json)); // Matt
+    let url = "/play/get-player-info/" + username;
+    fetch(url)
+      .then(response => response.json())
+      .then((the_json) => {
+        let playerID = the_json["player_id"];
+        let color = the_json["color_preference"];
+        let url2 = "/play/new-game/" + playerID + "/" + aiID + "/" + numShips + "/" + boardSize + "/" + isAI;
+        fetch(url2)
+          .then( response => response.json() )
+          .then( the_json => redirectBrowser(the_json, playerID, color));
+    });
   }
   return (
     <button className="popup-button" type="button" onClick={handleClick}>
