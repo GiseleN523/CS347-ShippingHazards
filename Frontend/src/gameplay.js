@@ -205,24 +205,11 @@ function GameOverPopup({status}) {
   // need to actually save these, not hardcode them like this
   const navigate = useNavigate();
 
-  /*function redirectBrowser(the_json){
-    gameID = the_json["game_id"];
-    window.location.replace("/game/"+gameID+"/"+boardSize+"/"+opponentID+"/"+playerID+"/"+username+"/"+shipColor.substring(1));
-  }*/
-  function handleButtonClick() {
-
-    navigate("/home/"+username);
-    
-    /*let url = "/play/new-game/" + playerID + "/" + opponentID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
-    fetch(url)
-      .then( response => response.json() )
-      .then( the_json => redirectBrowser(the_json));*/
-  }
   return (
     <div id="gameOverPopup" style={{visibility: (status === "player_won" || status === "opp_won") ? 'visible' : 'hidden'}}>
       <div>GAME OVER</div>
       <div>{status === "player_won" ? "You Won!" : "You Lost :("}</div><br></br>
-      <button onClick={handleButtonClick}>Back to Home</button>
+      <button onClick={() => navigate("/home/"+username)}>Back to Home</button>
     </div>
   )
 }
