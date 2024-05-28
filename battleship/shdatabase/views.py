@@ -121,6 +121,16 @@ def confirm_ships(request, game_id, player_id, ship_board):
     board.ship_board = ship_board
     board.combined_board = ship_board
     board.save()
+    #sends updated game state to all GameConsumers in this game through the websocket
+    group_name = "game_%s" % game_id
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            "type": "game_message",
+            "message": "%s" % ws_get_state(game_id, player_id)
+        }
+    )
     return JsonResponse({"ship_board": board.ship_board})
        
 def get_opponent(game, player_id):
