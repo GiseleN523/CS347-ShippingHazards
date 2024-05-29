@@ -1,7 +1,7 @@
 import './gameplay.css';
 import HeaderAndNav from './header_and_nav.js';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import hitImage from './images/HitPopup.png';
 import sunkImage from './images/SunkPopup.png';
 import hitSound from './sounds/hitSound.mp3'; 
@@ -9,17 +9,17 @@ import missSound from './sounds/missSound.mp3';
 import sunkSound from './sounds/sunkSound.mp3';
 
 const blankBoard = "----------------------------------------------------------------------------------------------------";
-let playerBoard = "-----------a---------a------------cccc----------------b---------b---------b--------------------ddddd"; // i had to switch the c and b characters bc an ai function depends on them being certain ones
+let playerBoard = "-----------a---------a------------cccc----------------b---------b---------b--------------------ddddd";
 let playerID;
-let opponentID;
 let username;
 let gameID;
 let boardSize;
 let socket;
 let selectedShip = null; // used in ship placement phase - ex - [[0, 0], [0, 1], [0, 2], [0, 3]]
 let shipColor;
+let playerNum;
 
-//returns a list of coordinates of the other squares that make up the ship at given coordinates
+//returns a list of coordinates of all squares that make up the ship at given coordinates
 //input ex: [0, 0]
 //output ex: [[0, 0], [0, 1], [0, 2], [0, 3]]
 function entireShipAt(id, board) {
@@ -168,8 +168,8 @@ function Instructions({status}) {
           else if (status === "player_turn") {
             return "Your Turn: Choose a square on your opponent's board to attack";
           }
-          else if(status === "opp_turn") {
-            return "Waiting for opponent move...";
+          else if(status === "opp_turn" || status === "setup_confirmed") {
+            return "Waiting for opponent...";
           }
         }()}
       </div>
@@ -185,7 +185,7 @@ function ConfirmButton({status, setStatus}) {
       });
       selectedShip = null;
     }
-    setStatus("player_turn"); // change this
+    setStatus("setup_confirmed");
     let url = "/play/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
     fetch(url);
   }
@@ -202,23 +202,13 @@ function ConfirmButton({status, setStatus}) {
 
 function GameOverPopup({status}) {
   // need to actually save these, not hardcode them like this
-  let numShips = 4;
-  let isAiGame = "true";
-  function redirectBrowser(the_json){
-    gameID = the_json["game_id"];
-    window.location.replace("/game/"+gameID+"/"+boardSize+"/"+opponentID+"/"+playerID+"/"+username+"/"+shipColor.substring(1));
-}
-  function handleButtonClick() {
-    let url = "/play/new-game/" + playerID + "/" + opponentID + "/" + numShips + "/" + boardSize + "/" + isAiGame;
-    fetch(url)
-      .then( response => response.json() )
-      .then( the_json => redirectBrowser(the_json));
-  }
+  const navigate = useNavigate();
+
   return (
     <div id="gameOverPopup" style={{visibility: (status === "player_won" || status === "opp_won") ? 'visible' : 'hidden'}}>
       <div>GAME OVER</div>
       <div>{status === "player_won" ? "You Won!" : "You Lost :("}</div><br></br>
-      <button onClick={handleButtonClick}>Play Again</button>
+      <button onClick={() => navigate("/home/"+username)}>Back to Home</button>
     </div>
   )
 }
@@ -307,11 +297,20 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
 
     socket.onmessage = function(e) {
       let message = JSON.parse(JSON.parse(e.data)["message"]);
-      updateBoardAndTurn(message);
+      (status === "setup" || status === "setup_confirmed") ? updateSetupStatus(message) : updateBoardAndTurn(message);
+    }
+
+    function updateSetupStatus(the_json) {
+      let player1ShipStatus = the_json["player1_ship_status"];
+      let player2ShipStatus = the_json["player2_ship_status"];
+      let turn = the_json["turn"];
+      if(player1ShipStatus == 1 && player2ShipStatus == 1) {
+        turn == playerNum ? setStatus("player_turn") : setStatus("opp_turn");
+      }
     }
     
     function updateBoardAndTurn(the_json) {
-      let myBoard = the_json["player_id"] != opponentID;
+      let myBoard = the_json["player_id"] == playerID;
       let shipBoard = the_json["ship_board"];
       let isHit = the_json["is_hit"];
       let isSunk = the_json["is_sunk"];
@@ -343,17 +342,17 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
         const audio = new Audio(missSound);
         audio.play();
       }
-      if(gameStatus === 1) {
+      if(gameStatus > 0 && gameStatus == playerNum) {
         setStatus("player_won");
       }
-      else if(gameStatus === 2) {
+      else if(gameStatus > 0 && gameStatus != playerNum) {
         setStatus("opp_won");
       }
-      else if(turn === 1) {
+      else if(turn > 0 && turn == playerNum) {
         setStatus("player_turn");
       }
-      else if(turn === 2) {
-        setStatus("opp_turn")
+      else if(turn > 0 && turn != playerNum) {
+        setStatus("opp_turn");
       }
     }
     return (
@@ -388,10 +387,16 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       </div>
     );
 }
+
+function GameIDText() {
+  return (
+    <div id="gameIDText">Game ID: {gameID}</div>
+  );
+}
   
 function GamePlay() {
-    ({gameID, boardSize, opponentID, playerID, username, shipColor} = useParams());
-    const [status, setStatus] = useState("setup"); // "setup", "player_turn", "opp_turn", "player_won", "opp_won"
+    ({gameID, boardSize, playerID, username, shipColor, playerNum} = useParams());
+    const [status, setStatus] = useState("setup"); // "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
     const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
     const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
@@ -422,6 +427,7 @@ function GamePlay() {
     return (
       <div>
         <HeaderAndNav username={username}/>
+        <GameIDText />
         <BoardsAndTitles 
           status={status} 
           setStatus={setStatus}
