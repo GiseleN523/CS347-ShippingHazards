@@ -169,7 +169,7 @@ function Instructions({status}) {
             return "Your Turn: Choose a square on your opponent's board to attack";
           }
           else if(status === "opp_turn" || status === "setup_confirmed") {
-            return "Waiting for opponent move...";
+            return "Waiting for opponent...";
           }
         }()}
       </div>
@@ -387,6 +387,12 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       </div>
     );
 }
+
+function GameIDText() {
+  return (
+    <div id="gameIDText">Game ID: {gameID}</div>
+  );
+}
   
 function GamePlay() {
     ({gameID, boardSize, playerID, username, shipColor, playerNum} = useParams());
@@ -421,6 +427,7 @@ function GamePlay() {
     return (
       <div>
         <HeaderAndNav username={username}/>
+        <GameIDText />
         <BoardsAndTitles 
           status={status} 
           setStatus={setStatus}

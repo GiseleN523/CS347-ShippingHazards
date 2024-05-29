@@ -8,20 +8,9 @@ let username;
 const boardSize = 10;
 const numShips = 4;
 
-function PlayMultiplayerButton() {
+function MultiplayerPopup({closePopup, joinID, setJoinID, joinErrorVisible, setJoinErrorVisible}) {
 
   const navigate = useNavigate();
-  const [popupOpen, setPopupOpen] = useState(false); // State to control popup visibility
-  const [joinID, setJoinID] = useState(0);
-  const [joinErrorVisible, setJoinErrorVisible] = useState(false);
-
-  const openPopup = () => {
-    setPopupOpen(true);
-  };
-
-  const closePopup = () => {
-    setPopupOpen(false);
-  };
 
   function attemptJoin(the_json, playerID, color){
     let success = the_json["status"] == 1;
@@ -53,29 +42,43 @@ function PlayMultiplayerButton() {
     }
   }
 
-  const Popup = ({closePopup }) => {
-    return (
-      <div className="popup-container">
-        <div className="popup-body">
-          <NewGameButton text={"New Game"} isAI={false} opponentID={4}/><br />
-          <TextFieldWithError
-              placeholder={"Game ID"}
-              value={joinID} 
-              setValue={setJoinID} 
-              errorVisible={joinErrorVisible}
-              errorMessage={"Invalid game ID, or game is already full. Ask your friend for the ID of their game."}>
-          </TextFieldWithError>
-          <button className="popup-button" type="button" onClick={handleJoinClick}>Join Game</button>
-          <button className="popup-button" onClick={closePopup}>X</button>
-        </div>
+  return (
+    <div className="popup-container">
+      <div className="popup-body">
+        <TextFieldWithError
+            placeholder={"Join Game ID"}
+            value={joinID} 
+            setValue={setJoinID} 
+            errorVisible={joinErrorVisible}
+            errorMessage={"Invalid game ID, or game is already full. After your friend starts a game, ask them for the ID."}
+            style={{width: '10em', display: 'inline'}} />
+        <button className="popup-button" type="button" onClick={handleJoinClick}>Join Game</button>
+        <NewGameButton text={"Create New Game"} isAI={false} opponentID={4} />
+        <button className="popup-button" onClick={closePopup}>X</button>
       </div>
-    );
+    </div>
+  );
+};
+
+function PlayMultiplayerButton() {
+
+  const [popupOpen, setPopupOpen] = useState(false); // State to control popup visibility
+  const [joinErrorVisible, setJoinErrorVisible] = useState(false);
+  const [joinID, setJoinID] = useState('');
+
+  const openPopup = () => {
+    setPopupOpen(true);
+    setJoinErrorVisible(false);
+  };
+
+  const closePopup = () => {
+    setPopupOpen(false);
   };
 
   return (
     <div>
       <button className="button" type="button" onClick={openPopup}>Multiplayer</button>
-      {popupOpen && <Popup closePopup={closePopup} />} 
+      {popupOpen && <MultiplayerPopup closePopup={closePopup} joinID={joinID} setJoinID={setJoinID} joinErrorVisible={joinErrorVisible} setJoinErrorVisible={setJoinErrorVisible}/>} 
     </div>
   );
 }
@@ -100,7 +103,7 @@ function PlayMainCompButton () {
           <NewGameButton text={"Play AI #1"} isAI={true} opponentID={1}/>
           <NewGameButton text={"Play AI #2"} isAI={true} opponentID={2}/>
           <NewGameButton text={"Play AI #3"} isAI={true} opponentID={3}/>
-        <button className="popup-button" onClick={closePopup}>X</button>
+          <button className="popup-button" onClick={closePopup}>X</button>
         </div>
       </div>
     );
@@ -122,9 +125,6 @@ function NewGameButton({text, isAI, opponentID}) {
   function redirectBrowser(the_json, playerID, color){
     let gameID = the_json["game_id"];
     let playerNum = 1;
-    if(!isAI) {
-      alert("game ID is: " + gameID);
-    }
     navigate("/game/"+gameID+"/"+boardSize+"/"+playerID+"/"+username+"/"+color+"/"+playerNum);
   }
 
@@ -191,7 +191,7 @@ function Home() {
       <div className="buttons-container">
         <PlayMultiplayerButton />
         <PlayMainCompButton />
-        <HowToPlayButton/>
+        <HowToPlayButton />
       </div>
     </div>
   );
