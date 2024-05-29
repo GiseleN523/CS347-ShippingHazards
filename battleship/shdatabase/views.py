@@ -13,6 +13,7 @@ from .serializers import PlayerSerializer, GameSerializer, BoardSerializer
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 
+PLACEHOLDER_PLAYER_ID = 4
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -86,14 +87,29 @@ def new_game(request, player1_id, player2_id, num_ships, board_size, is_ai_game)
     game.winner = 0 
     game.loser = 0
     game.save()
-    
-    requests.get('http://ai-server:5555/new-game/' + str(player1_id) + '/' + str(player2_id)  + '/' + 
-                 str(num_ships) + '/' + str(board_size) + '/' + str(game.id))
 
+    if is_ai_game:
+        requests.get('http://ai-server:5555/new-game/' + str(player1_id) + '/' + str(player2_id)  + '/' + 
+                    str(num_ships) + '/' + str(board_size) + '/' + str(game.id))
 
     return JsonResponse({"game_id": game.id,
                          "player_1_id": player1_id,
                          "player_2_id": player2_id})
+
+def change_opponent(request, game_id, player_id):
+    """
+    API endpoint that changes player 2 of a specified game if it is currently the placeholder player.
+    Returns status (1 if change is made, 0 otherwise) and player 2 ID.
+    """
+    game = Game.objects.get(id = game_id)
+    if game.player2_id == PLACEHOLDER_PLAYER_ID:
+        game.player2_id = player_id
+        game.save()
+        status = 1
+    else:
+        status = 0
+    return JsonResponse({"status": status,
+                         "player_2_id": game.player2_id})
 
 def get_player_board(game, player_id): 
     """
@@ -119,10 +135,12 @@ def confirm_ships(request, game_id, player_id, ship_board):
     elif game.player2_id == player_id:
         game.player2_ship_status = 1
         game.save()
+
     board = get_player_board(game, player_id)
     board.ship_board = ship_board
     board.combined_board = ship_board
     board.save()
+
     #sends updated game state to all GameConsumers in this game through the websocket
     group_name = "game_%s" % game_id
     channel_layer = get_channel_layer()
