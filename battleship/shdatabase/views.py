@@ -101,15 +101,19 @@ def change_opponent(request, game_id, player_id):
     API endpoint that changes player 2 of a specified game if it is currently the placeholder player.
     Returns status (1 if change is made, 0 otherwise) and player 2 ID.
     """
-    game = Game.objects.get(id = game_id)
-    if game.player2_id == PLACEHOLDER_PLAYER_ID:
-        game.player2_id = player_id
-        game.save()
-        status = 1
+    try: 
+        game = Game.objects.get(id = game_id)
+    except:
+        return JsonResponse({"status": 0})
     else:
-        status = 0
-    return JsonResponse({"status": status,
-                         "player_2_id": game.player2_id})
+        if game.player2_id == PLACEHOLDER_PLAYER_ID:
+            game.player2_id = player_id
+            game.save()
+            status = 1
+        else:
+            status = 0
+        return JsonResponse({"status": status,
+                            "player_2_id": game.player2_id})
 
 def get_player_board(game, player_id): 
     """
