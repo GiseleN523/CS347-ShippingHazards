@@ -424,7 +424,8 @@ function GamePlay() {
     }
 
     if(socket === undefined) {
-      socket = new WebSocket("ws://localhost:8000/ws/play/"+gameID+"/");
+      let hostName = window.location.hostname;
+      socket = new WebSocket("ws://"+hostName+":8000/ws/play/"+gameID+"/");
     }
 
     return (
