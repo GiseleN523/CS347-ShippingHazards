@@ -12,10 +12,6 @@
     cursor: crosshair;
 }
 
-/*.board-square:hover {
-    background-color: blue;
-} */
-
 #gameplay-instructions {
     padding: 0 2%;
     width: 100%;
@@ -67,4 +63,11 @@ button {
     border-radius: 20px;
     padding: 3%;
     text-align: center;
+}
+
+#gameIDText {
+    padding: .5em;
+    font-size: 150%;
+    float: right;
+    font-weight: bold;
 }
