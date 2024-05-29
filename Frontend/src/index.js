@@ -7,13 +7,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './home.js';
-import CreateAccount from './create_account.js'
+import CreateAccount from './create_account.js';
 import AboutUs from './aboutus.js';
 import GamePlay from './gameplay.js';
 import StatsPage from './stats.js';
 import Login from './login.js';
 import ProfilePage from './profile.js';
-import './index.css'
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -24,7 +24,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/createaccount/" element={<CreateAccount />} />
         <Route path="/home/:username" element={<Home />} />
         <Route path="/aboutus/:username" element={<AboutUs />} />
-        <Route path="/game/:gameID/:boardSize/:opponentID/:playerID/:username/:shipColor" element={<GamePlay />} />
+        <Route path="/game/:gameID/:boardSize/:playerID/:username/:shipColor/:playerNum" element={<GamePlay />} />
         <Route path="/profile/:username/:originalColor/:originalScreenName" element={<ProfilePage />} />
         <Route path="play/get-player-info/:username" element={<StatsPage />} />
       </Routes>
