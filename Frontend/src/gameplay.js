@@ -304,13 +304,13 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       let player1ShipStatus = the_json["player1_ship_status"];
       let player2ShipStatus = the_json["player2_ship_status"];
       let turn = the_json["turn"];
-      if(player1ShipStatus == 1 && player2ShipStatus == 1) {
-        turn == playerNum ? setStatus("player_turn") : setStatus("opp_turn");
+      if(player1ShipStatus === 1 && player2ShipStatus === 1) {
+        turn === playerNum ? setStatus("player_turn") : setStatus("opp_turn");
       }
     }
     
     function updateBoardAndTurn(the_json) {
-      let myBoard = the_json["player_id"] == playerID;
+      let myBoard = the_json["player_id"] === playerID;
       let shipBoard = the_json["ship_board"];
       let isHit = the_json["is_hit"];
       let isSunk = the_json["is_sunk"];
@@ -342,16 +342,16 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
         const audio = new Audio(missSound);
         audio.play();
       }
-      if(gameStatus > 0 && gameStatus == playerNum) {
+      if(gameStatus > 0 && gameStatus === playerNum) {
         setStatus("player_won");
       }
-      else if(gameStatus > 0 && gameStatus != playerNum) {
+      else if(gameStatus > 0 && gameStatus !== playerNum) {
         setStatus("opp_won");
       }
-      else if(turn > 0 && turn == playerNum) {
+      else if(turn > 0 && turn === playerNum) {
         setStatus("player_turn");
       }
-      else if(turn > 0 && turn != playerNum) {
+      else if(turn > 0 && turn !== playerNum) {
         setStatus("opp_turn");
       }
     }
@@ -401,6 +401,9 @@ function GamePlay() {
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
     const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
     const [sunkPopup2Visible, setSunkPopup2Visible] = useState(false);
+
+    playerID = Number(playerID);
+    playerNum = Number(playerNum);
 
     if(shipColor[0] !== "#") {
       shipColor = "#" + shipColor;

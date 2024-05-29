@@ -13,7 +13,7 @@ function MultiplayerPopup({closePopup, joinID, setJoinID, joinErrorVisible, setJ
   const navigate = useNavigate();
 
   function attemptJoin(the_json, playerID, color){
-    let success = the_json["status"] == 1;
+    let success = the_json["status"] === 1;
     let playerNum = 2;
     if(success) {
       navigate("/game/"+joinID+"/"+boardSize+"/"+playerID+"/"+username+"/"+color+"/"+playerNum);

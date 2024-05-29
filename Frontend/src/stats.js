@@ -3,8 +3,6 @@ import './stats.css';
 import HeaderAndNav from './header_and_nav.js';
 import { useParams } from 'react-router-dom';
 
-let username;
-
 
 function StatsTable({ the_json }) {
   if (!the_json) {
