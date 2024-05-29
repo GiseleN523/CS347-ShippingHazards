@@ -12,6 +12,7 @@ urlpatterns = [
 #     path("play/get-player-info/<int:player_id>", views.get_player_info, name="get_player_info")
     path("change-player-preferences/<str:username>/<str:screen_name>/<str:color_preference>", views.change_preferences, name="change_preferences"),
     path("play/change-opponent/<int:game_id>/<int:player_id>", views.change_opponent, name="change_opponent")
+    path('<str:username>/games/<str:status>', views.get_player_games, name='get_player_games'), #status will be all, active, inactive
 
 ]
 
