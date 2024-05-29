@@ -388,9 +388,9 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
     );
 }
 
-function GameIDText() {
+function RoomIDText() {
   return (
-    <div id="gameIDText">Game ID: {gameID}</div>
+    <div id="gameIDText">Room ID: {gameID}</div>
   );
 }
   
@@ -430,7 +430,7 @@ function GamePlay() {
     return (
       <div>
         <HeaderAndNav username={username}/>
-        <GameIDText />
+        <RoomIDText />
         <BoardsAndTitles 
           status={status} 
           setStatus={setStatus}

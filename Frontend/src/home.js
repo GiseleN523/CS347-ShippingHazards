@@ -46,14 +46,14 @@ function MultiplayerPopup({closePopup, joinID, setJoinID, joinErrorVisible, setJ
     <div className="popup-container">
       <div className="popup-body">
         <TextFieldWithError
-            placeholder={"Join Game ID"}
+            placeholder={"Join Room ID"}
             value={joinID} 
             setValue={setJoinID} 
             errorVisible={joinErrorVisible}
             errorMessage={"Invalid game ID, or game is already full. After your friend starts a game, ask them for the ID."}
             style={{width: '10em', display: 'inline'}} />
-        <button className="popup-button" type="button" onClick={handleJoinClick}>Join Game</button>
-        <NewGameButton text={"Create New Game"} isAI={false} opponentID={4} />
+        <button className="popup-button" type="button" onClick={handleJoinClick}>Join Room</button>
+        <NewGameButton text={"Create New Room"} isAI={false} opponentID={4} />
         <button className="popup-button" onClick={closePopup}>X</button>
       </div>
     </div>
