@@ -9,7 +9,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './home.js';
 import CreateAccount from './create_account.js';
 import AboutUs from './aboutus.js';
-import MyAccount from './myaccount.js';
 import GamePlay from './gameplay.js';
 import StatsPage from './stats.js';
 import Login from './login.js';
@@ -24,7 +23,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/createaccount/:fillerUsername" element={<CreateAccount />} />
         <Route path="/createaccount/" element={<CreateAccount />} />
         <Route path="/home/:username" element={<Home />} />
-        <Route path="/myaccount/:username" element={<MyAccount />} />
         <Route path="/aboutus/:username" element={<AboutUs />} />
         <Route path="/game/:gameID/:boardSize/:playerID/:username/:shipColor/:playerNum" element={<GamePlay />} />
         <Route path="/profile/:username/:originalColor/:originalScreenName" element={<ProfilePage />} />

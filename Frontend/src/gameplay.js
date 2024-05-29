@@ -310,7 +310,7 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
     }
     
     function updateBoardAndTurn(the_json) {
-      let myBoard = the_json["player_id"] == playerID;
+      let myBoard = the_json["player_id"] != opponentID;
       let shipBoard = the_json["ship_board"];
       let isHit = the_json["is_hit"];
       let isSunk = the_json["is_sunk"];
