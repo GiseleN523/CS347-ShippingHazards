@@ -11,7 +11,6 @@ import sunkSound from './sounds/sunkSound.mp3';
 const blankBoard = "----------------------------------------------------------------------------------------------------";
 let playerBoard = "-----------a---------a------------cccc----------------b---------b---------b--------------------ddddd";
 let playerID;
-let opponentID;
 let username;
 let gameID;
 let boardSize;
@@ -311,7 +310,7 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
     }
     
     function updateBoardAndTurn(the_json) {
-      let myBoard = the_json["player_id"] != opponentID;
+      let myBoard = the_json["player_id"] == playerID;
       let shipBoard = the_json["ship_board"];
       let isHit = the_json["is_hit"];
       let isSunk = the_json["is_sunk"];
@@ -390,7 +389,7 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
 }
   
 function GamePlay() {
-    ({gameID, boardSize, playerID, opponentID, username, shipColor, playerNum} = useParams());
+    ({gameID, boardSize, playerID, username, shipColor, playerNum} = useParams());
     const [status, setStatus] = useState("setup"); // "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
     const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);

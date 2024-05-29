@@ -26,7 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/home/:username" element={<Home />} />
         <Route path="/myaccount/:username" element={<MyAccount />} />
         <Route path="/aboutus/:username" element={<AboutUs />} />
-        <Route path="/game/:gameID/:boardSize/:playerID/:opponentID/:username/:shipColor/:playerNum" element={<GamePlay />} />
+        <Route path="/game/:gameID/:boardSize/:playerID/:username/:shipColor/:playerNum" element={<GamePlay />} />
         <Route path="/profile/:username/:originalColor/:originalScreenName" element={<ProfilePage />} />
         <Route path="play/get-player-info/:username" element={<StatsPage />} />
       </Routes>

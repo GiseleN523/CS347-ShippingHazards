@@ -55,7 +55,7 @@ function PlayCompButton({aiID}) {
   function redirectBrowser(the_json, playerID, color){
     let gameID = the_json["game_id"];
     let playerNum = 1;
-    navigate("/game/"+gameID+"/"+boardSize+"/"+playerID+"/"+aiID+"/"+username+"/"+color+"/"+playerNum);
+    navigate("/game/"+gameID+"/"+boardSize+"/"+playerID+"/"+username+"/"+color+"/"+playerNum);
   }
 
   function handleClick() {
