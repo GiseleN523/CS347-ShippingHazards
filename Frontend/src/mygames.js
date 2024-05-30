@@ -50,8 +50,8 @@ function MyGamesTable({ games }) {
               <td>{"/game/"+game.id+"/"+boardSize+"/"+game.player1_id+"/"+username+"/"+color+"/"+playerNum}</td>
               <td>{game.turn ? 'Mine' : 'Opponent'}</td>
               <td>{game.num_ships} </td>
-              <td>{game.winner ? 'Me' : 'Opponent'}</td>
-              <td>{game.loser ? 'Me' : 'Opponent'}</td>
+              <td>{game.winner}</td>
+              <td>{game.loser}</td>
             </tr>
           ))}
         </tbody>
