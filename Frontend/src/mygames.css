@@ -1,0 +1,63 @@
+
+.mygamestable {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8; 
+    padding: 20px;
+  }
+  
+  .mygamestable h1 {
+    text-align: center;
+    font-size: 30px; /* Adjust font size as needed */
+    padding: 10px;
+  }
+  
+  .mygamestable table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .mygamestable th, .mygamestable td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; 
+  }
+  
+  .mygamestable th {
+    background-color: #f25a8e; 
+    color: white; 
+  }
+  
+  .mygamestable tbody tr:nth-child(even) {
+    background-color: #fce4ec; 
+  }
+  
+  .mygamestable tbody tr:hover {
+    background-color: #f8bbd0; 
+  }
+
+  .toggle-buttons-container {
+    margin-bottom: 20px;
+  }
+  
+  .toggle-button {
+    padding: 8px;
+    margin-right: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f25a8e;
+    color: white;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .toggle-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .toggle-button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }

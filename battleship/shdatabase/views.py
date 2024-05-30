@@ -39,6 +39,46 @@ class BoardViewSet(viewsets.ModelViewSet):
     serializer_class = BoardSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+def get_player_games(request, username, status):
+    u = User.objects.get(username=username)
+    player = get_object_or_404(Player, user=u)
+
+    if status == "active":
+        games_as_player1 = player.player1_games.filter(status=0)
+        print(games_as_player1)
+        games_as_player2 = player.player2_games.filter(status=0)
+        all_games = games_as_player1 | games_as_player2
+    elif status == "inactive":
+        games_as_player1 = player.player1_games.exclude(status=0)
+        print(games_as_player1)
+        games_as_player2 = player.player2_games.exclude(status=0)
+        all_games = games_as_player1 | games_as_player2
+    elif status == "all":
+        games_as_player1 = player.player1_games.all()
+        print(games_as_player1)
+        games_as_player2 = player.player2_games.all()
+        all_games = games_as_player1 | games_as_player2
+    else:
+         raise ValueError("status must be active, inactive, or all")
+
+    games_list = []
+    for game in all_games:
+        games_list.append({
+            'id': game.id,
+            'is_ai_game': game.is_ai_game,
+            'player1_id': game.player1.id,
+            'player2_id': game.player2.id,
+            'board1ID': game.board1ID,
+            'board2ID': game.board2ID,
+            'turn': game.turn,
+            'status': game.status,
+            'num_ships': game.num_ships,
+            'winner': game.winner,
+            'loser': game.loser,
+        })
+
+    return JsonResponse(games_list, safe=False)
+
 def room(request, room_name):
     """
     Creates a room where the user can see all messages being sent through the websocket for a specified game.
