@@ -91,11 +91,10 @@
 .howto-popup-paragraph {
   font-family: Georgia, serif;
   font-size: 15px;
-  text-align: center;
+  text-align: left;
   padding: 20px;
   border-radius: 15px;
   background: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   width: 32%;
 }
-

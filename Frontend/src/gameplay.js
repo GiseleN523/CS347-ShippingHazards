@@ -1,3 +1,9 @@
+/*
+  Page where user can play battleship game, either against an AI or another player
+  Game ID is shown in the top right corner if the game is against another player
+  
+*/
+
 import './gameplay.css';
 import HeaderAndNav from './header_and_nav.js';
 import { useState, useEffect } from 'react';
@@ -10,12 +16,12 @@ import sunkSound from './sounds/sunkSound.mp3';
 
 const blankBoard = "----------------------------------------------------------------------------------------------------";
 let playerBoard = "-----------a---------a------------cccc----------------b---------b---------b--------------------ddddd";
+let selectedShip = null; // used in ship placement phase - ex - [[0, 0], [0, 1], [0, 2], [0, 3]]
 let playerID;
 let username;
 let gameID;
 let boardSize;
 let socket;
-let selectedShip = null; // used in ship placement phase - ex - [[0, 0], [0, 1], [0, 2], [0, 3]]
 let shipColor;
 let playerNum;
 let isAIGame;
@@ -38,7 +44,9 @@ function entireShipAt(id, board) {
   return coords;
 }
 
-// changeFunct is a function that takes a length 2 array of coordinates + selected ship and returns the modified coordinates
+// returns whether it would be legal for selectedShip to move according to changeFunct
+// illegal means ship would go out of bounds of board or would overlap with another ship
+// changeFunct is a function that takes a length 2 array of coordinates + a ship and returns the modified coordinates
 function legalSelectedShipMovement(changeFunct) {
   for(let i=0; i<selectedShip.length; i++) {
     let ship = selectedShip[i];
@@ -53,8 +61,12 @@ function legalSelectedShipMovement(changeFunct) {
   return true;
 }
 
+// move selectedShip according to changeFunct: update playerBoard and GUI
+// changeFunct is a function that takes a length 2 array of coordinates + a ship and returns the modified coordinates
 function applySelectedShipMovement(changeFunct) {
+
   let shipLetter = playerBoard[(selectedShip[0][0]*boardSize)+selectedShip[0][1]]; // letter for this ship in playerBoard (a, b, c, d)
+
   // first reset all old ship squares to blank
   for (let i = 0; i < selectedShip.length; i++) {
     let ship = selectedShip[i];
@@ -66,6 +78,7 @@ function applySelectedShipMovement(changeFunct) {
     ship[0] = newCoords[0];
     ship[1] = newCoords[1];
   }
+
   // then set new ship squares
   selectedShip.forEach(function(ship) {
     let id = "mysquare-" + ship[0] + "-" + ship[1];
@@ -75,9 +88,10 @@ function applySelectedShipMovement(changeFunct) {
   });
 }
 
-function BoardSquare({id, row, column, occupied, myBoard, status}) {
-  const [hoverable, setHoverable] = useState(true);
+// square on the board grid
+function BoardSquare({id, row, column, myBoard, status}) {
 
+  // on click during setup stage, reset selected ship and select the ship this square is part of, if any
   function handleClickSetup() {
     if(myBoard) {
       if(selectedShip !== null) { // reset selected ship
@@ -97,29 +111,32 @@ function BoardSquare({id, row, column, occupied, myBoard, status}) {
     }
   }
 
+  // on click during gameplay stage, if player's turn and square has not already been attacked, call fire shot endpoint
   function handleClickGameplay() {
     if(!myBoard && status === "player_turn" && document.getElementById(id).style.backgroundColor !== "white" && document.getElementById(id).style.backgroundColor !== "red") {
-      setHoverable(false);
       let url = "/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
       fetch(url)
         .catch(error => console.error('Error fetching fire shot: ', error));
     }
   }
+
   function handleMouseEnter() {
     if(status !== "setup" && !myBoard && status === "player_turn") {
       document.getElementById(id).style.backgroundColor = "blue";
     }
   }
+
   function handleMouseLeave() {
     if(hoverable && !myBoard) {
       document.getElementById(id).style.backgroundColor = 'inherit';
     }
   }
+
   return (
     <div className="board-square" id={id}
       onClick={status === "setup" ? handleClickSetup : handleClickGameplay}
-      onMouseEnter = {hoverable ? handleMouseEnter : null}
-      onMouseLeave = {hoverable ? handleMouseLeave : null}
+      onMouseEnter = {status === "player_turn" ? handleMouseEnter : null}
+      onMouseLeave = {status === "player_turn" ? handleMouseLeave : null}
       style={{backgroundColor:
            (function() {
             if(myBoard && playerBoard[(row*boardSize)+column] !== "-") {
@@ -134,22 +151,23 @@ function BoardSquare({id, row, column, occupied, myBoard, status}) {
   )
 }
   
-function BoardRow({row, ships, myBoard, status}) {
+// one row in a board grid
+function BoardRow({row, myBoard, status}) {
     let arr = [];
     for(let i=0; i<boardSize; i++) {
       let key = (myBoard? "mysquare-" : "opponentsquare-")+row+"-"+i;
-      arr.push(<BoardSquare key={key} id={key} row={row} column={i} occupied={(ships[i] !== "-")} myBoard={myBoard} status={status} />);
+      arr.push(<BoardSquare key={key} id={key} row={row} column={i} myBoard={myBoard} status={status} />);
     }
     return (
       <div className="board-row">{arr}</div>
     )
 }
   
-function Board({myBoard, presetBoard, status, hitPopupVisible, sunkPopupVisible}) {
+// the board/grid on which gameplay takes place
+function Board({myBoard, status, hitPopupVisible, sunkPopupVisible}) {
   let arr = [];
   for(let i=0; i<boardSize; i++) {
-    let ships = presetBoard.slice((i*boardSize), ((i+1)*boardSize));
-    arr.push(<BoardRow key={"row"+i} row={i} ships={ships} myBoard={myBoard} status={status} />);
+    arr.push(<BoardRow key={"row"+i} row={i} myBoard={myBoard} status={status} />);
   }
   return (
     <div className="board">
@@ -160,6 +178,8 @@ function Board({myBoard, presetBoard, status, hitPopupVisible, sunkPopupVisible}
   )
 }
   
+// instructions which are displayed between the two boards
+// prompts player what to do based on game status
 function Instructions({status}) {
     return (
       <div id="gameplay-instructions">
@@ -178,20 +198,27 @@ function Instructions({status}) {
     )
 }
 
+// button used by player to confirm their ship placement
+// when clicked, fetches confirm-ships endpoint and status is switched to "setup_confirmed"
+// once the opponent has also confirmed their ships, gameplay can start
 function ConfirmButton({status, setStatus}) {
+
   function handleClick() {
+    // if there is a ship selected, unselect it
     if(selectedShip !== null) {
-      selectedShip.forEach(function(ship) { // reset selectedShip
+      selectedShip.forEach(function(ship) {
         let id = "mysquare-" + ship[0] + "-" + ship[1];
         document.getElementById(id).style.backgroundColor = shipColor;
       });
       selectedShip = null;
     }
+
     setStatus("setup_confirmed");
     let url = "/play/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
     fetch(url)
       .catch(error => console.error('Error fetching confirm ships:', error));
   }
+
   return (
     <div style={{width: '100%', textAlign: 'center', paddingBottom: "2%"}}>
       <button
@@ -203,8 +230,10 @@ function ConfirmButton({status, setStatus}) {
   )
 }
 
+// popup that appears when status is equal to "player_won" or "opp_won"
+// includes a message with the player who won and a button back to home
 function GameOverPopup({status}) {
-  // need to actually save these, not hardcode them like this
+
   const navigate = useNavigate();
 
   return (
@@ -216,6 +245,8 @@ function GameOverPopup({status}) {
   )
 }
 
+// popup that is shown on top of a player's board when their opponent has hit or sunk one of their ships
+// image is the link to the image file and isVisible is a state that controls the popup's visibility
 function ComicPopup({isVisible, image}) {
   return (
     <div style={{
@@ -230,6 +261,7 @@ function ComicPopup({isVisible, image}) {
   )
 }
 
+// component that includes both boards, a title for each, and the instructions/confirm button in between
 function BoardsAndTitles({status, setStatus, popups1, popups2}) {
 
     useEffect(() => {
@@ -237,29 +269,35 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       if (status === "setup") {
         document.addEventListener('keydown', handleKeys);
       }
-
       return () => document.removeEventListener('keydown', handleKeys);
     });
 
+    // event listener called when user presses a key during setup stage
     function handleKeys(e) {
 
-      // arrow keys or spacebar to move ship in setup stage
+      // arrow keys or spacebar are used to move ship in setup stage
       if (selectedShip !== null && status === "setup" && (e.code === "Space" || e.code === "ArrowRight" || e.code === "ArrowLeft" || e.code === "ArrowUp" || e.code === "ArrowDown")) {
-        let changeFunct = (coords, ship) => [coords[0], coords[1]+1]; // function that returns new coordinates
+        
+        // function that, given coordinate pair and ship, returns modified coordinates
+        let changeFunct = (coords, ship) => [coords[0], coords[1]+1];
+
         if(e.code === "ArrowLeft") {
           changeFunct = (coords, ship) => [coords[0], coords[1]-1];
         }
+
         else if(e.code === "ArrowUp") {
           changeFunct = (coords, ship) => [coords[0]-1, coords[1]];
         }
+
         else if(e.code === "ArrowDown") {
           changeFunct = (coords, ship) => [coords[0]+1, coords[1]];
         }
+
         else if(e.code === "Space") {
           // for each square, find the difference between the row and column of the first item in the ship
           // this is the origin square everything else rotates around
           // add the row difference to the origin's column and the column difference to the origin's row
-          // try rotating on different parts of the ship until we find one that is legal
+          // try rotating on different parts of the ship (changing origin) until we find one that is legal
           // try rotating ships in four different directions
           findRotation:
           for(let i=0; i<selectedShip.length; i++) {
@@ -281,12 +319,16 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
             }
           }
         }
+
         if(legalSelectedShipMovement(changeFunct)) {
           applySelectedShipMovement(changeFunct);
         }
+
         e.preventDefault(); // prevent default scroll on up/down arrows
       }
-      else if (selectedShip !== null && status === "setup" && e.code === "Enter") { // enter key: reset selected ship
+
+      // enter key: clear selected ship
+      else if (selectedShip !== null && status === "setup" && e.code === "Enter") {
         selectedShip.forEach(function(ship) {
           let id = "mysquare-" + ship[0] + "-" + ship[1];
           document.getElementById(id).style.backgroundColor = shipColor;
@@ -295,11 +337,14 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       }
     }
 
+    // if a message is received from the websocket during setup or when only one player has confirmed, call updateSetupStatus
+    // if a message is received during gameplay, pass data to updateBoardAndTurn
     socket.onmessage = function(e) {
       let message = JSON.parse(JSON.parse(e.data)["message"]);
       (status === "setup" || status === "setup_confirmed") ? updateSetupStatus(message) : updateBoardAndTurn(message);
     }
 
+    // process data from the websocket: if both players have confirmed ship placement, update status to whoever's turn it now is
     function updateSetupStatus(the_json) {
       let player1ShipStatus = the_json["player1_ship_status"];
       let player2ShipStatus = the_json["player2_ship_status"];
@@ -309,6 +354,7 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       }
     }
     
+    // process data from websocket
     function updateBoardAndTurn(the_json) {
       let myBoard = the_json["player_id"] === playerID;
       let shipBoard = the_json["ship_board"];
@@ -319,7 +365,9 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       let turn = the_json["turn"];
       let gameStatus = the_json["status"];
     
-      let id = myBoard ? "mysquare-"+shotRow+"-"+shotCol : "opponentsquare-"+shotRow+"-"+shotCol;
+      let id = myBoard ? "mysquare-" + shotRow + "-" + shotCol : "opponentsquare-" + shotRow + "-" + shotCol;
+
+      // if shot sunk a ship, show popup, turn square red, and play sound; after 2 seconds, hide popup and turn entire ship gray 
       if(isHit && isSunk) {
         myBoard ? popups1["setSunkPopupVisible"](true) : popups2["setSunkPopupVisible"](true);
         document.getElementById(id).style.backgroundColor = "red";
@@ -330,6 +378,8 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
           entireShipAt(id, shipBoard).forEach((square) => document.getElementById((myBoard ? "mysquare-" : "opponentsquare-")+square[0]+"-"+square[1]).style.backgroundColor = "gray");
         }, 2000);
       }
+
+      // if shot was hit but not sunk, show popup, turn square red, and play sound; after 2 seconds, hide popup
       else if(isHit) {
         myBoard ? popups1["setHitPopupVisible"](true) : popups2["setHitPopupVisible"](true);
         document.getElementById(id).style.backgroundColor = "red";
@@ -337,11 +387,15 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
         audio.play();
         setTimeout(() => myBoard ? popups1["setHitPopupVisible"](false) : popups2["setHitPopupVisible"](false), 2000);
       }
+
+      // if shot was a miss, turn square white and play miss sound
       else {
         document.getElementById(id).style.backgroundColor = "white";
         const audio = new Audio(missSound);
         audio.play();
       }
+
+      // update status based on gameStatus and turn received from socket
       if(gameStatus > 0 && gameStatus === playerNum) {
         setStatus("player_won");
       }
@@ -355,6 +409,7 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
         setStatus("opp_turn");
       }
     }
+
     return (
       <div id="content">
         <div className="content-row">
@@ -366,7 +421,6 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
           <div className="content-cell" style={{width: '40%'}}>
             <Board 
               myBoard={true} 
-              presetBoard={playerBoard} 
               status={status} 
               hitPopupVisible={popups1["hitPopupVisible"]} 
               sunkPopupVisible={popups1["sunkPopupVisible"]} />
@@ -378,7 +432,6 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
           <div className="content-cell" style={{width: '40%'}}>
             <Board 
               myBoard={false} 
-              presetBoard={blankBoard} 
               status={status} 
               hitPopupVisible={popups2["hitPopupVisible"]}
               sunkPopupVisible={popups2["sunkPopupVisible"]} />
@@ -388,6 +441,8 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
     );
 }
 
+// text that displays the room ID in the top right corner if game is against another person
+// during setup stage, extra text prompts user to give the ID to their friend to join
 function RoomIDText({status}) {
   let text = "Room ID: " + gameID;
   if(status === "setup" && playerNum === 1) {
@@ -397,7 +452,8 @@ function RoomIDText({status}) {
     <div id="gameIDText">{text}</div>
   );
 }
-  
+
+
 function GamePlay() {
     ({gameID, boardSize, playerID, username, shipColor, playerNum, isAIGame} = useParams());
     const [status, setStatus] = useState("setup"); // "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
@@ -409,10 +465,12 @@ function GamePlay() {
     playerID = Number(playerID);
     playerNum = Number(playerNum);
 
+    // make sure # is added onto beginning of shipColor variable (it is received in the url without it)
     if(shipColor[0] !== "#") {
       shipColor = "#" + shipColor;
     }
 
+    // dictionary with hit/sunk popups for left side board
     let popups1 = {
       "hitPopupVisible" : hitPopup1Visible,
       "setHitPopupVisible" : setHitPopup1Visible,
@@ -420,6 +478,7 @@ function GamePlay() {
       "setSunkPopupVisible" : setSunkPopup1Visible
     }
 
+    // dictionary with hit/sunk poups for right side board
     let popups2 = {
       "hitPopupVisible" : hitPopup2Visible,
       "setHitPopupVisible" : setHitPopup2Visible,
@@ -428,7 +487,7 @@ function GamePlay() {
     }
 
     if(socket === undefined) {
-      let hostName = window.location.hostname;
+      let hostName = window.location.hostname; // allow for multiplayer locally and across computers
       socket = new WebSocket("ws://"+hostName+":8000/ws/play/"+gameID+"/");
     }
 
