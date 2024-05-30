@@ -1,3 +1,9 @@
+/*
+  Page that shows a table of user's game history
+  User can filter by Active Games, Inactive Games, or All
+  For active games, link is generated so that user can rejoin
+*/
+
 import React, { useState, useEffect } from 'react';
 import './mygames.css';
 import HeaderAndNav from './header_and_nav.js';

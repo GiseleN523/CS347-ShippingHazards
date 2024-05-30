@@ -1,3 +1,12 @@
+/*
+  Home page with three buttons: "Multiplayer", "Play AI", and "How to Play?"
+  Each button opens a popup
+  Multiplayer popup gives option to host game or to join a game by typing in an ID
+  AI popup allows player to choose between three AI difficulties
+  How to Play popup lets user read about how to play Battleship
+  This page can be reached by logging in, creating an account, clicking "Home" or the logo in the header, or by finishing a game
+*/
+
 import './home.css'
 import HeaderAndNav from './header_and_nav.js';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -8,6 +17,7 @@ let username;
 const boardSize = 10;
 const numShips = 4;
 
+// popup that opens when player clicks "Multiplayer" button
 function MultiplayerPopup({closePopup, joinID, setJoinID, joinErrorVisible, setJoinErrorVisible}) {
 
   const navigate = useNavigate();
@@ -61,6 +71,7 @@ function MultiplayerPopup({closePopup, joinID, setJoinID, joinErrorVisible, setJ
   );
 };
 
+// button that controls Multiplayer popup visibility
 function PlayMultiplayerButton() {
 
   const [popupOpen, setPopupOpen] = useState(false); // State to control popup visibility
@@ -84,6 +95,7 @@ function PlayMultiplayerButton() {
   );
 }
 
+// button that opens popup to play against an AI
 function PlayMainCompButton () {
 
   const [popupOpen, setPopupOpen] = useState(false); // State to control popup visibility
@@ -97,6 +109,7 @@ function PlayMainCompButton () {
   };
 
 
+  // popup where user can choose between three AIs to play against
   const Popup = ({closePopup }) => {
     return (
       <div className="popup-container">
@@ -110,7 +123,6 @@ function PlayMainCompButton () {
     );
   };
 
-
   return (
     <div>
       <button className="button" type="button" onClick={openPopup}>Play AI</button>
@@ -119,6 +131,7 @@ function PlayMainCompButton () {
   );
 }
 
+// component for button that starts a new game with given opponent when clicked
 function NewGameButton({text, isAI, opponentID}) {
 
   const navigate = useNavigate();
@@ -148,7 +161,7 @@ function NewGameButton({text, isAI, opponentID}) {
   );
 }
 
-
+// button that, when clicked, opens popup with How to Play information
 function HowToPlayButton() {
 
   const [popupOpen, setPopupOpen] = useState(false); 
@@ -161,21 +174,22 @@ function HowToPlayButton() {
     setPopupOpen(false);
   };
 
-
   const Popup = ({closePopup }) => {
     return (
       <div className="popup-container">
         <div className="howto-popup-paragraph">
-          Choose if you want to play with another person or with and AI.
-          Then place your ships in the postitions you would like.
-          Each player will try to hit the ships of their opoenents on the grid. 
-          Whoever sinks all of your oppenent's ships first, WINS!
-        <button className="popup-button"onClick={closePopup}>X</button>
+          <button className="popup-button" onClick={closePopup} style={{float: 'right'}}>X</button>
+          <div>
+            Choose if you want to play with another person or with an AI.<br /><br />
+            Then place your ships in the postitions you would like, using the arrow keys and space bar.<br /><br />
+            Players will take turns trying to hit the ships of their opponents on the grid by clicking.<br /><br />
+            If you get a hit or fully sink a ship, you get to go again.<br /><br />
+            Whoever sinks all of your oppenent's ships first, WINS!<br /><br />
+          </div>
         </div>
       </div>
     );
   };
-
 
   return (
     <div>
@@ -199,4 +213,4 @@ function Home() {
   );
 }
 
-export default Home
+export default Home;

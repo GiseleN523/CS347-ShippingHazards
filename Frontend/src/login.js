@@ -1,3 +1,10 @@
+/*
+  Login page; the first page a user sees when they open the application
+  User can type in their username and password and then either click on "Submit" or press Enter
+  If they do not yet have an account, they can click on "Create Account" to go to the Account Creation page
+  Errors are shown if the login information is correct or not given
+*/
+
 import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import './login.css';
