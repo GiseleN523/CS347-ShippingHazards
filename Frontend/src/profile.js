@@ -63,7 +63,8 @@ function ProfilePage() {
       let url = "/accounts/react_change_password/"+username+"/"+currentPassword+"/"+newPassword1+"/"+newPassword2;
       fetch(url)
           .then( response => response.json())
-          .then(the_json => attemptPasswordChange(the_json));
+          .then(the_json => attemptPasswordChange(the_json))
+          .catch(error => console.error('Error fetching player password change: ', error));
     }
   }
 
@@ -73,7 +74,9 @@ function ProfilePage() {
     screenName.length === 0 ? setScreenNameErrorVisible(true) : setScreenNameErrorVisible(false);
     if(screenName.length > 0) {
       let url = "/change-player-preferences/"+username+"/"+screenName+"/"+color.substring(color.indexOf("#")+1);
-      fetch(url).then(navigate('/home/'+username));
+      fetch(url)
+        .then(navigate('/home/'+username))
+        .catch(error => console.error('Error fetching player preferences change: ', error));
     }
   }
 

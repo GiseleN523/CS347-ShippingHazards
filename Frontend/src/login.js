@@ -52,7 +52,8 @@ function LoginFields() {
       let url = "accounts/react_login/"+username+"/"+password;
       fetch(url)
         .then( response => response.json())
-        .then(the_json => attemptLogin(the_json));
+        .then(the_json => attemptLogin(the_json))
+        .catch(error => console.error('Error fetching login:', error));
     }
   }
 

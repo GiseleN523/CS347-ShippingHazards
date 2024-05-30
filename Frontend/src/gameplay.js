@@ -100,7 +100,8 @@ function BoardSquare({id, row, column, occupied, myBoard, status}) {
     if(!myBoard && status === "player_turn" && document.getElementById(id).style.backgroundColor !== "white" && document.getElementById(id).style.backgroundColor !== "red") {
       setHoverable(false);
       let url = "/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
-      fetch(url);
+      fetch(url)
+        .catch(error => console.error('Error fetching fire shot: ', error));
     }
   }
   function handleMouseEnter() {
@@ -187,7 +188,8 @@ function ConfirmButton({status, setStatus}) {
     }
     setStatus("setup_confirmed");
     let url = "/play/confirm-ships/" + gameID + "/" + playerID + "/" + playerBoard;
-    fetch(url);
+    fetch(url)
+      .catch(error => console.error('Error fetching confirm ships:', error));
   }
   return (
     <div style={{width: '100%', textAlign: 'center', paddingBottom: "2%"}}>

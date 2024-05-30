@@ -67,7 +67,8 @@ function AccountCreationFields() {
       let url = "/accounts/react_signup/"+username+"/"+password1+"/"+password2+"/"+screenName;
       fetch(url)
         .then( response => response.json())
-        .then(the_json => attemptCreation(the_json));
+        .then(the_json => attemptCreation(the_json))
+        .catch(error => console.error('Error fetching account creation/signup: ', error));
     }
   }
 

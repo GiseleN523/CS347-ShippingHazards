@@ -51,7 +51,7 @@ function StatsPage() {
     fetch(url)
       .then(response => response.json())
       .then(the_json => setPlayerStats(the_json))
-      .catch(error => console.error('Error fetching player stats:', error));
+      .catch(error => console.error('Error fetching player stats: ', error));
   }, [username]);
 
   return (

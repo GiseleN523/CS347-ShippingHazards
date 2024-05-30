@@ -36,9 +36,8 @@ function NavigationBar() {
     let url = "/play/get-player-info/" + username;
     fetch(url)
       .then(response => response.json())
-      .then((the_json) => {
-        navigate("/profile/"+username+"/"+the_json["color_preference"]+"/"+the_json["screen_name"]);
-    });
+      .then((the_json) => navigate("/profile/" + username + "/" + the_json["color_preference"] + "/" + the_json["screen_name"]))
+      .catch(error => console.error('Error fetching player info: ', error));
   }
 
   return (
@@ -63,10 +62,18 @@ function HeaderAndNav() {
   const [screenName, setScreenName] = useState(username);
 
   // fetch screenname and put it in top right corner once it's ready
-  let url = "/play/get-player-info/" +username;
+  let url = "/play/get-player-info/hjklhj" + username;
   fetch(url)
-    .then(response => response.json())
-    .then(the_json => setScreenName(the_json["screen_name"]));
+    //.then(response => response.json())
+    .then(response => {
+      if(response.ok) {
+        setScreenName(response.json()["screen_name"]);
+      }
+      else {
+        console.error('Error fetching player stats');
+      }
+    })
+    .catch(error => console.error('Error fetching player stats: ', error));
 
   return (
     <div>

@@ -38,7 +38,8 @@ function MultiplayerPopup({closePopup, joinID, setJoinID, joinErrorVisible, setJ
           fetch(url2)
             .then( response => response.json() )
             .then( the_json => attemptJoin(the_json, playerID, color));
-      });
+        })
+        .catch(error => console.error('Error fetching player info and opponent change: ', error));
     }
   }
 
@@ -139,7 +140,8 @@ function NewGameButton({text, isAI, opponentID}) {
         fetch(url2)
           .then( response => response.json() )
           .then( the_json => redirectBrowser(the_json, playerID, color));
-    });
+      })
+      .catch(error => console.error('Error fetching player info and new game: ', error));
   }
   return (
     <button className="popup-button" type="button" onClick={handleClick}>{text}</button>
