@@ -1,45 +1,4 @@
-<<<<<<< HEAD
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f8f8; 
-    padding: 20px;
-}
 
-h1 {
-    text-align: center;
-    font-size: 5opx;
-    padding: 10px;
-
-}
-  
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-th, td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd; 
-}
-
-th {
-    background-color: #f25a8e; 
-    color: white; 
-}
-
-
-tbody tr:nth-child(even) {
-    background-color: #fce4ec; 
-}
-
-
-tbody tr:hover {
-    background-color: #f8bbd0; 
-}
-=======
 .mygamestable {
     font-family: Arial, sans-serif;
     background-color: #f8f8f8; 
@@ -76,4 +35,29 @@ tbody tr:hover {
   .mygamestable tbody tr:hover {
     background-color: #f8bbd0; 
   }
->>>>>>> 78e5971448e479a992b1725681b6d67d0b28f44d
+
+  .toggle-buttons-container {
+    margin-bottom: 20px;
+  }
+  
+  .toggle-button {
+    padding: 8px;
+    margin-right: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f25a8e;
+    color: white;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .toggle-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .toggle-button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }

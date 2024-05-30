@@ -13,6 +13,7 @@ import GamePlay from './gameplay.js';
 import StatsPage from './stats.js';
 import Login from './login.js';
 import ProfilePage from './profile.js';
+import MyGamesPage from './mygames.js';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -27,6 +28,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/game/:gameID/:boardSize/:playerID/:username/:shipColor/:playerNum" element={<GamePlay />} />
         <Route path="/profile/:username/:originalColor/:originalScreenName" element={<ProfilePage />} />
         <Route path="play/get-player-info/:username" element={<StatsPage />} />
+        <Route path="/:username/games/all" element={<MyGamesPage />} />
       </Routes>
     </Router>
   </React.StrictMode>,
