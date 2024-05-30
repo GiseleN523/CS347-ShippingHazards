@@ -18,6 +18,7 @@ let socket;
 let selectedShip = null; // used in ship placement phase - ex - [[0, 0], [0, 1], [0, 2], [0, 3]]
 let shipColor;
 let playerNum;
+let isAIGame;
 
 //returns a list of coordinates of all squares that make up the ship at given coordinates
 //input ex: [0, 0]
@@ -37,11 +38,11 @@ function entireShipAt(id, board) {
   return coords;
 }
 
-// changeFunct is a function that takes a length 2 array of coordinates and returns the modified coordinates
+// changeFunct is a function that takes a length 2 array of coordinates + selected ship and returns the modified coordinates
 function legalSelectedShipMovement(changeFunct) {
   for(let i=0; i<selectedShip.length; i++) {
     let ship = selectedShip[i];
-    let newCoords = changeFunct(ship);
+    let newCoords = changeFunct(ship, selectedShip);
     let row = newCoords[0];
     let col = newCoords[1];
     // new square out of board bounds or already contains a ship (not another part of the selected ship)
@@ -61,7 +62,7 @@ function applySelectedShipMovement(changeFunct) {
     document.getElementById(id).style.backgroundColor = "rgba(0, 0, 0, 0)";
     let ind = (ship[0]*boardSize)+ship[1]; // index in playerBoard
     playerBoard = playerBoard.substring(0, ind) + "-" + playerBoard.substring(ind+1);
-    let newCoords = changeFunct(ship);
+    let newCoords = changeFunct(ship, selectedShip);
     ship[0] = newCoords[0];
     ship[1] = newCoords[1];
   }
@@ -238,21 +239,21 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       }
 
       return () => document.removeEventListener('keydown', handleKeys);
-    }, [handleKeys, status]);
+    });
 
     function handleKeys(e) {
 
       // arrow keys or spacebar to move ship in setup stage
       if (selectedShip !== null && status === "setup" && (e.code === "Space" || e.code === "ArrowRight" || e.code === "ArrowLeft" || e.code === "ArrowUp" || e.code === "ArrowDown")) {
-        let changeFunct = (coords) => [coords[0], coords[1]+1]; // function that returns new coordinates
+        let changeFunct = (coords, ship) => [coords[0], coords[1]+1]; // function that returns new coordinates
         if(e.code === "ArrowLeft") {
-          changeFunct = (coords) => [coords[0], coords[1]-1];
+          changeFunct = (coords, ship) => [coords[0], coords[1]-1];
         }
         else if(e.code === "ArrowUp") {
-          changeFunct = (coords) => [coords[0]-1, coords[1]];
+          changeFunct = (coords, ship) => [coords[0]-1, coords[1]];
         }
         else if(e.code === "ArrowDown") {
-          changeFunct = (coords) => [coords[0]+1, coords[1]];
+          changeFunct = (coords, ship) => [coords[0]+1, coords[1]];
         }
         else if(e.code === "Space") {
           // for each square, find the difference between the row and column of the first item in the ship
@@ -264,9 +265,9 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
           for(let i=0; i<selectedShip.length; i++) {
             for(let p=0; p<=1; p++) {
               for(let q=0; q<=1; q++) {
-                changeFunct = function(coords){
-                  let startingRow = selectedShip[i][0];
-                  let startingCol = selectedShip[i][1];
+                changeFunct = function(coords, ship){
+                  let startingRow = ship[i][0];
+                  let startingCol = ship[i][1];
                   let rowDiff = startingRow - coords[0];
                   let colDiff = startingCol - coords[1];
                   let newRow = p ? startingRow - colDiff : startingRow + colDiff;
@@ -387,14 +388,18 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
     );
 }
 
-function RoomIDText() {
+function RoomIDText({status}) {
+  let text = "Room ID: " + gameID;
+  if(status === "setup" && playerNum === 1) {
+    text = "Tell your friend to join with this ID -> " + text;
+  }
   return (
-    <div id="gameIDText">Room ID: {gameID}</div>
+    <div id="gameIDText">{text}</div>
   );
 }
   
 function GamePlay() {
-    ({gameID, boardSize, playerID, username, shipColor, playerNum} = useParams());
+    ({gameID, boardSize, playerID, username, shipColor, playerNum, isAIGame} = useParams());
     const [status, setStatus] = useState("setup"); // "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
     const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
@@ -430,7 +435,7 @@ function GamePlay() {
     return (
       <div>
         <HeaderAndNav username={username}/>
-        <RoomIDText />
+        {isAIGame === "false" && <RoomIDText status={status}/>}
         <BoardsAndTitles 
           status={status} 
           setStatus={setStatus}
