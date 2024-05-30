@@ -46,7 +46,7 @@ function NavigationBar() {
       <span className="dropdown">
         My Account
         <span className="dropdown-content">
-          <a onClick={navigateToProfilePage}>Profile & Settings</a>
+          <span onClick={navigateToProfilePage}>Profile & Settings</span>
           <a href={"/play/get-player-info/" + username}>Stats</a>
           <a href={"/"+username +"/games/all"}>My Games</a>
         </span>
@@ -63,17 +63,10 @@ function HeaderAndNav() {
   const [screenName, setScreenName] = useState(username);
 
   // fetch screenname and put it in top right corner once it's ready
-  let url = "/play/get-player-info/hjklhj" + username;
+  let url = "/play/get-player-info/" + username;
   fetch(url)
-    //.then(response => response.json())
-    .then(response => {
-      if(response.ok) {
-        setScreenName(response.json()["screen_name"]);
-      }
-      else {
-        console.error('Error fetching player stats');
-      }
-    })
+    .then(response => response.json())
+    .then(the_json => setScreenName(the_json["screen_name"]))
     .catch(error => console.error('Error fetching player stats: ', error));
 
   return (

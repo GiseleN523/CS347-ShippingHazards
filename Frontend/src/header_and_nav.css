@@ -70,7 +70,7 @@ nav a:hover {
     padding-top: 1em;
 }
 
-.dropdown-content a {
+.dropdown-content * {
     color: white;
     padding: 12px 16px;
     font-size: 20px;
@@ -78,7 +78,7 @@ nav a:hover {
     display: block;
 }
 
-.dropdown-content a:hover {
+.dropdown-content *:hover {
     background-color: white;
     color: black;
 }

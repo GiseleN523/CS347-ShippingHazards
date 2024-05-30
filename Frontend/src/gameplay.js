@@ -232,16 +232,13 @@ function ComicPopup({isVisible, image}) {
 function BoardsAndTitles({status, setStatus, popups1, popups2}) {
 
     useEffect(() => {
+
       if (status === "setup") {
         document.addEventListener('keydown', handleKeys);
       }
 
-      return () => {
-        if (status === "setup") {
-          document.removeEventListener('keydown', handleKeys);
-        }
-      };
-    }, [status, selectedShip]);
+      return () => document.removeEventListener('keydown', handleKeys);
+    }, [handleKeys, status]);
 
     function handleKeys(e) {
 
