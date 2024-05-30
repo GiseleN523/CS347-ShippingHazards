@@ -24,11 +24,13 @@ function ProfilePage() {
   const [newPassword2, setNewPassword2] = useState('');
   const [screenName, setScreenName] = useState(originalScreenName);
   const [color, setColor] = useState("#"+originalColor);
+
   // errors set by frontend when a required field is not filled out 
   const [currentPasswordErrorVisible, setCurrentPasswordErrorVisible] = useState(false);
   const [newPassword1ErrorVisible, setNewPassword1ErrorVisible] = useState(false);
   const [newPassword2ErrorVisible, setNewPassword2ErrorVisible] = useState(false);
   const [screenNameErrorVisible, setScreenNameErrorVisible] = useState(false);
+
   // custom error sent by backend when value given is invalid
   const [backendErrorVisible, setBackendErrorVisible] = useState(false);
   const [backendErrorText, setBackendErrorText] = useState('');
@@ -86,6 +88,7 @@ function ProfilePage() {
       <main>
         <div id="account">Account name: {username}</div>
         <div id="profileSettings">
+
             Current Password
             <TextFieldWithError password={true} value={currentPassword} setValue={setCurrentPassword} errorVisible={currentPasswordErrorVisible}/>
             New Password
@@ -103,8 +106,11 @@ function ProfilePage() {
                 name="color"
                 value={color}
                 onChange={(ev) => setColor(ev.target.value)}
-                style={{marginLeft: '1em'}}
-            ></input><br />
+                style={{marginLeft: '1em'}} /><br />
+            <input type="checkbox" id="muteMusic" name="muteMusic" value="false" />
+            <label for="muteMusic">Mute Music</label><br />
+            <input type="checkbox" id="muteEffects" name="muteEffects" value="false" />
+            <label for="muteEffects">Mute Sound Effects</label><br />
             <button onClick={handleScreenNameColorClick}>Update</button><br />
         </div>
       </main>

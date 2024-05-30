@@ -91,6 +91,8 @@ function applySelectedShipMovement(changeFunct) {
 // square on the board grid
 function BoardSquare({id, row, column, myBoard, status}) {
 
+  const [attackable, setAttackable] = useState(true); // whether the square has already been attacked or is still attackable
+
   // on click during setup stage, reset selected ship and select the ship this square is part of, if any
   function handleClickSetup() {
     if(myBoard) {
@@ -114,6 +116,7 @@ function BoardSquare({id, row, column, myBoard, status}) {
   // on click during gameplay stage, if player's turn and square has not already been attacked, call fire shot endpoint
   function handleClickGameplay() {
     if(!myBoard && status === "player_turn" && document.getElementById(id).style.backgroundColor !== "white" && document.getElementById(id).style.backgroundColor !== "red") {
+      setAttackable(false);
       let url = "/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
       fetch(url)
         .catch(error => console.error('Error fetching fire shot: ', error));
@@ -121,13 +124,13 @@ function BoardSquare({id, row, column, myBoard, status}) {
   }
 
   function handleMouseEnter() {
-    if(status !== "setup" && !myBoard && status === "player_turn") {
+    if(!myBoard && status === "player_turn" && attackable) {
       document.getElementById(id).style.backgroundColor = "blue";
     }
   }
 
   function handleMouseLeave() {
-    if(hoverable && !myBoard) {
+    if(!myBoard && status === "player_turn" && attackable) {
       document.getElementById(id).style.backgroundColor = 'inherit';
     }
   }
