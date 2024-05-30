@@ -61,8 +61,19 @@ def get_player_games(request, username, status):
     else:
          raise ValueError("status must be active, inactive, or all")
 
+
     games_list = []
     for game in all_games:
+        winner = "n/a"
+        loser = "n/a"
+        if game.status != 0:
+            if game.status == 1: 
+                winner = game.player1.screen_name
+                loser = game.player2.screen_name
+            else: 
+                winner = game.player2.screen_name
+                loser = game.player1.screen_name
+
         games_list.append({
             'id': game.id,
             'is_ai_game': game.is_ai_game,
@@ -73,8 +84,9 @@ def get_player_games(request, username, status):
             'turn': game.turn,
             'status': game.status,
             'num_ships': game.num_ships,
-            'winner': game.winner,
-            'loser': game.loser,
+            'winner': winner,
+            'loser': loser,
+            
         })
 
     return JsonResponse(games_list, safe=False)
