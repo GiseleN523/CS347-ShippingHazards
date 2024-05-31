@@ -87,7 +87,7 @@ function MyGamesPage() {
         setGames(sortedGames);
       })
       .catch(error => console.error('Error fetching games:', error));
-  }, [username, filter]);  
+  }, [filter]);  
 
 
   return (
