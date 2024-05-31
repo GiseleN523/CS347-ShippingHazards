@@ -57,12 +57,7 @@
 #            ---------- 
 #            ----OXdddd
 
-
-
-# this logic file is only taking in and dealing with one board at a time
-# there is no logic in here that deals with comparing player1 and player2
-# as we felt that should be in a dedicated file that will run the game from 
-# start to finish.
+import random
 
 
 
@@ -75,6 +70,16 @@ def charAt(board, row, col): # from Matt Lepinski connect4-server.py
     index = col + row*10
     return board[index]
 
+# func that gives the row and col of the specified index
+def getCoords(index, boardSize):
+        '''
+        Input: an index and a boardsize (board width)
+        Output: the row, col of the corresponding index
+        '''
+        row = index//boardSize
+        col = index%boardSize
+        return row,col
+
 # helper func that updates the char at certain coords in the board-string to be the new char 
 def updateChar(board, newChar, row, col):
     '''
@@ -83,6 +88,14 @@ def updateChar(board, newChar, row, col):
     '''
     index = col + row*10
     # board[index] = newChar
+    return board[:index] + newChar + board[index+1:]
+
+# helper func that updates char at certain index
+def updateCharAtIndex(board, newChar, index):
+    '''
+    Input: any 10x10 board, the new character, and what index to be updated
+    Output: the updated board 
+    '''
     return board[:index] + newChar + board[index+1:]
 
 
@@ -127,6 +140,20 @@ def isHit(shipBoard, attackRow, attackCol):
         return True, char
     else:
         return False, char
+
+# checks if the row, col was attacked or not
+def wasAttacked(attackBoard, attackRow, attackCol, board_size):
+    '''
+    Input: attackBoard with only previous hits and misses, row and col of next attack
+    Output: True if there has not been an attack at those coordinates before, otherwise False
+    '''
+    edge = board_size-1
+    if attackRow > edge or attackRow < 0 or attackCol > edge or attackCol < 0:
+        return False
+    if charAt(attackBoard, attackRow, attackCol) == "X":
+        return True
+    else:
+        return False
     
 # has a ship been sunk?
 def isShipSunk(combinedBoard, ship):
@@ -156,7 +183,73 @@ def updateBoards(shipBoard, prevCombinedBoard, prevAttackBoard, attackRow, attac
     newAttackBoard = updateChar(prevAttackBoard, char, attackRow, attackCol)
     return newCombinedBoard, newAttackBoard
 
-    
+
+# func that returns a list of the indices that a specific ships is located at 
+def getShipIndices(shipBoard, shipChar):
+    '''
+    Input: shipBoard and a character corresponding to a ship in the board
+    Output: a list of indices where that corresponding ship is located inside the board string
+    '''
+    shipIndices = []
+    index = 0
+    for char in shipBoard:
+        if char == shipChar:
+            shipIndices.append(index)
+        index = index+1
+    return shipIndices
+
+
+# number of ships and the corresponding ship lengths
+ships_composition = {
+        4: [2, 3, 4, 5],
+        5: [2, 3, 3, 4, 5],
+        6: [2, 3, 3, 4, 4, 5],
+    }
+
+# placeShips() helper
+def placeOneShip(size, ship_board, ship_letter):
+    # horizontal
+    if random.randint(0, 1) == 0:
+        row = random.randint(0, 9)
+        col = random.randint(0, 10 - size)
+        # check that entire ship can be placed
+        for i in range(size):
+            if ship_board[row * 10 + col + i] != "-":
+                return False
+        # place ship
+        for i in range(size):
+                ship_board[row * 10 + col + i] = ship_letter
+    # vertical
+    else: 
+        row = random.randint(0, 10 - size)
+        col = random.randint(0, 9)
+        # check that entire ship can be placed
+        for i in range(size):
+            if ship_board[(row + i) * 10 + col] != "-":
+                return False
+        # place ship
+        for i in range(size):
+                ship_board[(row + i) * 10 + col] = ship_letter
+    return True
+
+# randomize board configuration based on either 4, 5, or 6 ships
+def placeShips(num_ships, board_size):
+    ship_board = ["-" for _ in range(board_size * board_size)]
+
+    ship_index = 0
+    for size in ships_composition[num_ships]:
+        placed = False
+        ship_index += 1
+        # https://www.pythoncheatsheet.org/builtin/chr
+        # https://en.wikipedia.org/wiki/List_of_Unicode_characters
+        ship_letter = chr(ship_index + 96) 
+        while placed == False:
+            placed = placeOneShip(size, ship_board, ship_letter)
+
+    return ''.join(ship_board)
+
+
+
 
 
 if __name__ == '__main__':
