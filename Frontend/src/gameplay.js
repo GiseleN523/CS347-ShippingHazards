@@ -291,9 +291,12 @@ function BoardsAndTitles({status, setStatus, popups1, popups2, muted}) {
       let opponentID = the_json["opponent_id"];
       let gameStatus = the_json["status"];
       let turn = the_json["turn"];
+      let myShipStatus = the_json["player_ship_status"];
+      let oppShipStatus = the_json["opponent_ship_status"];
 
       // if game was still in setup stage when paused, ship data was not saved; act as if the game just started
-      if(status === "setup") {
+      if(myShipStatus === 0) {
+        setStatus("setup");
         return;
       }
 
@@ -308,7 +311,10 @@ function BoardsAndTitles({status, setStatus, popups1, popups2, muted}) {
           setBoard(playerCombinedBoard, playerCombinedBoard, playerShipBoard, true);
           setBoard(opponentAttackBoard, opponentCombinedBoard, opponentShipBoard, false);
 
-          if(gameStatus > 0 && gameStatus === playerNum) {
+          if(myShipStatus === 1) {
+            setStatus("setup_confirmed");
+          }
+          else if(gameStatus > 0 && gameStatus === playerNum) {
             setStatus("player_won");
           }
           else if(gameStatus > 0 && gameStatus !== playerNum) {
