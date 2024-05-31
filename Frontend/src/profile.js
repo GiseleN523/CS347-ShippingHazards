@@ -107,10 +107,6 @@ function ProfilePage() {
                 value={color}
                 onChange={(ev) => setColor(ev.target.value)}
                 style={{marginLeft: '1em'}} /><br />
-            <input type="checkbox" id="muteMusic" name="muteMusic" value="false" />
-            <label for="muteMusic">Mute Music</label><br />
-            <input type="checkbox" id="muteEffects" name="muteEffects" value="false" />
-            <label for="muteEffects">Mute Sound Effects</label><br />
             <button onClick={handleScreenNameColorClick}>Update</button><br />
         </div>
       </main>

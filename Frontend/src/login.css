@@ -56,7 +56,7 @@
     justify-content: flex-start;
 }
 
-.inputButton {
+.inputButton { /* From react.dev */
     justify-content: center;
     cursor: pointer;
     border: 0;

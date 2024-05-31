@@ -3,12 +3,12 @@
   User can type in their username and password and then either click on "Submit" or press Enter
   If they do not yet have an account, they can click on "Create Account" to go to the Account Creation page
   Errors are shown if the login information is correct or not given
+  Login by clicking on the "Submit" button or by pressing Enter
 */
 
 import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import './login.css';
-import lobbyMusic from './sounds/lobbyMusic.mp3';
 import TextFieldWithError from './text_field_with_error';
 
 function LoginFields() {
@@ -36,10 +36,6 @@ function LoginFields() {
     let message = the_json["message"];
     if(success) {
       navigate('/home/'+username);
-      // only play audio if login is a success
-      const audio = new Audio(lobbyMusic);
-      audio.loop = true;
-      audio.play(); 
     }
     else {
       setBackendErrorText(message);

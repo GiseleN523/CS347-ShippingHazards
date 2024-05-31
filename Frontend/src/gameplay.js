@@ -6,15 +6,17 @@
 
 import './gameplay.css';
 import HeaderAndNav from './header_and_nav.js';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import hitImage from './images/HitPopup.png';
 import sunkImage from './images/SunkPopup.png';
 import hitSound from './sounds/hitSound.mp3'; 
 import missSound from './sounds/missSound.mp3'; 
 import sunkSound from './sounds/sunkSound.mp3';
+import muteIcon from './images/mute.png';
+import unMuteIcon from './images/unmute.png';
+import lobbyMusic from './sounds/lobbyMusic.mp3';
 
-const blankBoard = "----------------------------------------------------------------------------------------------------";
 let playerBoard = "-----------a---------a------------cccc----------------b---------b---------b--------------------ddddd";
 let selectedShip = null; // used in ship placement phase - ex - [[0, 0], [0, 1], [0, 2], [0, 3]]
 let playerID;
@@ -265,7 +267,7 @@ function ComicPopup({isVisible, image}) {
 }
 
 // component that includes both boards, a title for each, and the instructions/confirm button in between
-function BoardsAndTitles({status, setStatus, popups1, popups2}) {
+function BoardsAndTitles({status, setStatus, popups1, popups2, muted}) {
 
     useEffect(() => {
 
@@ -374,8 +376,10 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       if(isHit && isSunk) {
         myBoard ? popups1["setSunkPopupVisible"](true) : popups2["setSunkPopupVisible"](true);
         document.getElementById(id).style.backgroundColor = "red";
-        const audio = new Audio(sunkSound);
-        audio.play();
+        if(!muted) {
+          const audio = new Audio(sunkSound);
+          audio.play();
+        }
         setTimeout(function () {
           myBoard ? popups1["setSunkPopupVisible"](false) : popups2["setSunkPopupVisible"](false);
           entireShipAt(id, shipBoard).forEach((square) => document.getElementById((myBoard ? "mysquare-" : "opponentsquare-")+square[0]+"-"+square[1]).style.backgroundColor = "gray");
@@ -386,16 +390,20 @@ function BoardsAndTitles({status, setStatus, popups1, popups2}) {
       else if(isHit) {
         myBoard ? popups1["setHitPopupVisible"](true) : popups2["setHitPopupVisible"](true);
         document.getElementById(id).style.backgroundColor = "red";
-        const audio = new Audio(hitSound);
-        audio.play();
+        if(!muted) {
+          const audio = new Audio(hitSound);
+          audio.play();
+        }
         setTimeout(() => myBoard ? popups1["setHitPopupVisible"](false) : popups2["setHitPopupVisible"](false), 2000);
       }
 
       // if shot was a miss, turn square white and play miss sound
       else {
         document.getElementById(id).style.backgroundColor = "white";
-        const audio = new Audio(missSound);
-        audio.play();
+        if(!muted) {
+          const audio = new Audio(missSound);
+          audio.play();
+        }
       }
 
       // update status based on gameStatus and turn received from socket
@@ -456,6 +464,34 @@ function RoomIDText({status}) {
   );
 }
 
+// button to play/mute music and sound effects
+// if music is muted, clicking the button unmutes it, and if it is unmuted, clicking mutes it
+function MuteButton({musicRef, muted, setMuted}) {
+
+  // start playing music
+  useEffect(() => {
+    if(!muted) {
+      musicRef.current.play();
+    }
+  });
+
+  return (
+      <img 
+        style={{width: '4em', margin: '.5em 0 0 1em'}} 
+        src={muted ? muteIcon : unMuteIcon}
+        alt="speaker"
+        onClick={() => {
+          if(muted) {
+            musicRef.current.play();
+            setMuted(false);
+          }
+          else {
+            musicRef.current.pause();
+            setMuted(true);
+          }
+        }}/>
+  )
+}
 
 function GamePlay() {
     ({gameID, boardSize, playerID, username, shipColor, playerNum, isAIGame} = useParams());
@@ -464,6 +500,10 @@ function GamePlay() {
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
     const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
     const [sunkPopup2Visible, setSunkPopup2Visible] = useState(false);
+
+    // state indicating whether music and sound effects are muted or not
+    const [muted, setMuted] = useState(false);
+    const musicRef = useRef();
 
     playerID = Number(playerID);
     playerNum = Number(playerNum);
@@ -497,12 +537,15 @@ function GamePlay() {
     return (
       <div>
         <HeaderAndNav username={username}/>
+        <MuteButton musicRef={musicRef} muted={muted} setMuted={setMuted} />
+        <audio ref={musicRef} src={lobbyMusic} loop />
         {isAIGame === "false" && <RoomIDText status={status}/>}
         <BoardsAndTitles 
           status={status} 
           setStatus={setStatus}
           popups1={popups1}
           popups2={popups2}
+          muted={muted}
         />
         <GameOverPopup status={status} />
       </div>

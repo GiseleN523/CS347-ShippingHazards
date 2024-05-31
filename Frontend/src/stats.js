@@ -1,5 +1,5 @@
 /*
-  Page that shows table with user's stats, loaded in from the backend: wins, losses, and total ship sunks
+  Page that shows table of user's stats, loaded in from the backend: wins, losses, and total ship sunks
   This page can be reached by clicking on "Stats" in the "My Accounts" dropdown menu in the navbar
 */
 
