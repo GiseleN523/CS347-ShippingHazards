@@ -28,7 +28,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/game/:gameID/:boardSize/:playerID/:username/:shipColor/:playerNum/:isAIGame" element={<GamePlay />} />
         <Route path="/profile/:username/:originalColor/:originalScreenName" element={<ProfilePage />} />
         <Route path="play/get-player-info/:username" element={<StatsPage />} />
-        <Route path="/:username/games/all" element={<MyGamesPage />} />
+        <Route path="/games/all/:username" element={<MyGamesPage />} />
       </Routes>
     </Router>
   </React.StrictMode>,

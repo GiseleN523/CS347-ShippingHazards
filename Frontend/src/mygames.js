@@ -11,13 +11,13 @@ import { useNavigate } from 'react-router-dom';
 
 let username;
 
-function MyGamesTable({games , username}) {
+function MyGamesTable({games}) {
 
   const navigate = useNavigate();
 
-  function handleClick(game,the_json) {
-    let url = "/play/get-player-info/" + username;
+  function handleClick(game) {
 
+    let url = "/play/get-player-info/" + username;
     fetch(url)
       .then(response => response.json())
       .then((the_json) => {
@@ -25,7 +25,7 @@ function MyGamesTable({games , username}) {
         let color = the_json["color_preference"];
         let boardSize = 10
         let playerNum = (game.player1_id === playerID) ? 1 : 2;
-        navigate("/game/"+game.id+"/"+ boardSize +"/"+game.player1_id+"/"+username+"/"+color+"/"+playerNum)
+        navigate("/game/"+game.id+"/"+ boardSize +"/"+playerID+"/"+username+"/"+color+"/"+playerNum+"/"+game.is_ai_game);
 
       })
       .catch(error => console.error('Error fetching player info and new game: ', error));
@@ -77,7 +77,7 @@ function MyGamesTable({games , username}) {
 
 
 function MyGamesPage() {
-  const { username } = useParams(); // Get the username from the URL parameters
+  ({username} = useParams()); // Get the username from the URL parameters
   const [games, setGames] = useState([]);
   const [filter, setFilter] = useState('all'); // Default filter is 'all'
 

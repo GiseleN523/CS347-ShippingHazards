@@ -48,7 +48,7 @@ function NavigationBar() {
         <span className="dropdown-content">
           <span onClick={navigateToProfilePage}>Profile & Settings</span>
           <a href={"/play/get-player-info/" + username}>Stats</a>
-          <a href={"/"+username +"/games/all"}>My Games</a>
+          <a href={"/games/all/" + username}>My Games</a>
         </span>
       </span>
       <a href={"/aboutus/" + username}>About Us</a>
