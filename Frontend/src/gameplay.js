@@ -7,7 +7,7 @@
 import './gameplay.css';
 import HeaderAndNav from './header_and_nav.js';
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import hitImage from './images/HitPopup.png';
 import sunkImage from './images/SunkPopup.png';
 import hitSound from './sounds/hitSound.mp3'; 
@@ -239,13 +239,11 @@ function ConfirmButton({status, setStatus}) {
 // includes a message with the player who won and a button back to home
 function GameOverPopup({status}) {
 
-  const navigate = useNavigate();
-
   return (
     <div id="gameOverPopup" style={{visibility: (status === "player_won" || status === "opp_won") ? 'visible' : 'hidden'}}>
       <div>GAME OVER</div>
       <div>{status === "player_won" ? "You Won!" : "You Lost :("}</div><br></br>
-      <button onClick={() => navigate("/home/"+username)}>Back to Home</button>
+      <button onClick={() => window.location.href = "/home/" + username}>Back to Home</button>
     </div>
   )
 }
