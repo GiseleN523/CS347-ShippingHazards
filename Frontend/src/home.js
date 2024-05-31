@@ -25,8 +25,10 @@ function MultiplayerPopup({closePopup, joinID, setJoinID, joinErrorVisible, setJ
   function attemptJoin(the_json, playerID, color){
     let success = the_json["status"] === 1;
     let playerNum = 2;
+    let existingGame = false;
+    let isAIGame = false;
     if(success) {
-      navigate("/game/"+joinID+"/"+boardSize+"/"+playerID+"/"+username+"/"+color+"/"+playerNum+"/"+false);
+      navigate("/game/"+joinID+"/"+boardSize+"/"+playerID+"/"+username+"/"+color+"/"+playerNum+"/"+isAIGame+"/"+existingGame);
     }
     else {
       setJoinErrorVisible(true);
@@ -139,7 +141,8 @@ function NewGameButton({text, isAI, opponentID}) {
   function redirectBrowser(the_json, playerID, color){
     let gameID = the_json["game_id"];
     let playerNum = 1;
-    navigate("/game/"+gameID+"/"+boardSize+"/"+playerID+"/"+username+"/"+color+"/"+playerNum+"/"+isAI);
+    let existingGame = false;
+    navigate("/game/"+gameID+"/"+boardSize+"/"+playerID+"/"+username+"/"+color+"/"+playerNum+"/"+isAI+"/"+existingGame);
   }
 
   function handleClick() {

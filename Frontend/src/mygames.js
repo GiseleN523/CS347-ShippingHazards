@@ -25,7 +25,8 @@ function MyGamesTable({games}) {
         let color = the_json["color_preference"];
         let boardSize = 10
         let playerNum = (game.player1_id === playerID) ? 1 : 2;
-        navigate("/game/"+game.id+"/"+ boardSize +"/"+playerID+"/"+username+"/"+color+"/"+playerNum+"/"+game.is_ai_game);
+        let existingGame = true;
+        navigate("/game/"+game.id+"/"+ boardSize +"/"+playerID+"/"+username+"/"+color+"/"+playerNum+"/"+game.is_ai_game+"/"+existingGame);
 
       })
       .catch(error => console.error('Error fetching player info and new game: ', error));

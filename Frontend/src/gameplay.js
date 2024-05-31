@@ -93,8 +93,6 @@ function applySelectedShipMovement(changeFunct) {
 // square on the board grid
 function BoardSquare({id, row, column, myBoard, status}) {
 
-  const [attackable, setAttackable] = useState(true); // whether the square has already been attacked or is still attackable
-
   // on click during setup stage, reset selected ship and select the ship this square is part of, if any
   function handleClickSetup() {
     if(myBoard) {
@@ -117,8 +115,7 @@ function BoardSquare({id, row, column, myBoard, status}) {
 
   // on click during gameplay stage, if player's turn and square has not already been attacked, call fire shot endpoint
   function handleClickGameplay() {
-    if(!myBoard && status === "player_turn" && document.getElementById(id).style.backgroundColor !== "white" && document.getElementById(id).style.backgroundColor !== "red") {
-      setAttackable(false);
+    if(!myBoard && status === "player_turn" && document.getElementById(id).style.backgroundColor === "blue") {
       let url = "/play/fire-shot/" + gameID + "/" + playerID + "/" + row+"/" + column;
       fetch(url)
         .catch(error => console.error('Error fetching fire shot: ', error));
@@ -126,14 +123,14 @@ function BoardSquare({id, row, column, myBoard, status}) {
   }
 
   function handleMouseEnter() {
-    if(!myBoard && status === "player_turn" && attackable) {
+    if(!myBoard && status === "player_turn" && document.getElementById(id).style.backgroundColor === "rgba(0, 0, 0, 0)") {
       document.getElementById(id).style.backgroundColor = "blue";
     }
   }
 
   function handleMouseLeave() {
-    if(!myBoard && status === "player_turn" && attackable) {
-      document.getElementById(id).style.backgroundColor = 'inherit';
+    if(!myBoard && status === "player_turn" && document.getElementById(id).style.backgroundColor === "blue") {
+      document.getElementById(id).style.backgroundColor = 'rgba(0, 0, 0, 0)';
     }
   }
 
@@ -148,7 +145,7 @@ function BoardSquare({id, row, column, myBoard, status}) {
               return shipColor;
             }
             else
-              return 'transparent';
+              return 'rgba(0, 0, 0, 0)';
             }
            )()
       }}>
@@ -189,7 +186,10 @@ function Instructions({status}) {
     return (
       <div id="gameplay-instructions">
         {function() {
-          if(status === "setup") {
+          if(status === "loading_game") {
+            return "Loading game data; please wait...";
+          }
+          else if(status === "setup") {
             return "Setup Stage: Click on a ship to select it, then use the Arrow Keys to move it, the Spacebar to rotate, and the Enter key to place it";
           }
           else if (status === "player_turn") {
@@ -274,6 +274,80 @@ function BoardsAndTitles({status, setStatus, popups1, popups2, muted}) {
       }
       return () => document.removeEventListener('keydown', handleKeys);
     });
+
+    // load preexisting game if applicable
+    if(status === "loading_game") {
+      let url = "/play/get-state/"+gameID+"/"+playerID;
+      fetch(url)
+        .then(response => response.json())
+        .then(the_json => loadInGame(the_json))
+        .catch(error => console.error('Error fetching get-state: ', error));
+    }
+
+    // load in game from get-state for player: call get-state for opponent, update both board graphics, and update status
+    function loadInGame(the_json) {
+      let playerCombinedBoard = the_json["combined_board"];
+      let playerShipBoard = the_json["ship_board"];
+      let opponentID = the_json["opponent_id"];
+      let gameStatus = the_json["status"];
+      let turn = the_json["turn"];
+
+      let url = "/play/get-state/"+gameID+"/"+opponentID;
+      fetch(url)
+        .then(response => response.json())
+        .then((the_json) => {
+
+          let opponentCombinedBoard = the_json["combined_board"];
+          let opponentShipBoard = the_json["ship_board"];
+          let opponentAttackBoard = the_json["attack_board"];
+          setBoard(playerCombinedBoard, playerCombinedBoard, playerShipBoard, true);
+          setBoard(opponentAttackBoard, opponentCombinedBoard, opponentShipBoard, false);
+
+          if(gameStatus > 0 && gameStatus === playerNum) {
+            setStatus("player_won");
+          }
+          else if(gameStatus > 0 && gameStatus !== playerNum) {
+            setStatus("opp_won");
+          }
+          else if(turn > 0 && turn === playerNum) {
+            setStatus("player_turn");
+          }
+          else if(turn > 0 && turn !== playerNum) {
+            setStatus("opp_turn");
+          }
+
+        })
+        .catch(error => console.error('Error fetching get-state: ', error));
+    }
+
+    // set colors of board based on boardToShow
+    // player is a boolean representing whether this is the player or opponent board
+    function setBoard(boardToShow, combinedBoard, shipBoard, player) {
+      for(let r=0; r<boardSize; r++) {
+        for(let c=0; c<boardSize; c++) {
+
+          let val = boardToShow[(r*boardSize) + c];
+          let char = shipBoard[(r*boardSize) + c];
+          let squareId = player ? "mysquare-"+r+"-"+c : "opponentsquare-"+r+"-"+c;
+
+          if(val === "O") { // miss
+            document.getElementById(squareId).style.backgroundColor = "white";
+          }
+          else if(val === "X" && !combinedBoard.includes(char)) { // sunk ship; ship's character is no longer in combinedBoard
+            document.getElementById(squareId).style.backgroundColor = "gray";
+          }
+          else if(val === "X") { // hit
+            document.getElementById(squareId).style.backgroundColor = "red";
+          }
+          else if(val === "-") { // empty
+            document.getElementById(squareId).style.backgroundColor = "rgba(0, 0, 0, 0)";
+          }
+          else { // some other character: ship
+            document.getElementById(squareId).style.backgroundColor = shipColor;
+          }
+        }
+      }
+    }
 
     // event listener called when user presses a key during setup stage
     function handleKeys(e) {
@@ -492,8 +566,11 @@ function MuteButton({musicRef, muted, setMuted}) {
 }
 
 function GamePlay() {
-    ({gameID, boardSize, playerID, username, shipColor, playerNum, isAIGame} = useParams());
-    const [status, setStatus] = useState("setup"); // "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
+    
+    let existingGame;
+    ({gameID, boardSize, playerID, username, shipColor, playerNum, isAIGame, existingGame} = useParams());
+
+    const [status, setStatus] = useState(existingGame ? "loading_game" : "setup"); // "loading_game", "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
     const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
     const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
