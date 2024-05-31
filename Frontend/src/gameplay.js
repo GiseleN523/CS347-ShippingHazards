@@ -292,6 +292,11 @@ function BoardsAndTitles({status, setStatus, popups1, popups2, muted}) {
       let gameStatus = the_json["status"];
       let turn = the_json["turn"];
 
+      // if game was still in setup stage when paused, ship data was not saved; act as if the game just started
+      if(status === "setup") {
+        return;
+      }
+
       let url = "/play/get-state/"+gameID+"/"+opponentID;
       fetch(url)
         .then(response => response.json())
@@ -329,6 +334,10 @@ function BoardsAndTitles({status, setStatus, popups1, popups2, muted}) {
           let val = boardToShow[(r*boardSize) + c];
           let char = shipBoard[(r*boardSize) + c];
           let squareId = player ? "mysquare-"+r+"-"+c : "opponentsquare-"+r+"-"+c;
+
+          if(player) {
+            playerBoard = shipBoard;
+          }
 
           if(val === "O") { // miss
             document.getElementById(squareId).style.backgroundColor = "white";
@@ -570,7 +579,7 @@ function GamePlay() {
     let existingGame;
     ({gameID, boardSize, playerID, username, shipColor, playerNum, isAIGame, existingGame} = useParams());
 
-    const [status, setStatus] = useState(existingGame ? "loading_game" : "setup"); // "loading_game", "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
+    const [status, setStatus] = useState(existingGame === "true" ? "loading_game" : "setup"); // "loading_game", "setup", "setup_confirmed", "player_turn", "opp_turn", "player_won", "opp_won"
     const [hitPopup1Visible, setHitPopup1Visible] = useState(false);
     const [hitPopup2Visible, setHitPopup2Visible] = useState(false);
     const [sunkPopup1Visible, setSunkPopup1Visible] = useState(false);
