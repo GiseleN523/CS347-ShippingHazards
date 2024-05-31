@@ -310,10 +310,7 @@ function BoardsAndTitles({status, setStatus, popups1, popups2, muted}) {
           setBoard(playerCombinedBoard, playerCombinedBoard, playerShipBoard, true);
           setBoard(opponentAttackBoard, opponentCombinedBoard, opponentShipBoard, false);
 
-          if(myShipStatus === 1) {
-            setStatus("setup_confirmed");
-          }
-          else if(gameStatus > 0 && gameStatus === playerNum) {
+          if(gameStatus > 0 && gameStatus === playerNum) {
             setStatus("player_won");
           }
           else if(gameStatus > 0 && gameStatus !== playerNum) {
@@ -324,6 +321,9 @@ function BoardsAndTitles({status, setStatus, popups1, popups2, muted}) {
           }
           else if(turn > 0 && turn !== playerNum) {
             setStatus("opp_turn");
+          }
+          else if(myShipStatus === 1) {
+            setStatus("setup_confirmed");
           }
 
         })
