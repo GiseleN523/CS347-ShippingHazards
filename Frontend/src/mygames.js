@@ -40,8 +40,6 @@ function MyGamesTable({games}) {
           <tr>
             <th> Game ID</th>
             <th>Is AI Game</th>
-            <th>Player 1 ID</th>
-            <th>Player 2 ID</th>
             <th>Status</th>
             <th>Link</th>
             <th>Turn</th>
@@ -55,8 +53,6 @@ function MyGamesTable({games}) {
             <tr key={game.id}>
               <td>{game.id}</td>
               <td>{game.is_ai_game ? 'Yes' : 'No'}</td>
-              <td>{game.player1_id}</td>
-              <td>{game.player2_id}</td>
               <td>{game.status ? 'Inactive' : 'Active'}</td>
               <td>
                 {game.status === 0 && (
