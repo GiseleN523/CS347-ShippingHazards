@@ -73,17 +73,21 @@ function MyGamesTable({games}) {
 
 
 function MyGamesPage() {
-  ({username} = useParams()); // Get the username from the URL parameters
+  ({ username } = useParams()); // Get the username from the URL parameters
   const [games, setGames] = useState([]);
   const [filter, setFilter] = useState('all'); // Default filter is 'all'
 
   useEffect(() => {
-    let url = "/" +username +"/games/" +filter;
+    let url = "/" + username + "/games/" + filter;
     fetch(url)
       .then(response => response.json())
-      .then(data => setGames(data))
+      .then(data => {
+        const sortedGames = data.sort((a, b) => (a.id > b.id) ? 1 : -1); // Sort games by id in ascending order
+        setGames(sortedGames);
+      })
       .catch(error => console.error('Error fetching games:', error));
   }, [username, filter]);  
+
 
   return (
     <div>
