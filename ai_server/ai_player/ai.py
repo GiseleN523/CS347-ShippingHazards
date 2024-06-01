@@ -175,8 +175,17 @@ class BattleShipAI:
     # structure from: https://towardsdatascience.com/coding-an-intelligent-battleship-agent-bf0064a4b319
     def targetedAttack(self):
         print("entered targeted attack function", flush=True)
-        if self.previousShotHit == 1:
-            print("prev shot hit", flush=True)
+        
+        # if previous shot was a hit and sunk the ship
+        if self.previousShotHit == 1 and self.previousShotSunk == 1:
+            print("prev shot hit and sunk", flush=True)
+            # clear stack
+            while (self.highPriorityStack != []):
+                self.highPriorityStack.pop()
+        
+        # if prev shot hit but did not sink ship
+        elif self.previousShotHit == 1 and self.previousShotSunk == 0:
+            print("prev shot hit but no sunk", flush=True)
             possibleTargets = self.getSurroundingLocations(self.previousShotRow, self.previousShotCol)
             print("retrieved targets", flush=True)
 
