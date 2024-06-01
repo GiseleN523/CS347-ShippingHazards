@@ -83,7 +83,7 @@ function MyGamesPage() {
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        const sortedGames = data.sort((a, b) => (a.id > b.id) ? 1 : -1); // Sort games by id in ascending order
+        const sortedGames = data.sort((a, b) => (a.id < b.id) ? 1 : -1); // Sort games by id in descending order
         setGames(sortedGames);
       })
       .catch(error => console.error('Error fetching games:', error));
