@@ -26,8 +26,12 @@ def react_login(request, username, password):
 def react_signup(request, username, password1, password2, screen_name):
     if not User.objects.filter(username=username).exists():
         if password1 == password2: 
-            user = User.objects.create_user(username=username, password=password1)
-            player = Player.objects.create(user=user, screen_name=screen_name)
+            try: 
+                validate_password(password1, username)
+                user = User.objects.create_user(username=username, password=password1)
+                player = Player.objects.create(user=user, screen_name=screen_name)
+            except ValidationError as e:
+                return JsonResponse({'status': 'error', 'message': e.messages})
 
             return JsonResponse({'status':'success', 'message':'Look at you go!! You can type the same password TWICE!!'})
         else:
