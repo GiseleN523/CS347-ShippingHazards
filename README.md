@@ -10,7 +10,8 @@ Shipping Hazards is an implementation of the popular game Battleship, in which p
 ## How to Play
 1. Clone the repository and navigate to it in the terminal
 2. Type: docker-compose up -d --build
-3. Go to http://localhost:3000/ in your browser
+3. If this is your first time playing you will need to follow the POPULATING THE DATABASE section in the [walkthrough](https://github.com/GiseleN523/CS347-ShippingHazards/blob/main/battleship/loaddata_walkthrough.txt)
+4. Go to http://localhost:3000/ in your browser
    
 If you encounter any issues, please follow our [walkthrough](https://github.com/GiseleN523/CS347-ShippingHazards/blob/main/battleship/loaddata_walkthrough.txt).
 
@@ -21,6 +22,7 @@ If you encounter any issues, please follow our [walkthrough](https://github.com/
 * Websockets facilitate real-time communication, ensuring that gameplay is engaging and fast-paced.
 * Account creation and login capabilities allow users to save their account data and preferences.
 * Users, players, boards, and games can be viewed and changed from the admin site.
+* Multiplayer games and the capability to rejoin games in progress. 
 
 ## Folders
 * The Frontend folder contains the code for the graphical user interface of our game.
