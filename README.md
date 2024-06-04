@@ -37,7 +37,7 @@ If you encounter any issues, please follow our [walkthrough](https://github.com/
 ## Other Files
 * Each folder has a Dockerfile that assembles the image for a particular component of the app.
 * docker-compose.yml defines and runs the services and volumes for the entire project.
-* populateData.json contains initial data for the database.
+* clean_database.json contains initial data for the database.
 
 ## Screenshots
 <img width="1440" alt="login" src="https://github.com/GiseleN523/CS347-ShippingHazards/assets/113497140/3c280ef5-0c00-4018-89ac-29ccfcde66e1">
