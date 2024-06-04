@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 class Player(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     is_ai_player = models.BooleanField(default=False)
-    # username = models.CharField(max_length=100)   Will be taken care of with User Authentication. 
-    # password = models.CharField(max_length=100)
     screen_name = models.CharField(max_length=100)
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
@@ -19,7 +17,7 @@ class Player(models.Model):
 class Game(models.Model):
     is_ai_game = models.BooleanField(default=True)
     player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player1_games')
-    player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player2_games') #Unsure how we will want to set on_delete but 
+    player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player2_games') 
     player1_ship_status = models.IntegerField(default=0) #0 if ships not confirmed, 1 if confirmed
     player2_ship_status = models.IntegerField(default=0) #0 if ships not confirmed, 1 if confirmed
     board1ID = models.IntegerField(default=0)
