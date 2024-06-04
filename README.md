@@ -19,10 +19,12 @@ If you encounter any issues, please follow our [walkthrough](https://github.com/
 * Various colors, sounds, pop-ups, and music add excitement to the game.
 * Customizable ship colors, ship placement, and screen names encourage creativity and novelty.
 * Three computer opponents, with different levels of difficulty, add variety to the game.
+* Multiplayer games add the ability to play with friends.
+* The ability to rejoin games in progress allows for flexible gameplay.
 * Websockets facilitate real-time communication, ensuring that gameplay is engaging and fast-paced.
 * Account creation and login capabilities allow users to save their account data and preferences.
 * Users, players, boards, and games can be viewed and changed from the admin site.
-* Multiplayer games and the capability to rejoin games in progress. 
+* Players can view their stats and past games.
 
 ## Folders
 * The Frontend folder contains the code for the graphical user interface of our game.
