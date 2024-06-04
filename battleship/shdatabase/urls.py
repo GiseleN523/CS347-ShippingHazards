@@ -1,4 +1,9 @@
-#Written by Kendra and Ryan
+'''
+urls.py
+Kendra Winhall and Ryan Dunn
+
+Defines urls for API endpoints
+'''
 
 from django.urls import path
 from . import views

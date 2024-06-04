@@ -1,3 +1,10 @@
+'''
+views.py
+Kendra Winhall and Ryan Dunn
+
+Defines functions for HTTP requests/responses
+'''
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from .models import Player, Game, Board

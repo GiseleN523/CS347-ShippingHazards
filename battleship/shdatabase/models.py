@@ -1,3 +1,10 @@
+'''
+models.py
+Ryan Dunn and Kendra Winhall
+
+Defines attributes of Player, Game, and Board objects
+'''
+
 from django.db import models
 from django.contrib.auth.models import User
 

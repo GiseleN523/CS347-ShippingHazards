@@ -1,6 +1,10 @@
 '''
-Modified from this Django Channels tutorial: 
+consumers.py
+Kendra Winhall
+Adapted from this Django Channels tutorial: 
 https://channels.readthedocs.io/en/stable/tutorial/index.html
+
+Defines how websocket messages and game rooms function
 '''
 import json
 
